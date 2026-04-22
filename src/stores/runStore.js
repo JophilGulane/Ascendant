@@ -394,6 +394,7 @@ const useRunStore = create(
           energy: s.maxEnergy,
           bonusEnergyNextTurn: 0,
           blindCardId: newBlindCardId,
+          lastCardTypePlayed: null,  // Reset type_lock tracker
         }
       }),
 

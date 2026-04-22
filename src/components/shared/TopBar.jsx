@@ -29,9 +29,9 @@ export function TopBar({ hideMapButton = false, potionsLocked = false }) {
   const { usePotion } = usePotions({ isQuestionOpen: potionsLocked, playSFX })
 
   return (
-    <>
+    <div className="relative w-full z-50">
       <div
-        className="relative z-40 flex items-center justify-between px-4 py-1.5 w-full"
+        className="flex items-center justify-between px-4 py-1.5 w-full relative z-40"
         style={{
           background: 'linear-gradient(180deg, #2b353f 0%, #1a2228 100%)',
           borderBottom: '2px solid #111',
@@ -42,7 +42,9 @@ export function TopBar({ hideMapButton = false, potionsLocked = false }) {
       >
         {/* Left: Player Info */}
         <div className="flex items-center gap-4">
-          <div className="font-bold text-white text-base mr-2">{store.character?.name || 'Traveler'}</div>
+          <div className="flex flex-col justify-center mr-2">
+            <div className="font-bold text-white text-base leading-none">{store.character?.name || 'Traveler'}</div>
+          </div>
           <div className="flex items-center gap-1">
             <span className="text-red-400">❤️</span>
             <span className="font-bold text-red-100">{store.hp}/{store.maxHp}</span>
@@ -109,6 +111,27 @@ export function TopBar({ hideMapButton = false, potionsLocked = false }) {
         </div>
       </div>
 
+      {/* Floating Modifier Display (Top Left, Below TopBar) */}
+      {store.activeModifier && (
+        <div className="absolute top-full left-4 mt-2 flex items-center gap-2 pointer-events-auto">
+          <div 
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-[#1a1a24]/90 border shadow-xl backdrop-blur-md cursor-help transition-transform hover:scale-110"
+            style={{ borderColor: store.activeModifier.blessing.color }}
+            title={`Blessing: ${store.activeModifier.blessing.name}\n${store.activeModifier.blessing.description}`}
+          >
+            <span className="text-lg drop-shadow-md leading-none">{store.activeModifier.blessing.icon}</span>
+          </div>
+          <div 
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-[#1a1a24]/90 border shadow-xl backdrop-blur-md cursor-help transition-transform hover:scale-110"
+            style={{ borderColor: store.activeModifier.curse.color }}
+            title={`Curse: ${store.activeModifier.curse.name}\n${store.activeModifier.curse.description}`}
+          >
+            <span className="text-lg drop-shadow-md leading-none">{store.activeModifier.curse.icon}</span>
+          </div>
+        </div>
+      )}
+
+
       {/* OVERLAYS */}
       <AnimatePresence>
         {openModal === 'settings' && (
@@ -133,7 +156,7 @@ export function TopBar({ hideMapButton = false, potionsLocked = false }) {
           <JournalOverlay onClose={closeModal} words={store.journalWords} grammar={store.journalGrammar} />
         )}
       </AnimatePresence>
-    </>
+    </div>
   )
 }
 

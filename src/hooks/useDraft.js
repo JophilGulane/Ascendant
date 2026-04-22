@@ -25,14 +25,7 @@ async function loadCards(campaign) {
  * @returns {{ count: number, allowRare: boolean }}
  */
 export function calculateDraftPool(accuracy, masteryLevel) {
-  let pool
-  if (accuracy >= 0.8) {
-    pool = { count: 4, allowRare: true }
-  } else if (accuracy >= 0.6) {
-    pool = { count: 3, allowRare: false }
-  } else {
-    pool = { count: 2, allowRare: false }
-  }
+  let pool = { count: 3, allowRare: accuracy >= 0.8 }
 
   // Mastery 9: draft pools reduced by 1
   if (isRuleActive('smaller_draft', masteryLevel)) {

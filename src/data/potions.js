@@ -167,6 +167,10 @@ export const POTIONS = {
 
 export const POTION_IDS = Object.keys(POTIONS)
 
+export function getPotionData(id) {
+  return POTIONS[id]
+}
+
 // Weighted random pool by tier — floors 1-2 favor common, 3-4 uncommon, 5+ rare possible
 export function getRandomPotionDrop(floor = 1) {
   const weights = {

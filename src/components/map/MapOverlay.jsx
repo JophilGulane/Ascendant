@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import useRunStore from '../../stores/runStore.js'
 import { NODE_TYPES } from '../../constants/nodeTypes.js'
@@ -117,6 +117,37 @@ export function MapOverlay({ onClose }) {
 
   const mapHeightTotal = maxRow * ROW_HEIGHT + START_Y_PADDING * 2
 
+  const scrollContainerRef = useRef(null)
+
+  useEffect(() => {
+    if (!scrollContainerRef.current) return
+    
+    const timeoutId = setTimeout(() => {
+      let targetY = null
+      const currentNode = positionedNodes.find(n => n.id === store.currentNodeId)
+      if (currentNode) {
+        targetY = currentNode.y
+      } else {
+        const availableNodes = positionedNodes.filter(n => n.available)
+        if (availableNodes.length > 0) {
+          targetY = availableNodes[0].y
+        }
+      }
+
+      if (targetY !== null && scrollContainerRef.current) {
+        const containerHeight = scrollContainerRef.current.clientHeight
+        scrollContainerRef.current.scrollTo({
+          top: Math.max(0, targetY - containerHeight * 0.6),
+          behavior: 'smooth'
+        })
+      } else if (scrollContainerRef.current) {
+        scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight
+      }
+    }, 100)
+
+    return () => clearTimeout(timeoutId)
+  }, [positionedNodes, store.currentNodeId])
+
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -128,7 +159,7 @@ export function MapOverlay({ onClose }) {
       </div>
 
       <div className="flex-1 w-full max-w-[800px] mx-auto rounded-xl overflow-hidden relative" style={{ background: '#D9CDB6', boxShadow: '0 0 50px rgba(0,0,0,0.8)' }}>
-        <div className="w-full h-full overflow-y-auto overflow-x-hidden relative">
+        <div ref={scrollContainerRef} className="w-full h-full overflow-y-auto overflow-x-hidden relative">
           <div className="relative w-full mx-auto" style={{ height: mapHeightTotal, maxWidth: MAP_WIDTH }}>
             {/* Paper textures */}
             <div className="absolute inset-0 pointer-events-none" style={{

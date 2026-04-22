@@ -14,21 +14,10 @@ import useRunStore from '../../stores/runStore.js'
  * @param {number} accuracy - fight accuracy 0-1
  */
 export default function DraftScreen({ cards = [], cardMap = {}, onPick, onSkip, accuracy = 1 }) {
-  const [selected, setSelected] = useState(null)
   const { playSFX } = useAudio()
   const activeModifier = useRunStore(s => s.activeModifier)
   // Curse: blind_drafts — card names/effects are hidden during draft
   const isBlindDraft = activeModifier?.curse?.effect?.type === 'blind_drafts'
-
-  const accuracyLabel = accuracy >= 0.8 ? 'Excellent!' : accuracy >= 0.6 ? 'Good' : 'Keep practicing'
-  const accuracyColor = accuracy >= 0.8 ? 'text-green-400' : accuracy >= 0.6 ? 'text-yellow-400' : 'text-red-400'
-
-  const handlePick = () => {
-    if (selected) {
-      playSFX('correct')
-      onPick(selected)
-    }
-  }
 
   return (
     <div
@@ -42,22 +31,19 @@ export default function DraftScreen({ cards = [], cardMap = {}, onPick, onSkip, 
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 w-full max-w-2xl px-6"
+        className="relative z-10 w-full max-w-4xl px-6 pt-16 flex flex-col items-center justify-center h-full"
       >
-        {/* Header */}
-        <div className="text-center mb-6">
-          <motion.div
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            className="text-4xl mb-2"
-          >
-            🏆
-          </motion.div>
-          <h1 className="text-2xl font-bold text-amber-200">Victory!</h1>
-          <p className="text-sm text-gray-400 mt-1">
-            Fight accuracy: <span className={accuracyColor}>{Math.round(accuracy * 100)}% — {accuracyLabel}</span>
-          </p>
-          <p className="text-xs text-gray-500 mt-1">Choose a card to add to your deck, or skip.</p>
+        {/* Choose a Card Scroll Header */}
+        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-full max-w-[450px] z-20 pointer-events-none">
+          <svg viewBox="0 0 450 80" className="w-full drop-shadow-lg" preserveAspectRatio="none">
+            <path d="M 30,40 Q 20,20 10,35 Q 0,50 15,60 Q 20,65 30,60 L 420,60 Q 430,65 435,60 Q 450,50 440,35 Q 430,20 420,40 Z" fill="#D9CDB6" stroke="#A29478" strokeWidth="2" />
+            <path d="M 40,30 L 410,30 L 410,70 L 40,70 Z" fill="#E8DCC4" />
+          </svg>
+          <div className="absolute inset-0 flex items-center justify-center pt-2">
+            <h2 className="text-3xl font-bold text-[#333] tracking-widest" style={{ fontFamily: "'Cinzel', serif" }}>
+              Choose a Card
+            </h2>
+          </div>
         </div>
 
         {/* Cards */}
@@ -66,7 +52,6 @@ export default function DraftScreen({ cards = [], cardMap = {}, onPick, onSkip, 
             {cards.map((card, i) => {
               const typeMeta = CARD_TYPE_META[card.type] || {}
               const rarityMeta = CARD_RARITY_META[card.rarity] || {}
-              const isSelected = selected?.id === card.id
 
               return (
                 <motion.div
@@ -74,12 +59,12 @@ export default function DraftScreen({ cards = [], cardMap = {}, onPick, onSkip, 
                   initial={{ opacity: 0, y: 40, rotateY: 90 }}
                   animate={{ opacity: 1, y: 0, rotateY: 0 }}
                   transition={{ delay: i * 0.15, type: 'spring', stiffness: 280, damping: 24 }}
-                  whileHover={{ y: -8, scale: 1.03 }}
-                  onClick={() => { playSFX('button_click'); setSelected(isSelected ? null : card); }}
+                  whileHover={{ y: -15, scale: 1.05 }}
+                  onClick={() => { playSFX('correct'); onPick(card); }}
                   className={`
-                    w-40 p-4 rounded-2xl border-2 cursor-pointer transition-all
+                    w-56 p-5 rounded-2xl border-2 cursor-pointer transition-all hover:ring-2 hover:ring-yellow-400/50 hover:shadow-xl hover:shadow-yellow-500/20
                     ${typeMeta.bgClass}
-                    ${isSelected ? `${rarityMeta.borderClass} ring-2 ring-yellow-400/50 shadow-xl shadow-yellow-500/20` : `${rarityMeta.borderClass}/60`}
+                    ${rarityMeta.borderClass}/60
                   `}
                   style={{ background: 'linear-gradient(160deg, rgba(18,18,24,0.95) 0%, rgba(8,8,12,0.98) 100%)' }}
                 >
@@ -115,43 +100,20 @@ export default function DraftScreen({ cards = [], cardMap = {}, onPick, onSkip, 
                   <div className="mt-3 text-[10px] text-gray-600 italic border-t border-gray-700/50 pt-2">
                     {isBlindDraft ? '...' : <HoverTranslate translation={card.flavor_native}>{card.flavor_target}</HoverTranslate>}
                   </div>
-
-                  {isSelected && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="mt-2 text-center text-xs font-bold text-yellow-400"
-                    >
-                      ✓ Selected
-                    </motion.div>
-                  )}
                 </motion.div>
               )
             })}
           </AnimatePresence>
         </div>
 
-        {/* Action buttons */}
-        <div className="flex gap-3 justify-center">
+        {/* Skip button */}
+        <div className="flex justify-center mt-12 w-full">
           <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={handlePick}
-            disabled={!selected}
-            className={`
-              px-8 py-3 rounded-xl font-bold text-sm border transition-all
-              ${selected
-                ? 'bg-amber-700/60 border-amber-500 text-amber-100 hover:bg-amber-600/60 cursor-pointer'
-                : 'bg-gray-800 border-gray-700 text-gray-600 cursor-default'}
-            `}
-          >
-            Add to Deck
-          </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => { playSFX('button_click'); onSkip(); }}
-            className="px-6 py-3 rounded-xl font-medium text-sm border border-gray-700 bg-gray-800/40 text-gray-400 hover:bg-gray-700/40 hover:text-gray-200 transition-all cursor-pointer"
+            className="px-16 py-3 rounded-full font-bold text-2xl border-4 border-[#F5C842] bg-[#4FA0A0] text-[#111] hover:bg-[#5FB0B0] hover:text-white transition-all cursor-pointer shadow-[0_4px_10px_rgba(0,0,0,0.6)]"
+            style={{ fontFamily: "'Cinzel', serif" }}
           >
             Skip
           </motion.button>

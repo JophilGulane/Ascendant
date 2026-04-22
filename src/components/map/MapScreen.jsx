@@ -1,6 +1,6 @@
 // components/map/MapScreen.jsx
 // Slay the Spire accurate Map Design
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import useRunStore from '../../stores/runStore.js'
@@ -95,6 +95,7 @@ export function MapScreen() {
   const store = useRunStore()
   const { playSFX, playMusic } = useAudio()
   const [showLegend, setShowLegend] = useState(true)
+  const scrollContainerRef = useRef(null)
 
   useEffect(() => {
     // Prevent skipping rooms via browser 'Back' button
@@ -235,6 +236,43 @@ export function MapScreen() {
 
   const mapHeightTotal = maxRow * ROW_HEIGHT + START_Y_PADDING * 2
 
+  // Auto-scroll to the current or next available node
+  useEffect(() => {
+    if (!scrollContainerRef.current) return
+    
+    // We need a small delay to ensure rendering is complete before measuring/scrolling
+    const timeoutId = setTimeout(() => {
+      let targetY = null
+      
+      // 1. Try to find the node we are currently on
+      const currentNode = positionedNodes.find(n => n.id === store.currentNodeId)
+      if (currentNode) {
+        targetY = currentNode.y
+      } else {
+        // 2. Otherwise, find the lowest row node that is available to click
+        const availableNodes = positionedNodes.filter(n => n.available)
+        if (availableNodes.length > 0) {
+          // Sort to find the one closest to bottom (highest y) or just pick any available
+          targetY = availableNodes[0].y
+        }
+      }
+
+      if (targetY !== null && scrollContainerRef.current) {
+        const containerHeight = scrollContainerRef.current.clientHeight
+        // Scroll so the target node is centered in the container, but bias it slightly lower
+        scrollContainerRef.current.scrollTo({
+          top: Math.max(0, targetY - containerHeight * 0.6),
+          behavior: 'smooth'
+        })
+      } else if (scrollContainerRef.current) {
+        // Default: scroll all the way to bottom (start)
+        scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight
+      }
+    }, 100)
+
+    return () => clearTimeout(timeoutId)
+  }, [positionedNodes, store.currentNodeId])
+
   return (
     <ScreenTransition>
       <div
@@ -250,6 +288,7 @@ export function MapScreen() {
         <div className="relative flex-1 flex items-center justify-center overflow-hidden pt-12">
           {/* Scrollable Container */}
           <div 
+            ref={scrollContainerRef}
             className="w-full max-w-[800px] h-full overflow-y-auto overflow-x-hidden relative"
             style={{
               // Light parchment background, imitating STS paper map
@@ -307,7 +346,7 @@ export function MapScreen() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
-                className="absolute right-4 top-10 z-30 pointer-events-none"
+                className="absolute right-4 top-24 z-30 pointer-events-none"
               >
                 <div 
                   style={{

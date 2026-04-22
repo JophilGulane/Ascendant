@@ -21,7 +21,8 @@ import DraftScreen from '../menus/DraftScreen.jsx'
 import { BossDefeatScreen } from './BossDefeatScreen.jsx'
 import { ScreenTransition } from '../shared/ScreenTransition.jsx'
 import { TopBar, DeckOverlay } from '../shared/TopBar.jsx'
-import { getRandomPotionDrop, getPotionDropRate } from '../../data/potions.js'
+import { getRandomPotionDrop, getPotionDropRate, getPotionData } from '../../data/potions.js'
+import { LootScreen } from './LootScreen.jsx'
 
 // Turn phases — explicit state machine per AGENT.md v2
 const PHASE = {
@@ -110,12 +111,20 @@ export function CombatScreen() {
   const [journalOpen, setJournalOpen] = useState(false)
   const [openPile, setOpenPile] = useState(null) // 'draw' | 'discard' | null
   const [potionDropped, setPotionDropped] = useState(null) // { id, shattered } or null
+  const [loot, setLoot] = useState(null) // Array of loot items when fight ends
 
   const fightStarted = useRef(false)
 
   const silencedTypes = store.activePlayerDebuffs
     .filter(d => d.type === 'silence')
     .map(d => d.target)
+
+  // type_lock curse: visually silence the last played card type so player knows it's unplayable
+  if (store.activeModifier?.curse?.effect?.type === 'type_lock' && store.lastCardTypePlayed) {
+    if (!silencedTypes.includes(store.lastCardTypePlayed)) {
+      silencedTypes.push(store.lastCardTypePlayed)
+    }
+  }
 
   const { executeEnemyTurn, isExecuting: isEnemyTurnRunning, currentAction: enemyAction } = useEnemyTurn({
     onTurnComplete: () => {
@@ -243,35 +252,8 @@ export function CombatScreen() {
     const isBoss = s.currentEnemy?.tier === 'boss'
     const accuracy = s.fightTotal > 0 ? s.fightCorrect / s.fightTotal : 1
 
-    // Potion drop logic
-    const dropRate = getPotionDropRate(s.currentEnemy?.tier, isBoss)
-    if (Math.random() < dropRate) {
-      const potionId = getRandomPotionDrop(s.floor)
-      if (s.potions.length >= 3) {
-        // Slots full — show shatter notification only
-        setPotionDropped({ id: potionId, shattered: true })
-        setTimeout(() => setPotionDropped(null), 2000)
-      } else {
-        s.addPotion(potionId)
-        setPotionDropped({ id: potionId, shattered: false })
-        setTimeout(() => setPotionDropped(null), 1800)
-      }
-    }
-
-    // Reset potion combat effects for next fight
     s.resetPotionEffects()
     s.endFight()
-    
-    let baseGold = Math.floor(10 + accuracy * 20)
-    if (choice?.reward?.type === 'gold') baseGold += choice.reward.amount
-    
-    const relicGold = s.relics.includes('lucky_coin') ? 15 : 0
-    s.addGold(baseGold + relicGold)
-    
-    let draftRarity = null
-    if (choice?.reward?.type === 'card') {
-      draftRarity = choice.reward.rarity
-    }
 
     if (isBoss) {
       const newFloor = s.floor + 1
@@ -281,14 +263,62 @@ export function CombatScreen() {
       s.setCurrentNode(null)
     }
 
-    openDraft(accuracy, draftRarity)
-  }, [openDraft])
+    const generatedLoot = []
+
+    // 1. Gold
+    let baseGold = Math.floor(10 + accuracy * 20)
+    if (choice?.reward?.type === 'gold') baseGold += choice.reward.amount
+    const relicGold = s.relics.includes('lucky_coin') ? 15 : 0
+    generatedLoot.push({ id: 'gold', type: 'gold', amount: baseGold + relicGold, icon: '🪙', label: `${baseGold + relicGold} Gold` })
+
+    // 2. Potion
+    const dropRate = getPotionDropRate(s.currentEnemy?.tier, isBoss)
+    if (Math.random() < dropRate) {
+      const potionId = getRandomPotionDrop(s.floor)
+      const potionData = getPotionData(potionId)
+      generatedLoot.push({ id: 'potion', type: 'potion', potionId, icon: potionData?.icon || '🧪', label: potionData?.name || 'Unknown Potion' })
+    }
+
+    // 3. Card Draft
+    let draftRarity = null
+    if (choice?.reward?.type === 'card') draftRarity = choice.reward.rarity
+    generatedLoot.push({ id: 'card', type: 'card', rarity: draftRarity, icon: '🃏', label: 'Add a card to your deck' })
+
+    setLoot(generatedLoot)
+  }, [])
+
+  const handleClaimLoot = useCallback((lootId) => {
+    const s = useRunStore.getState()
+    const item = loot.find(l => l.id === lootId)
+    if (!item) return
+
+    if (item.type === 'gold') {
+      s.addGold(item.amount)
+    } else if (item.type === 'potion') {
+      if (s.potions.length >= 3) {
+        setPotionDropped({ id: item.potionId, shattered: true })
+        setTimeout(() => setPotionDropped(null), 2000)
+      } else {
+        s.addPotion(item.potionId)
+      }
+    }
+    setLoot(prev => prev.filter(l => l.id !== lootId))
+  }, [loot])
+
+  const handleLootDone = useCallback(() => {
+    sessionStorage.removeItem('active_encounter')
+    navigate('/map')
+  }, [navigate])
+
+  const handleOpenDraftLoot = useCallback((item) => {
+    const accuracy = store.fightTotal > 0 ? store.fightCorrect / store.fightTotal : 1
+    openDraft(accuracy, item.rarity)
+  }, [openDraft, store.fightTotal, store.fightCorrect])
 
   const handleDraftDone = useCallback((card) => {
     pickCard(card)
-    sessionStorage.removeItem('active_encounter')
-    navigate('/map')
-  }, [pickCard, navigate])
+    setLoot(prev => prev.filter(l => l.id !== 'card'))
+  }, [pickCard])
 
   if (isDrafting) {
     const accuracy = store.fightTotal > 0 ? store.fightCorrect / store.fightTotal : 1
@@ -297,7 +327,7 @@ export function CombatScreen() {
         cards={draftCards}
         cardMap={cardMap}
         onPick={handleDraftDone}
-        onSkip={() => { skipDraft(); sessionStorage.removeItem('active_encounter'); navigate('/map') }}
+        onSkip={() => handleDraftDone(null)}
         accuracy={accuracy}
       />
     )
@@ -575,6 +605,18 @@ export function CombatScreen() {
             <DeckOverlay onClose={() => setOpenPile(null)} deck={store.discardPile} title="Discard Pile" />
           )}
         </AnimatePresence>
+        {/* ── LOOT SCREEN ── */}
+        <AnimatePresence>
+          {loot && !isDrafting && (
+            <LootScreen 
+              loot={loot} 
+              onClaim={handleClaimLoot} 
+              onSkip={handleLootDone} 
+              onOpenDraft={handleOpenDraftLoot} 
+            />
+          )}
+        </AnimatePresence>
+
       </div>
     </ScreenTransition>
   )
