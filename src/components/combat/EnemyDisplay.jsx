@@ -69,17 +69,18 @@ export function EnemyDisplay({
         } : { x: 0 }}
         className="relative"
       >
-        <div className="w-36 h-44 rounded-2xl overflow-hidden border-2 border-gray-700/60 shadow-2xl shadow-black/60">
+        <div className="flex items-end justify-center relative" style={{ height: '200px', width: '200px' }}>
           {enemy.portrait ? (
             <img
               src={enemy.portrait}
               alt={enemy.name_native}
-              className="w-full h-full object-cover object-top"
+              className="max-h-full max-w-full object-contain object-bottom relative z-10"
+              style={{ imageRendering: 'pixelated', filter: 'drop-shadow(0 8px 10px rgba(0,0,0,0.8))' }}
               onError={(e) => { e.target.style.display = 'none' }}
             />
           ) : (
             <div
-              className="w-full h-full flex items-center justify-center text-6xl"
+              className="w-36 h-44 rounded-2xl overflow-hidden border-2 border-gray-700/60 flex items-center justify-center text-6xl relative z-10 shadow-xl"
               style={{ background: `linear-gradient(135deg, ${enemy.portrait_placeholder_color || '#1a1a3a'}88, ${enemy.portrait_placeholder_color || '#1a1a3a'}cc)` }}
             >
               👹

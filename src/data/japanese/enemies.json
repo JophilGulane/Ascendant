@@ -56,7 +56,7 @@
       "reading":    { "type": "fortify",            "hp_bonus": 5,     "duration_turns": 2 }
     },
     "special_ability": null,
-    "portrait": null,
+    "portrait": "/images/enemies/japanese/shrine_guard.png",
     "portrait_placeholder_color": "#2a1a00",
     "defeat_sfx": "guard_dismiss",
     "defeat_dialogue": "まだ…力が足りぬ。",
@@ -218,7 +218,7 @@
       "trigger": "on_phase_2_start",
       "effect": "add_chain_armor_15"
     },
-    "portrait": null,
+    "portrait": "/images/enemies/japanese/mountain_spirit.png",
     "portrait_placeholder_color": "#0a0a1a",
     "defeat_sfx": "boss_dissolve",
     "pre_fight_dialogue": [

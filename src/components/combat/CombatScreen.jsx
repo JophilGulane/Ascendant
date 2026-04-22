@@ -24,8 +24,8 @@ import { ScreenTransition } from '../shared/ScreenTransition.jsx'
 const PHASE = {
   PLAYER_DRAW: 'PLAYER_DRAW',
   PLAYER_TURN: 'PLAYER_TURN',
-  ENEMY_TURN:  'ENEMY_TURN',
-  FIGHT_END:   'FIGHT_END',
+  ENEMY_TURN: 'ENEMY_TURN',
+  FIGHT_END: 'FIGHT_END',
 }
 
 // Energy Orb (STS style bottom-left)
@@ -94,7 +94,7 @@ export function CombatScreen() {
   const { draftCards, isDrafting, openDraft, pickCard, skipDraft } = useDraft()
   const { playMusic } = useAudio()
 
-  const [turnPhase, setTurnPhase] = useState(PHASE.PLAYER_DRAW)
+  const [turnPhase, setTurnPhase] = useState(null)
   const [bossPhase, setBossPhase] = useState(1)
   const [isShakingEnemy, setIsShakingEnemy] = useState(false)
   const [isHitPlayer, setIsHitPlayer] = useState(false)
@@ -120,9 +120,21 @@ export function CombatScreen() {
   useEffect(() => {
     if (fightStarted.current) return
     fightStarted.current = true
+
+    // Check if we are resuming an ongoing fight (e.g. after a page refresh)
     if (store.currentEnemy) {
-      useRunStore.getState().startFight(store.currentEnemy)
-      setTurnPhase(PHASE.PLAYER_DRAW)
+      if (!store.inCombat) {
+        // Fresh encounter
+        useRunStore.getState().startFight(store.currentEnemy)
+        setTurnPhase(PHASE.PLAYER_DRAW)
+      } else {
+        // Resuming encounter: skip draw phase if we already have a hand
+        if (store.hand.length > 0) {
+          setTurnPhase(PHASE.PLAYER_TURN)
+        } else {
+          setTurnPhase(PHASE.PLAYER_DRAW)
+        }
+      }
     }
   }, [])
 
@@ -240,8 +252,9 @@ export function CombatScreen() {
           className="absolute inset-0"
           style={{
             backgroundImage: 'url(/images/ui/dungeon_combat_bg.png)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: '110%',
+            backgroundPosition: 'center bottom',
             filter: 'brightness(0.7) contrast(1.1)',
           }}
         />
@@ -270,7 +283,7 @@ export function CombatScreen() {
             </div>
             {/* Relics placeholder */}
             <div className="ml-4 flex gap-1">
-              {store.relics.slice(0,3).map((r, i) => (
+              {store.relics.slice(0, 3).map((r, i) => (
                 <div key={i} className="w-5 h-5 bg-gray-700 border border-gray-500 rounded-sm opacity-60" title={r} />
               ))}
             </div>
@@ -298,57 +311,66 @@ export function CombatScreen() {
 
         {/* ── Main Combat Arena ── */}
         <div className="flex-1 relative">
-          
+
           {/* Player Character Sprite (Left) */}
-          <div className="absolute left-[15%] bottom-[35%] flex flex-col items-center">
-             <motion.div
-               animate={isHitPlayer ? { x: [-10, 10, -10, 10, 0], filter: 'brightness(2) sepia(1) hue-rotate(-50deg) saturate(5)' } : {}}
-               transition={{ duration: 0.3 }}
-               className="relative"
-             >
-                {store.character?.id === 'kenji' ? (
-                  <img
-                    src="/images/characters/japanese/kenji.png"
-                    alt="Player"
-                    className="w-48 h-48 object-contain object-bottom filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)]"
-                  />
-                ) : (
-                  <div className="w-32 h-48 bg-gray-800/80 border-2 border-gray-600 rounded flex items-center justify-center text-4xl">
-                    👤
-                  </div>
-                )}
-             </motion.div>
-             {/* Player HP Bar below sprite */}
-             <div className="mt-2 w-32">
-                <div className="w-full bg-red-950 border border-black rounded-sm h-3 relative">
-                  <div className="bg-red-600 h-full" style={{ width: `${Math.max(0, (store.hp / store.maxHp) * 100)}%` }} />
-                  {store.block > 0 && (
-                    <div className="absolute top-0 right-0 h-full bg-blue-400" style={{ width: `${Math.min(100, (store.block / store.maxHp) * 100)}%` }} />
-                  )}
-                  <div className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-white shadow-black drop-shadow-md">
-                    {store.hp}/{store.maxHp}
-                  </div>
+          <div className="absolute left-[30%] bottom-[5%] flex flex-col items-center">
+            <motion.div
+              animate={isHitPlayer ? { x: [-10, 10, -10, 10, 0], filter: 'brightness(2) sepia(1) hue-rotate(-50deg) saturate(5)' } : {}}
+              transition={{ duration: 0.3 }}
+              className="relative flex items-end justify-center"
+              style={{ height: '200px' }}
+            >
+              {store.character?.id === 'kenji' ? (
+                <img
+                  src="/images/characters/japanese/kenji.png"
+                  alt="Player"
+                  className="max-h-full max-w-full object-contain object-bottom"
+                  style={{ imageRendering: 'pixelated', filter: 'drop-shadow(0 8px 10px rgba(0,0,0,0.8))' }}
+                />
+              ) : (
+                <div className="w-36 h-44 bg-gray-800/80 border-2 border-gray-600 rounded flex items-center justify-center text-4xl">
+                  👤
                 </div>
-                {store.block > 0 && (
-                  <div className="flex justify-center mt-1">
-                    <span className="text-xs text-blue-300 font-bold bg-blue-900/80 px-1.5 rounded-sm border border-blue-500">🛡️ {store.block}</span>
-                  </div>
-                )}
-             </div>
-             {/* Debuffs */}
-             {store.activePlayerDebuffs.length > 0 && (
-               <div className="flex gap-1 mt-2">
-                 {store.activePlayerDebuffs.map((d, i) => (
-                   <span key={i} className="text-xs bg-purple-900/80 text-purple-200 px-1 rounded border border-purple-500">
-                     {d.type} {d.duration}
-                   </span>
-                 ))}
-               </div>
-             )}
+              )}
+            </motion.div>
+            {/* Player Name */}
+            <div className="text-center mt-2">
+              <div className="text-sm font-bold text-white">
+                {store.character?.name || 'Traveler'}
+              </div>
+            </div>
+
+            {/* Player HP Bar (Matching Enemy Design) */}
+            <div className="w-44 mt-1">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-xs text-gray-400">HP</span>
+                <div className="flex items-center gap-2">
+                  {store.block > 0 && <span className="text-[10px] text-blue-300">🛡️{store.block}</span>}
+                  <span className="text-xs text-white font-mono">{store.hp} / {store.maxHp}</span>
+                </div>
+              </div>
+              <div className="h-3 bg-gray-800 rounded-full overflow-hidden border border-gray-700/50">
+                <motion.div
+                  className="h-full rounded-full bg-emerald-500"
+                  animate={{ width: `${Math.max(0, (store.hp / store.maxHp) * 100)}%` }}
+                  transition={{ duration: 0.4, ease: 'easeOut' }}
+                />
+              </div>
+            </div>
+            {/* Debuffs */}
+            {store.activePlayerDebuffs.length > 0 && (
+              <div className="flex gap-1 mt-2">
+                {store.activePlayerDebuffs.map((d, i) => (
+                  <span key={i} className="text-xs bg-purple-900/80 text-purple-200 px-1 rounded border border-purple-500">
+                    {d.type} {d.duration}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Enemy Display (Right) */}
-          <div className="absolute right-[15%] bottom-[35%] flex flex-col items-center">
+          <div className="absolute right-[30%] bottom-[5%] flex flex-col items-center">
             <EnemyDisplay
               enemy={store.currentEnemy}
               hp={store.enemyHp}
@@ -408,7 +430,7 @@ export function CombatScreen() {
 
         {/* ── Bottom HUD ── */}
         <div className="relative z-30 h-[30vh] flex items-end justify-between px-8 pb-6">
-          
+
           {/* Bottom-Left: Draw Pile & Energy */}
           <div className="flex items-end gap-6 pb-2">
             <CardPile count={store.deck.length} type="draw" side="left" />
@@ -417,20 +439,20 @@ export function CombatScreen() {
 
           {/* Center: Cards (Absolute positioned so they fan out properly) */}
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-full max-w-3xl h-48 pointer-events-none" style={{ perspective: 1000 }}>
-             <div className="relative w-full h-full flex justify-center pointer-events-auto">
-               <CardHand
-                  handIds={store.hand}
-                  cardMap={cardMap}
-                  currentEnergy={store.energy}
-                  lockedCards={store.lockedCards}
-                  silencedTypes={silencedTypes}
-                  selectedCardId={activeCardId}
-                  chainActive={store.chainActive}
-                  chainType={store.chainType}
-                  disabled={!isPlayerTurn || !!activeQuestion}
-                  onCardSelect={selectCard}
-                />
-             </div>
+            <div className="relative w-full h-full flex justify-center pointer-events-auto">
+              <CardHand
+                handIds={store.hand}
+                cardMap={cardMap}
+                currentEnergy={store.energy}
+                lockedCards={store.lockedCards}
+                silencedTypes={silencedTypes}
+                selectedCardId={activeCardId}
+                chainActive={store.chainActive}
+                chainType={store.chainType}
+                disabled={!isPlayerTurn || !!activeQuestion}
+                onCardSelect={selectCard}
+              />
+            </div>
           </div>
 
           {/* Bottom-Right: End Turn & Discard */}
@@ -451,7 +473,7 @@ export function CombatScreen() {
             >
               {isEnemyPhase ? 'Enemy Turn' : 'End Turn'}
             </motion.button>
-            
+
             <CardPile count={store.discardPile.length} type="discard" side="right" />
           </div>
         </div>

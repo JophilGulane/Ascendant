@@ -8,7 +8,7 @@ import useRunStore from '../stores/runStore.js'
 import { useAudio } from './useAudio.js'
 import { resolveEnemyAction } from '../utils/enemyTurn.js'
 
-const ACTION_DELAY_MS = 700 // pause between sequential actions
+const ACTION_DELAY_MS = 1800 // Increased from 700 to give player time to read enemy action
 
 export function useEnemyTurn({ onTurnComplete } = {}) {
   const store = useRunStore()
@@ -45,7 +45,7 @@ export function useEnemyTurn({ onTurnComplete } = {}) {
     sAfter.unlockAllCards()        // locked cards unlock for next player turn
 
     // Brief pause so the last action animation is visible
-    await new Promise(r => setTimeout(r, 400))
+    await new Promise(r => setTimeout(r, 1200)) // Increased from 400
 
     setCurrentAction(null)
     setIsExecuting(false)
