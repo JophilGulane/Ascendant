@@ -180,6 +180,8 @@ export function useCombat() {
     // Energy check
     if (s.energy < card.energy_cost) return
 
+    playSFX('card_play')
+
     // Sample question — v2: passes store so used IDs are tracked
     const question = sampleQuestionsForCard(
       card,
@@ -363,6 +365,7 @@ export function useCombat() {
 
       s.damageEnemy(finalDmg)
       showDamageNumber(finalDmg, 'damage')
+      playSFX('attack_enemy')
     }
 
     if (effect.block) {
@@ -374,12 +377,14 @@ export function useCombat() {
         const growthBonus = stacks * 4
         const blockGained = calculateBlock({ base: effect.block + growthBonus, chainMultiplier })
         s.addBlock(blockGained)
+        playSFX('block_gain')
       }
     }
 
     if (effect.heal) {
       const healAmt = chainMultiplier > 1 ? Math.floor(effect.heal * chainMultiplier) : effect.heal
       s.healHp(healAmt)
+      playSFX('heal')
     }
 
     if (effect.draw) {
@@ -427,9 +432,10 @@ export function useCombat() {
       s.setDiscard(newDiscard)
       useRunStore.setState(st => ({ exhaustPile: [...st.exhaustPile, card.id] }))
       s.gainBonusEnergy(effect.exhaust_self_gain_energy)
+      playSFX('card_exhaust')
     }
 
-  }, [])
+  }, [playSFX])
 
   // ============================================================
   // HINT

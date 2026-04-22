@@ -133,8 +133,8 @@ export function CombatScreen() {
   })
 
   useEffect(() => {
-    playMusic(store.campaign || 'japanese', store.floor)
-  }, [])
+    playMusic(store.campaign || 'japanese', store.currentEnemy?.tier === 'boss' ? 'boss' : 'combat')
+  }, [playMusic, store.campaign, store.currentEnemy?.tier])
 
   useEffect(() => {
     if (fightStarted.current) return
@@ -261,6 +261,8 @@ export function CombatScreen() {
       const { nodes, paths } = generateFloorMap(newFloor, s.masteryLevel)
       s.setMap(nodes, paths)
       s.setCurrentNode(null)
+    } else {
+      playSFX('victory')
     }
 
     const generatedLoot = []
@@ -285,7 +287,8 @@ export function CombatScreen() {
     generatedLoot.push({ id: 'card', type: 'card', rarity: draftRarity, icon: '🃏', label: 'Add a card to your deck' })
 
     setLoot(generatedLoot)
-  }, [])
+    playSFX('loot_appear')
+  }, [playSFX])
 
   const handleClaimLoot = useCallback((lootId) => {
     const s = useRunStore.getState()
@@ -293,12 +296,15 @@ export function CombatScreen() {
     if (!item) return
 
     if (item.type === 'gold') {
+      playSFX('gold_gain')
       s.addGold(item.amount)
     } else if (item.type === 'potion') {
       if (s.potions.length >= 3) {
         setPotionDropped({ id: item.potionId, shattered: true })
+        playSFX('wrong') // placeholder for shatter
         setTimeout(() => setPotionDropped(null), 2000)
       } else {
+        playSFX('relic_obtain') // placeholder for potion gain
         s.addPotion(item.potionId)
       }
     }
@@ -306,14 +312,16 @@ export function CombatScreen() {
   }, [loot])
 
   const handleLootDone = useCallback(() => {
+    playSFX('button_click')
     sessionStorage.removeItem('active_encounter')
     navigate('/map')
-  }, [navigate])
+  }, [navigate, playSFX])
 
   const handleOpenDraftLoot = useCallback((item) => {
+    playSFX('draft_open')
     const accuracy = store.fightTotal > 0 ? store.fightCorrect / store.fightTotal : 1
     openDraft(accuracy, item.rarity)
-  }, [openDraft, store.fightTotal, store.fightCorrect])
+  }, [openDraft, store.fightTotal, store.fightCorrect, playSFX])
 
   const handleDraftDone = useCallback((card) => {
     pickCard(card)

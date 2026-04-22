@@ -9,6 +9,7 @@ import useRunStore from '../../stores/runStore.js'
 import { CARDS as CAMPAIGN_CHARS } from '../../constants/campaigns.js'
 import { buildStartingDeck } from '../../utils/deck.js'
 import { ScreenTransition } from '../shared/ScreenTransition.jsx'
+import { useAudio } from '../../hooks/useAudio.js'
 
 // Floating ember
 function Ember({ delay }) {
@@ -144,6 +145,7 @@ function CharTile({ char, isSelected, onClick }) {
 export function CharacterSelect() {
   const navigate = useNavigate()
   const store = useRunStore()
+  const { playSFX, stopMusic } = useAudio()
   const [selectedChar, setSelectedChar] = useState(null)
   
   const campaignId = sessionStorage.getItem('selected_campaign') || 'japanese'
@@ -156,6 +158,8 @@ export function CharacterSelect() {
 
   const handleEmbark = () => {
     if (!selectedChar) return
+    playSFX('button_click')
+    stopMusic()
     const campaign = CAMPAIGN_CHARS[campaignId]
     
     // Choose rare card based on character

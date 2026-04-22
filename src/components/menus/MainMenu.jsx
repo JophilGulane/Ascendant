@@ -1,9 +1,10 @@
 // components/menus/MainMenu.jsx — STS style redesign
 // Inspired by Slay the Spire: full-bleed background, gold title, plain left-side menu items
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useAudio } from '../../hooks/useAudio.js'
 import useRunStore from '../../stores/runStore.js'
 import { CAMPAIGN_THEMES } from '../../constants/campaigns.js'
 
@@ -46,13 +47,37 @@ const MENU_ITEMS = [
 export function MainMenu() {
   const navigate = useNavigate()
   const store = useRunStore()
+  const { playMusic, playSFX } = useAudio()
+  
   const [hoveredItem, setHoveredItem] = useState(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [view, setView] = useState('main') // 'main' | 'campaign'
 
   const hasActiveRun = Boolean(store.runId)
 
+  useEffect(() => {
+    // Attempt to play immediately (works if navigating back to menu)
+    playMusic('menu', 1)
+
+    // Browsers block autoplay on first load until user interaction.
+    // This ensures the music starts as soon as they click anywhere.
+    const handleInteraction = () => {
+      playMusic('menu', 1)
+      window.removeEventListener('click', handleInteraction)
+      window.removeEventListener('keydown', handleInteraction)
+    }
+
+    window.addEventListener('click', handleInteraction)
+    window.addEventListener('keydown', handleInteraction)
+
+    return () => {
+      window.removeEventListener('click', handleInteraction)
+      window.removeEventListener('keydown', handleInteraction)
+    }
+  }, [playMusic])
+
   const handleMenuClick = (id) => {
+    playSFX('button_click')
     if (id === 'play') setView('campaign')
     if (id === 'graveyard') navigate('/graveyard')
     if (id === 'pantheon') navigate('/pantheon')
@@ -138,8 +163,14 @@ export function MainMenu() {
             className="mb-3"
           >
             <button
-              onClick={() => navigate('/map')}
-              onMouseEnter={() => setHoveredItem('continue')}
+              onClick={() => {
+                playSFX('button_click')
+                navigate('/map')
+              }}
+              onMouseEnter={() => {
+                setHoveredItem('continue')
+                playSFX('button_hover')
+              }}
               onMouseLeave={() => setHoveredItem(null)}
               className="flex items-center gap-2 group"
             >
@@ -170,7 +201,10 @@ export function MainMenu() {
           >
             <button
               onClick={() => handleMenuClick(item.id)}
-              onMouseEnter={() => setHoveredItem(item.id)}
+              onMouseEnter={() => {
+                setHoveredItem(item.id)
+                playSFX('button_hover')
+              }}
               onMouseLeave={() => setHoveredItem(null)}
               className="flex items-center gap-2 group"
             >
@@ -211,7 +245,10 @@ export function MainMenu() {
           >
             <div className="absolute top-12 left-12">
               <button
-                onClick={() => setView('main')}
+                onClick={() => {
+                  playSFX('button_click')
+                  setView('main')
+                }}
                 className="text-gray-400 hover:text-white text-xl font-bold tracking-widest uppercase transition-colors"
                 style={{ fontFamily: "'Cinzel', serif" }}
               >
@@ -230,10 +267,12 @@ export function MainMenu() {
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
+                  onHoverStart={() => !campaign.locked && playSFX('button_hover')}
                   whileHover={!campaign.locked ? { scale: 1.05, y: -10 } : {}}
                   whileTap={!campaign.locked ? { scale: 0.95 } : {}}
                   onClick={() => {
                     if (!campaign.locked) {
+                      playSFX('button_click')
                       sessionStorage.setItem('selected_campaign', campaign.id)
                       navigate('/character-select')
                     }

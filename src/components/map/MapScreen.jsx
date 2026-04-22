@@ -24,7 +24,7 @@ const NODE_META = {
 }
 
 // Map Node Component
-function MapNodeSTS({ node, x, y, isUnlocked, isVisited, isCurrent, onClick }) {
+function MapNodeSTS({ node, x, y, isUnlocked, isVisited, isCurrent, onClick, onHover }) {
   const meta = NODE_META[node.type] || NODE_META[NODE_TYPES.COMBAT]
   const canClick = isUnlocked && !isVisited
 
@@ -39,6 +39,7 @@ function MapNodeSTS({ node, x, y, isUnlocked, isVisited, isCurrent, onClick }) {
       }}
     >
       <motion.button
+        onHoverStart={() => canClick && onHover && onHover()}
         whileHover={canClick ? { scale: 1.2 } : {}}
         whileTap={canClick ? { scale: 0.95 } : {}}
         onClick={() => canClick && onClick(node)}
@@ -117,7 +118,7 @@ export function MapScreen() {
   }, [store.floor, store.campaign, store.mapNodes, store.masteryLevel, navigate, playMusic])
 
   const handleNodeClick = (node) => {
-    playSFX('button_click')
+    playSFX('map_click')
     const updatedNodes = visitNode(store.mapNodes, node.id)
     const unlockedNodes = unlockNextNodes(updatedNodes, store.mapPaths, node.id)
     store.setMapNodes(unlockedNodes)
@@ -334,6 +335,7 @@ export function MapScreen() {
                   isVisited={node.visited === true}
                   isCurrent={store.currentNodeId === node.id}
                   onClick={handleNodeClick}
+                  onHover={() => playSFX('map_hover')}
                 />
               ))}
             </div>

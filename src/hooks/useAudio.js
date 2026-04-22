@@ -32,16 +32,49 @@ function createHowl(src, options = {}) {
 }
 
 const SFX_MAP = {
+  // Core UI
+  button_click: '/audio/sfx/click.mp3',
+  button_hover: '/audio/sfx/hover.mp3',
+
+  // Game Logic
   correct: '/audio/sfx/correct.mp3',
   wrong: '/audio/sfx/wrong.mp3',
+  hint: '/audio/sfx/hint.mp3',
+  chain_activate: '/audio/sfx/chain_activate.mp3',
+  cardLock: '/audio/sfx/cardLock.mp3',
+
+  // Cards
   card_draw_vocab: '/audio/sfx/card_draw.mp3',
   card_draw_grammar: '/audio/sfx/card_draw.mp3',
   card_draw_reading: '/audio/sfx/card_draw.mp3',
-  chain_activate: '/audio/sfx/chain_activate.mp3',
-  boss_appear: '/audio/sfx/boss_appear.mp3',
+  card_play: '/audio/sfx/card_play.mp3',
+  card_exhaust: '/audio/sfx/card_play.mp3',
+  card_discard: '/audio/sfx/card_play.mp3',
+
+  // Combat Actions
+  attack_player: '/audio/sfx/attack_player.mp3',
+  attack_enemy: '/audio/sfx/attack_enemy.mp3',
+  enemy_strike: '/audio/sfx/attack_player.mp3', // mapping enemy_strike to attack_player
+  block_gain: '/audio/sfx/power_effect.mp3',
+  heal: '/audio/sfx/heal.mp3',
+  enemy_heal: '/audio/sfx/heal.mp3',
+  debuff_apply: '/audio/sfx/debuff_apply.mp3',
+  buff_apply: '/audio/sfx/power_effect.mp3',
+  enemy_buff: '/audio/sfx/power_effect.mp3',
+  enemy_turn_start: '/audio/sfx/enemy_turn.mp3',
+
+  // Rewards & Loot
+  gold_gain: '/audio/sfx/gold_gain.mp3',
+  relic_obtain: '/audio/sfx/relic_obtain.mp3',
+  potion_use: '/audio/sfx/potion_use.mp3',
+  loot_appear: '/audio/sfx/loot_appear.mp3',
+  draft_open: '/audio/sfx/draft_open.mp3',
+
+  // Progress
   victory: '/audio/sfx/victory.mp3',
-  hint: '/audio/sfx/hint.mp3',
-  button_click: '/audio/sfx/click.mp3',
+  boss_appear: '/audio/sfx/boss_appear.mp3',
+  map_hover: '/audio/sfx/map_hover.mp3',
+  map_click: '/audio/sfx/map_click.mp3',
 }
 
 export function useAudio() {
@@ -70,9 +103,17 @@ export function useAudio() {
     }
   }, [sfxVolume])
 
-  const playMusic = useCallback(async (campaign, floor) => {
-    const key = `${campaign}_floor${floor}`
-    const src = `/audio/${campaign}/bgm_floor${floor}.mp3`
+  const playMusic = useCallback(async (campaign, trackId) => {
+    const key = `${campaign}_${trackId}`
+    let src = `/audio/${campaign}/bgm_floor${trackId}.mp3` // Default assumption: trackId is a floor number
+
+    if (campaign === 'menu') {
+      src = '/audio/bgm_menu.mp3'
+    } else if (trackId === 'combat') {
+      src = `/audio/${campaign}/bgm_combat.mp3`
+    } else if (trackId === 'boss') {
+      src = `/audio/${campaign}/bgm_boss.mp3`
+    }
 
     await loadHowler()
     if (!Howl) return
@@ -106,7 +147,7 @@ export function useAudio() {
   const stopMusic = useCallback(() => {
     Object.values(musicRef.current).forEach(m => {
       if (m) {
-        try { m.fade(musicRef.current ? 0.4 : 0, 0, 500); setTimeout(() => m.stop(), 500) } catch {}
+        try { m.fade(musicRef.current ? 0.4 : 0, 0, 500); setTimeout(() => m.stop(), 500) } catch { }
       }
     })
   }, [])
