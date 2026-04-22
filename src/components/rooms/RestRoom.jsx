@@ -20,12 +20,14 @@ export function RestRoom() {
   const handleHeal = () => {
     setChosen('heal')
     store.healHp(healAmount)
+    sessionStorage.removeItem('active_encounter')
     setTimeout(() => navigate('/map'), 1200)
   }
 
   const handleReview = () => {
     setChosen('review')
     // For Phase 1, just give a small restoration (full graveyard review in Phase 2)
+    sessionStorage.removeItem('active_encounter')
     setTimeout(() => navigate('/map'), 1500)
   }
 

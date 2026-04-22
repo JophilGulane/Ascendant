@@ -161,6 +161,7 @@ export function CharacterSelect() {
       'jp_read_travelers_wisdom'
     )
     store.startRun('japanese', selectedChar, 0, deck, selectedChar.starterRelic)
+    sessionStorage.removeItem('active_encounter')
     navigate('/map')
   }
 

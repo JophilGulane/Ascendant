@@ -135,7 +135,7 @@ export function EventRoom() {
               transition={{ delay: 0.5 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => navigate('/map')}
+              onClick={() => { sessionStorage.removeItem('active_encounter'); navigate('/map') }}
               className="mt-5 w-full py-3 rounded-xl bg-gray-800/60 border border-gray-700 text-gray-200 hover:bg-gray-700/60 transition-all font-medium"
             >
               Continue →

@@ -220,7 +220,7 @@ export function MerchantRoom() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => navigate('/map')}
+            onClick={() => { sessionStorage.removeItem('active_encounter'); navigate('/map') }}
             className="w-full py-3 rounded-xl border border-gray-700 bg-gray-800/40 text-gray-300 hover:bg-gray-700/40 transition-all font-medium"
           >
             Leave Shop

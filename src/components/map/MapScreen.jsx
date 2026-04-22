@@ -94,19 +94,29 @@ export function MapScreen() {
   const [showLegend, setShowLegend] = useState(true)
 
   useEffect(() => {
+    // Prevent skipping rooms via browser 'Back' button
+    const activeEncounter = sessionStorage.getItem('active_encounter')
+    if (activeEncounter) {
+      const { path } = JSON.parse(activeEncounter)
+      navigate(path, { replace: true })
+      return
+    }
+
     // Detect old map format (which had a single START node) and force regeneration
     const isOldFormat = store.mapNodes?.some(n => n.type === NODE_TYPES.START)
     if (!store.mapNodes || store.mapNodes.length === 0 || isOldFormat) {
       const { nodes, paths } = generateFloorMap(store.floor, store.masteryLevel)
       store.setMap(nodes, paths)
     }
-  }, [store.floor])
+  }, [store.floor, navigate])
 
   const handleNodeClick = (node) => {
     const updatedNodes = visitNode(store.mapNodes, node.id)
     const unlockedNodes = unlockNextNodes(updatedNodes, store.mapPaths, node.id)
     store.setMapNodes(unlockedNodes)
     store.setCurrentNode(node.id)
+
+    let nextPath = ''
 
     switch (node.type) {
       case NODE_TYPES.START:
@@ -122,26 +132,35 @@ export function MapScreen() {
         const pool = floorEnemies.length > 0 ? floorEnemies : fallback
         const enemy = pool[Math.floor(Math.random() * pool.length)]
         if (enemy) store.setEnemy(enemy)
-        navigate('/combat')
+        nextPath = '/combat'
         break
       }
       case NODE_TYPES.BOSS: {
         const boss = enemiesData.find(e => e.floor === store.floor && e.tier === 'boss')
           || enemiesData.find(e => e.tier === 'boss')
         if (boss) store.setEnemy(boss)
-        navigate('/combat')
+        nextPath = '/combat'
         break
       }
-      case NODE_TYPES.REST:  navigate('/rest'); break
-      case NODE_TYPES.MERCHANT: navigate('/merchant'); break
+      case NODE_TYPES.REST:  
+        nextPath = '/rest'
+        break
+      case NODE_TYPES.MERCHANT: 
+        nextPath = '/merchant'
+        break
       case NODE_TYPES.EVENT: {
         const floorEvents = eventsData.filter(e => e.floor_tier <= store.floor)
         const event = floorEvents[Math.floor(Math.random() * floorEvents.length)]
         if (event) sessionStorage.setItem('lq_current_event', JSON.stringify(event))
-        navigate('/event')
+        nextPath = '/event'
         break
       }
       default: break
+    }
+
+    if (nextPath) {
+      sessionStorage.setItem('active_encounter', JSON.stringify({ path: nextPath }))
+      navigate(nextPath)
     }
   }
 

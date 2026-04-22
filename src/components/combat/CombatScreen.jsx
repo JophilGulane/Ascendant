@@ -149,6 +149,7 @@ export function CombatScreen() {
   useEffect(() => {
     if (isPlayerDefeated && turnPhase !== PHASE.FIGHT_END) {
       setTurnPhase(PHASE.FIGHT_END)
+      sessionStorage.removeItem('active_encounter')
       navigate('/summary', { replace: true })
     }
   }, [isPlayerDefeated])
@@ -208,6 +209,7 @@ export function CombatScreen() {
 
   const handleDraftDone = useCallback((card) => {
     pickCard(card)
+    sessionStorage.removeItem('active_encounter')
     navigate('/map')
   }, [pickCard, navigate])
 
@@ -218,7 +220,7 @@ export function CombatScreen() {
         cards={draftCards}
         cardMap={cardMap}
         onPick={handleDraftDone}
-        onSkip={() => { skipDraft(); navigate('/map') }}
+        onSkip={() => { skipDraft(); sessionStorage.removeItem('active_encounter'); navigate('/map') }}
         accuracy={accuracy}
       />
     )
