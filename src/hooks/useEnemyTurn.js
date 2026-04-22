@@ -8,7 +8,7 @@ import useRunStore from '../stores/runStore.js'
 import { useAudio } from './useAudio.js'
 import { resolveEnemyAction } from '../utils/enemyTurn.js'
 
-const ACTION_DELAY_MS = 1800 // Increased from 700 to give player time to read enemy action
+const ACTION_DELAY_MS = 600 // Drastically reduced since cutscene banner is gone
 
 export function useEnemyTurn({ onTurnComplete } = {}) {
   const store = useRunStore()
@@ -31,9 +31,14 @@ export function useEnemyTurn({ onTurnComplete } = {}) {
 
     // Execute each action in sequence with a gap between them
     for (const action of actionList) {
+      // 1. Telegraph phase (triggers animation on EnemyDisplay)
+      setCurrentAction({ type: 'telegraph', actionType: action })
+      await new Promise(r => setTimeout(r, 400)) // Time for lunge animation
+
+      // 2. Resolve phase (applies damage, plays sound, shows damage number)
       const freshStore = useRunStore.getState()
       const result = await resolveEnemyAction(action, currentEnemy, freshStore, playSFX)
-      setCurrentAction(result)
+      setCurrentAction({ ...result, id: Math.random().toString() })
       await new Promise(r => setTimeout(r, ACTION_DELAY_MS))
     }
 
@@ -45,7 +50,7 @@ export function useEnemyTurn({ onTurnComplete } = {}) {
     sAfter.unlockAllCards()        // locked cards unlock for next player turn
 
     // Brief pause so the last action animation is visible
-    await new Promise(r => setTimeout(r, 1200)) // Increased from 400
+    await new Promise(r => setTimeout(r, 300)) // Reduced from 1200
 
     setCurrentAction(null)
     setIsExecuting(false)

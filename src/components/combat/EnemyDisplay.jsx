@@ -29,6 +29,7 @@ const BUFF_ICONS = {
  * @param {number} intentIndex   - v2: current intent index
  * @param {Object[]} activeBuffs - v2: activeEnemyBuffs from wrong answers
  * @param {boolean} isShaking    - trigger shake animation on being hit
+ * @param {Object} [enemyAction] - current enemy action from useEnemyTurn
  * @param {number} [phase]       - boss phase number
  */
 export function EnemyDisplay({
@@ -41,6 +42,7 @@ export function EnemyDisplay({
   intentIndex = 0,
   activeBuffs = [],
   isShaking = false,
+  enemyAction = null,
   phase,
 }) {
   if (!enemy) return null
@@ -63,10 +65,31 @@ export function EnemyDisplay({
 
       {/* Enemy portrait */}
       <motion.div
-        animate={isShaking ? {
-          x: [-8, 8, -6, 6, -3, 3, 0],
-          transition: { duration: 0.4, ease: 'easeInOut' }
-        } : { x: 0 }}
+        animate={
+          isShaking ? {
+            x: [-12, 12, -10, 10, -6, 6, 0],
+            filter: ['brightness(2) sepia(1) hue-rotate(-50deg) saturate(5)', 'brightness(1)', 'brightness(1)'],
+            transition: { duration: 0.45, ease: 'easeInOut' }
+          } : enemyAction?.type === 'telegraph' ? (
+            enemyAction.actionType === 'strike' ? {
+              x: [0, 15, 15],
+              y: [0, -10, -10],
+              transition: { duration: 0.35, ease: 'easeOut' }
+            } : {
+              scale: [1, 1.1, 1.1],
+              filter: ['brightness(1)', 'brightness(1.5)', 'brightness(1.5)'],
+              transition: { duration: 0.35, ease: 'easeOut' }
+            }
+          ) : enemyAction?.type === 'damage' ? {
+            x: [15, -40, 0],
+            y: [-10, 20, 0],
+            transition: { duration: 0.4, ease: 'backOut' }
+          } : enemyAction?.type === 'buff' || enemyAction?.type === 'debuff' ? {
+            scale: [1.1, 1, 1],
+            filter: ['brightness(1.5)', 'brightness(1)', 'brightness(1)'],
+            transition: { duration: 0.4, ease: 'easeOut' }
+          } : { x: 0, y: 0, scale: 1, filter: 'brightness(1)' }
+        }
         className="relative"
       >
         <div className="flex items-end justify-center relative" style={{ height: '200px', width: '200px' }}>

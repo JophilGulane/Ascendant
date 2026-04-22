@@ -211,7 +211,7 @@ export function useCombat() {
   // RESOLVE ANSWER — called by QuestionPrompt after delay
   // v2: wrong = lockCard + addEnemyBuff + breakChain
   // ============================================================
-  const resolveAnswer = useCallback(({ result, isFirstTry, halfDamage }) => {
+  const resolveAnswer = useCallback(async ({ result, isFirstTry, halfDamage }) => {
     if (!activeQuestion) return
     const { question, card } = activeQuestion
     const isCorrect = result === 'correct'
@@ -264,6 +264,15 @@ export function useCombat() {
         s.activateChain(card.type)
       }
 
+      // ── NEW: Telegraph Animation Phase ──
+      setActiveQuestion(null)
+      
+      const isAttack = card.effect?.type === 'damage' || card.effect?.type === 'damage_all' || card.effect?.type === 'discard_damage' || card.effect?.type === 'exhaust_damage'
+      setAnimState(isAttack ? 'player_telegraph_damage' : 'player_telegraph_buff')
+      
+      await new Promise(r => setTimeout(r, 350)) // Time for player to wind up
+
+      // ── Resolve Phase ──
       // Card effect (apply once normally)
       let mult = chainResult.bonusMultiplier
       if (halfDamage) mult *= 0.5
@@ -284,7 +293,7 @@ export function useCombat() {
       // Track for type_lock curse
       s.setLastCardTypePlayed(card.type)
 
-      setAnimState('correct')
+      setAnimState(isAttack ? 'player_attack' : 'player_buff')
       setTimeout(() => setAnimState(null), 600)
       playSFX('correct')
 

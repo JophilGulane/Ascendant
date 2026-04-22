@@ -13,7 +13,6 @@ import { useAudio } from '../../hooks/useAudio.js'
 import { generateFloorMap } from '../../utils/map.js'
 import { EnemyDisplay } from './EnemyDisplay.jsx'
 import { ChainIndicator } from './ChainIndicator.jsx'
-import { EnemyTurnResolver } from './EnemyTurnResolver.jsx'
 import CardHand from './CardHand.jsx'
 import { QuestionPrompt } from './QuestionPrompt.jsx'
 import { JournalOverlay } from '../journal/JournalOverlay.jsx'
@@ -101,7 +100,7 @@ export function CombatScreen() {
   } = useCombat()
 
   const { draftCards, isDrafting, openDraft, pickCard, skipDraft } = useDraft()
-  const { playMusic, playSFX } = useAudio()
+  const { playMusic, playSFX, stopMusic } = useAudio()
 
   const [turnPhase, setTurnPhase] = useState(null)
   const [bossPhase, setBossPhase] = useState(1)
@@ -164,11 +163,7 @@ export function CombatScreen() {
     }
   }, [turnPhase])
 
-  useEffect(() => {
-    if (turnPhase === PHASE.PLAYER_TURN && store.energy === 0 && !activeQuestion) {
-      handleEndTurn()
-    }
-  }, [store.energy, turnPhase, activeQuestion])
+
 
   useEffect(() => {
     if (isEnemyDefeated && turnPhase !== PHASE.FIGHT_END && turnPhase !== PHASE.BOSS_DEFEAT) {
@@ -222,22 +217,28 @@ export function CombatScreen() {
   }, [store.enemyHp, bossPhase, playSFX])
 
   useEffect(() => {
-    if (animState === 'correct') {
-      setIsShakingEnemy(true)
-      setTimeout(() => setIsShakingEnemy(false), 400)
-    }
     if (animState === 'wrong') {
       setWrongFlash(true)
       setTimeout(() => setWrongFlash(false), 600)
     }
   }, [animState])
 
+  // Enemy hit shake — triggered whenever a new 'damage' number appears (player dealt damage)
+  useEffect(() => {
+    const latest = damageNumbers[damageNumbers.length - 1]
+    if (latest && latest.type === 'damage') {
+      setIsShakingEnemy(true)
+      setTimeout(() => setIsShakingEnemy(false), 450)
+    }
+  }, [damageNumbers])
+
   useEffect(() => {
     if (isEnemyTurnRunning && enemyAction?.type === 'damage' && enemyAction.value > 0) {
       setIsHitPlayer(true)
       setTimeout(() => setIsHitPlayer(false), 600)
     }
-  }, [enemyAction])
+  }, [enemyAction, isEnemyTurnRunning])
+
 
   const handleEndTurn = useCallback(() => {
     if (turnPhase !== PHASE.PLAYER_TURN) return
@@ -246,6 +247,7 @@ export function CombatScreen() {
     setTurnPhase(PHASE.ENEMY_TURN)
     executeEnemyTurn()
   }, [turnPhase, activeQuestion, executeEnemyTurn, playSFX])
+
 
   const handleVictory = useCallback(async (choice = null) => {
     const s = useRunStore.getState()
@@ -262,6 +264,7 @@ export function CombatScreen() {
       s.setMap(nodes, paths)
       s.setCurrentNode(null)
     } else {
+      stopMusic()
       playSFX('victory')
     }
 
@@ -392,8 +395,31 @@ export function CombatScreen() {
           {/* Player Character Sprite (Left) */}
           <div className="absolute left-[30%] bottom-[5%] flex flex-col items-center">
             <motion.div
-              animate={isHitPlayer ? { x: [-10, 10, -10, 10, 0], filter: 'brightness(2) sepia(1) hue-rotate(-50deg) saturate(5)' } : {}}
-              transition={{ duration: 0.3 }}
+              animate={
+                isHitPlayer ? { 
+                  x: [-10, 10, -10, 10, 0], 
+                  filter: 'brightness(2) sepia(1) hue-rotate(-50deg) saturate(5)',
+                  transition: { duration: 0.3 }
+                } : animState === 'player_telegraph_damage' ? {
+                  x: [0, -20, -20],
+                  y: [0, -5, -5],
+                  transition: { duration: 0.35, ease: 'easeOut' }
+                } : animState === 'player_telegraph_buff' ? {
+                  scale: [1, 1.15, 1.15],
+                  filter: ['brightness(1)', 'brightness(1.5)', 'brightness(1.5)'],
+                  transition: { duration: 0.35, ease: 'easeOut' }
+                } : animState === 'player_attack' ? {
+                  x: [-20, 50, 0], // Smoothly leap forward from pullback and return
+                  y: [-5, 15, 0],
+                  scale: [1.15, 1],
+                  filter: ['brightness(1.5)', 'brightness(1)'],
+                  transition: { duration: 0.6, times: [0, 0.2, 1], ease: 'easeOut' }
+                } : animState === 'player_buff' ? {
+                  scale: [1.15, 1], // Snap back from swell
+                  filter: ['brightness(1.5)', 'brightness(1)'],
+                  transition: { duration: 0.6, ease: 'easeOut' }
+                } : { x: 0, y: 0, scale: 1, filter: 'brightness(1)' }
+              }
               className="relative flex items-end justify-center"
               style={{ height: '200px' }}
             >
@@ -458,6 +484,7 @@ export function CombatScreen() {
               intentIndex={store.intentIndex}
               activeBuffs={store.activeEnemyBuffs}
               isShaking={isShakingEnemy}
+              enemyAction={enemyAction}
               phase={bossPhase > 1 ? bossPhase : undefined}
             />
           </div>
@@ -479,6 +506,26 @@ export function CombatScreen() {
                   {type === 'damage' ? `-${value}` : `+${value}`}
                 </motion.div>
               ))}
+            </AnimatePresence>
+
+            {/* Floating Enemy Action Text (Buffs/Debuffs/Misc/Damage) */}
+            <AnimatePresence mode="wait">
+              {enemyAction?.message && enemyAction.type !== 'telegraph' && (
+                <motion.div
+                  key={enemyAction.id}
+                  initial={{ opacity: 1, y: 0, scale: 0.8 }}
+                  animate={{ opacity: 0, y: -50, scale: 1.1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 1.2, ease: 'easeOut' }}
+                  className={`absolute top-[35%] font-black pointer-events-none -translate-x-1/2
+                    ${enemyAction.type === 'debuff' ? 'text-purple-400 text-2xl left-[30%]' : 
+                      enemyAction.type === 'damage' ? 'text-red-500 text-5xl left-[30%]' :
+                      enemyAction.type === 'selfbuff' ? 'text-blue-400 text-2xl left-[70%]' : 'text-gray-200 text-2xl left-[30%]'}`}
+                  style={{ textShadow: '2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000' }}
+                >
+                  {enemyAction.type === 'damage' ? (enemyAction.value > 0 ? `-${enemyAction.value}` : 'Blocked!') : enemyAction.message}
+                </motion.div>
+              )}
             </AnimatePresence>
 
             {/* Potion drop notification */}
@@ -562,16 +609,24 @@ export function CombatScreen() {
           {/* Bottom-Right: End Turn & Discard */}
           <div className="flex items-end gap-6 pb-2 relative z-40">
             <motion.button
+              animate={(isPlayerTurn && !activeQuestion && !store.hand.some(id => cardMap[id] && !store.lockedCards.includes(id) && store.energy >= cardMap[id].energy_cost)) ? {
+                boxShadow: ['0px 4px 10px rgba(0,0,0,0.6)', '0px 0px 25px rgba(74, 158, 192, 1)', '0px 4px 10px rgba(0,0,0,0.6)'],
+                borderColor: ['#4a9ec0', '#8be9fd', '#4a9ec0']
+              } : { 
+                boxShadow: '0px 4px 10px rgba(0,0,0,0.6)',
+                borderColor: (!isPlayerTurn || activeQuestion) ? '#111' : '#4a9ec0'
+              }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
               whileHover={isPlayerTurn && !activeQuestion ? { scale: 1.05 } : {}}
               whileTap={isPlayerTurn && !activeQuestion ? { scale: 0.95 } : {}}
               onClick={handleEndTurn}
               disabled={!isPlayerTurn || !!activeQuestion}
               className={`
-                px-6 py-4 rounded font-bold text-lg border-2 shadow-[0_4px_10px_rgba(0,0,0,0.6)]
-                transition-all
+                px-6 py-4 rounded font-bold text-lg border-2
+                transition-colors
                 ${(!isPlayerTurn || activeQuestion)
-                  ? 'bg-[#1a2228] border-[#111] text-gray-600 cursor-default'
-                  : 'bg-gradient-to-b from-[#2a627a] to-[#163e52] border-[#4a9ec0] text-white hover:brightness-110 cursor-pointer'}
+                  ? 'bg-[#1a2228] text-gray-600 cursor-default'
+                  : 'bg-gradient-to-b from-[#2a627a] to-[#163e52] text-white hover:brightness-110 cursor-pointer'}
               `}
               style={{ fontFamily: "'Cinzel', serif" }}
             >
@@ -596,7 +651,7 @@ export function CombatScreen() {
           )}
         </AnimatePresence>
 
-        <EnemyTurnResolver isActive={isEnemyTurnRunning} action={enemyAction} />
+        {/* Removed EnemyTurnResolver to stop cutscene feeling */}
 
         <AnimatePresence>
           {journalOpen && (

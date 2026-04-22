@@ -136,6 +136,8 @@ export function useAudio() {
       }
 
       if (musicRef.current[key]) {
+        // Prevent React strict mode double-play
+        musicRef.current[key].stop()
         musicRef.current[key].play()
         musicRef.current[key].fade(0, musicVolume, 1000)
       }
