@@ -10,19 +10,23 @@ import { HoverTranslate } from '../shared/HoverTranslate.jsx'
 /**
  * @param {Object} card - card data object from cards.json
  * @param {boolean} isPlayable - player has enough energy
- * @param {boolean} isPrimed - chain is active and this card would trigger a combo
+ * @param {boolean} isLocked   - wrong answer locked this card until next turn
+ * @param {boolean} isSilenced - silence debuff — cannot play this type
+ * @param {boolean} isPrimed   - chain is active and this card would trigger a combo
  * @param {boolean} isSelected - this card is currently selected
- * @param {boolean} isGrammarBlocked - enemy has Conjugation Armor active
- * @param {function} onSelect - called when card is clicked
+ * @param {boolean} isShaking  - shake animation trigger (locked card clicked)
+ * @param {function} onSelect  - called when card is clicked
  * @param {number} indexInHand - position in hand (0-4) for fan angle
  * @param {number} totalInHand - total cards in hand
  */
 const CardComponent = React.memo(function CardComponent({
   card,
   isPlayable = true,
+  isLocked = false,
+  isSilenced = false,
   isPrimed = false,
   isSelected = false,
-  isGrammarBlocked = false,
+  isShaking = false,
   onSelect,
   indexInHand = 0,
   totalInHand = 5,
@@ -32,7 +36,9 @@ const CardComponent = React.memo(function CardComponent({
   const typeMeta = CARD_TYPE_META[card.type] || CARD_TYPE_META[CARD_TYPES.VOCABULARY]
   const rarityMeta = CARD_RARITY_META[card.rarity] || CARD_RARITY_META['common']
 
-  const isBlocked = isGrammarBlocked && card.type === CARD_TYPES.GRAMMAR
+  // v2: locked = wrong answer this turn, silenced = silence debuff on this card type
+  const isBlocked = isLocked || isSilenced
+  const canInteract = isPlayable && !isBlocked && !isSelected
 
   // Fan angle based on position in hand
   const centerIdx = (totalInHand - 1) / 2
@@ -45,13 +51,14 @@ const CardComponent = React.memo(function CardComponent({
       style={{ originY: 1.5 }}
       initial={{ opacity: 0, y: 60, scale: 0.8, rotate: angle }}
       animate={{
-        opacity: isPlayable && !isBlocked ? 1 : 0.45,
+        opacity: canInteract ? 1 : 0.45,
         y: isSelected ? yOffset - 50 : yOffset,
         scale: isSelected ? 1.08 : 1,
-        rotate: isSelected ? 0 : angle,
+        rotate: isShaking ? [0, -8, 8, -8, 8, -4, 4, 0] : (isSelected ? 0 : angle),
         zIndex: isSelected ? 50 : indexInHand,
+        filter: isLocked ? 'grayscale(100%)' : 'grayscale(0%)',
       }}
-      whileHover={isPlayable && !isBlocked ? {
+      whileHover={canInteract ? {
         y: yOffset - 28,
         scale: 1.05,
         rotate: 0,
@@ -59,7 +66,7 @@ const CardComponent = React.memo(function CardComponent({
         transition: { type: 'spring', stiffness: 500, damping: 30 },
       } : {}}
       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-      onClick={() => isPlayable && !isBlocked && !isSelected && onSelect?.(card.id)}
+      onClick={() => canInteract && onSelect?.(card.id)}
     >
       {/* Pulsing outline when primed for chain */}
       {isPrimed && (
@@ -128,15 +135,23 @@ const CardComponent = React.memo(function CardComponent({
           </div>
         </div>
 
-        {/* Blocked overlay */}
-        {isBlocked && (
-          <div className="absolute inset-0 bg-gray-900/60 flex items-center justify-center rounded-xl">
-            <span className="text-xs text-red-400 font-bold rotate-[-15deg]">BLOCKED</span>
+        {/* v2: Locked overlay — wrong answer this turn */}
+        {isLocked && (
+          <div className="absolute inset-0 bg-gray-900/70 flex flex-col items-center justify-center rounded-xl border-2 border-red-700">
+            <span className="text-xl">🔒</span>
+            <span className="text-[8px] text-red-400 font-bold mt-0.5">Locked</span>
+          </div>
+        )}
+
+        {/* Silenced overlay */}
+        {isSilenced && !isLocked && (
+          <div className="absolute inset-0 bg-purple-950/60 flex items-center justify-center rounded-xl border border-purple-700">
+            <span className="text-lg">🔇</span>
           </div>
         )}
 
         {/* Not enough energy overlay */}
-        {!isPlayable && !isBlocked && (
+        {!canInteract && !isLocked && !isSilenced && (
           <div className="absolute inset-0 bg-black/40 rounded-xl pointer-events-none" />
         )}
       </div>

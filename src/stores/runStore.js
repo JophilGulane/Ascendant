@@ -1,6 +1,6 @@
-// stores/runStore.js
+// stores/runStore.js — v2
 // Active run state — all combat, navigation, and deck data for the current run
-// Per SKILL.md: never mutate state directly — always use store actions
+// Per SKILL.md v2: includes lockedCards, activePlayerDebuffs, fightQuestionPoolUsed
 
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
@@ -30,28 +30,42 @@ const useRunStore = create(
       mapPaths: [],
 
       // Deck
-      deck: [],       // draw pile (card IDs)
-      hand: [],       // current hand (card IDs)
+      deck: [],
+      hand: [],
       discardPile: [],
       exhaustPile: [],
 
-      // Relics and buffs
+      // v2: Locked cards (wrong answer → locked for this turn)
+      lockedCards: [],
+
+      // Relics
       relics: [],
-      activeBuffs: [],    // player buffs
-      activeDebuffs: [],  // player debuffs
+
+      // v2: Player debuffs applied by enemy (silence/drain/fog/bind/confusion)
+      activePlayerDebuffs: [],
+
+      // v2: Enemy buffs from wrong answers (consumed after enemy turn)
+      activeEnemyBuffs: [],
 
       // Combat
       inCombat: false,
       currentEnemy: null,
-      enemyBuffs: [],
       enemyHp: 0,
       enemyMaxHp: 0,
-      enemyBlock: 0,
+      enemyArmor: 0,          // v2: flat damage reduction (armor_up move)
+      enemyFuryStacks: 0,     // v2: fury accumulates via power_up, doubles dmg at 3
+      enemyFocusType: null,   // v2: card type enemy is focused against (focus move)
       intentIndex: 0,
       turnNumber: 0,
       chainActive: false,
-      chainType: null,    // 'vocabulary' | 'grammar'
+      chainType: null,
       hintUsedThisFight: false,
+
+      // v2: Per-fight question pool — reset on fight start, prevents repeats
+      fightQuestionPoolUsed: [],
+
+      // Card type tracking for self_buff_focus
+      cardTypesPlayedThisFight: {},
 
       // Run session graveyard (merged to persistent graveyard on run end)
       sessionMistakes: [],
@@ -62,12 +76,12 @@ const useRunStore = create(
       fightCorrect: 0,
       fightTotal: 0,
 
-      // Journal — words and grammar seen this run
-      journalWords: [],   // { questionId, word, reading, translation, example, seenAt }
-      journalGrammar: [], // { questionId, concept, pattern, example }
+      // Journal
+      journalWords: [],
+      journalGrammar: [],
 
       // ============================================================
-      // ACTIONS — always use these, never mutate state directly
+      // ACTIONS
       // ============================================================
 
       // HP & Block
@@ -80,46 +94,83 @@ const useRunStore = create(
       // Energy
       spendEnergy: (amount) => set(s => ({ energy: Math.max(0, s.energy - amount) })),
       resetEnergy: () => set(s => ({ energy: s.maxEnergy })),
-      gainBonusEnergy: (amount) => set(s => ({ energy: Math.min(s.maxEnergy + amount, s.energy + amount) })),
+      gainBonusEnergy: (amount) => set(s => ({ energy: s.energy + amount })),
 
       // Gold
       addGold: (amount) => set(s => ({ gold: s.gold + amount })),
       spendGold: (amount) => set(s => ({ gold: Math.max(0, s.gold - amount) })),
 
-      // Enemy
-      setEnemy: (enemy) => set({
-        currentEnemy: enemy,
-        enemyHp: enemy.hp,
-        enemyMaxHp: enemy.hp,
-        enemyBlock: 0,
-        enemyBuffs: [],
-        intentIndex: 0,
-      }),
-      damageEnemy: (amount) => set(s => {
-        const absorbed = Math.min(s.enemyBlock, amount)
-        const remaining = amount - absorbed
-        return {
-          enemyHp: Math.max(0, s.enemyHp - remaining),
-          enemyBlock: Math.max(0, s.enemyBlock - absorbed),
-        }
-      }),
-      healEnemy: (amount) => set(s => ({ enemyHp: Math.min(s.enemyMaxHp, s.enemyHp + amount) })),
-      addEnemyMaxHp: (amount) => set(s => ({
-        enemyMaxHp: s.enemyMaxHp + amount,
-        enemyHp: s.enemyHp + amount,
+      // v2: Locked cards
+      lockCard: (cardId) => set(s => ({
+        lockedCards: s.lockedCards.includes(cardId) ? s.lockedCards : [...s.lockedCards, cardId]
+      })),
+      unlockAllCards: () => set({ lockedCards: [] }),
+
+      // v2: Player debuffs
+      addPlayerDebuff: (debuff) => set(s => ({
+        activePlayerDebuffs: [...s.activePlayerDebuffs, { ...debuff, id: Date.now() + Math.random() }]
+      })),
+      tickPlayerDebuffs: () => set(s => ({
+        activePlayerDebuffs: s.activePlayerDebuffs
+          .map(d => ({ ...d, duration: d.duration - 1 }))
+          .filter(d => d.duration > 0)
+      })),
+      clearPlayerDebuffs: () => set({ activePlayerDebuffs: [] }),
+      consumeDebuff: (type) => set(s => ({
+        activePlayerDebuffs: s.activePlayerDebuffs.filter(d => d.type !== type)
       })),
 
-      // Enemy phase (boss multi-phase)
-      setEnemyHp: (hp) => set({ enemyHp: Math.max(0, hp) }),
+      // v2: Enemy buffs from wrong answers
+      addEnemyBuff: (buff) => set(s => ({
+        activeEnemyBuffs: [...s.activeEnemyBuffs, buff]
+      })),
+      clearEnemyBuffs: () => set({ activeEnemyBuffs: [] }),
 
-      // Enemy buffs
-      addEnemyBuff: (buff) => set(s => ({ enemyBuffs: [...s.enemyBuffs, buff] })),
-      clearEnemyBuffs: () => set({ enemyBuffs: [] }),
-      setEnemyBuffs: (buffs) => set({ enemyBuffs: buffs }),
+      // v2: Question pool tracking
+      markQuestionUsed: (questionId) => set(s => ({
+        fightQuestionPoolUsed: [...s.fightQuestionPoolUsed, questionId]
+      })),
+      resetFightQuestionPool: () => set({ fightQuestionPoolUsed: [] }),
+
+      // v2: Card type tracking for focus move
+      trackCardTypePlayed: (cardType) => set(s => ({
+        cardTypesPlayedThisFight: {
+          ...s.cardTypesPlayedThisFight,
+          [cardType]: (s.cardTypesPlayedThisFight[cardType] || 0) + 1,
+        }
+      })),
 
       // Chain
       activateChain: (type) => set({ chainActive: true, chainType: type }),
       breakChain: () => set({ chainActive: false, chainType: null }),
+
+      // Enemy state
+      setEnemy: (enemy) => set({
+        currentEnemy: enemy,
+        enemyHp: enemy.hp,
+        enemyMaxHp: enemy.hp,
+        enemyArmor: 0,
+        enemyFuryStacks: 0,
+        enemyFocusType: null,
+        activeEnemyBuffs: [],
+        intentIndex: 0,
+      }),
+      damageEnemy: (amount) => set(s => {
+        const absorbed = Math.min(s.enemyArmor > 0 ? s.enemyArmor : 0, amount)
+        const remaining = amount - absorbed
+        return {
+          enemyHp: Math.max(0, s.enemyHp - remaining),
+          enemyArmor: Math.max(0, s.enemyArmor - absorbed),
+        }
+      }),
+      healEnemy: (amount) => set(s => ({ enemyHp: Math.min(s.enemyMaxHp, s.enemyHp + amount) })),
+      setEnemyHp: (hp) => set({ enemyHp: Math.max(0, hp) }),
+      setEnemyArmor: (armor) => set({ enemyArmor: Math.max(0, armor) }),
+      addEnemyArmor: (amount) => set(s => ({ enemyArmor: s.enemyArmor + amount })),
+      addEnemyFury: () => set(s => ({ enemyFuryStacks: s.enemyFuryStacks + 1 })),
+      clearEnemyFury: () => set({ enemyFuryStacks: 0 }),
+      setEnemyFocusType: (type) => set({ enemyFocusType: type }),
+      setEnemyBuffs: (buffs) => set({ activeEnemyBuffs: buffs }),
 
       // Intent
       advanceIntent: () => set(s => {
@@ -152,7 +203,7 @@ const useRunStore = create(
         sessionTotal: s.sessionTotal + 1,
         fightTotal: s.fightTotal + 1,
       })),
-      logCorrect: (questionId) => set(s => ({
+      logCorrect: () => set(s => ({
         sessionCorrect: s.sessionCorrect + 1,
         fightCorrect: s.fightCorrect + 1,
       })),
@@ -189,6 +240,44 @@ const useRunStore = create(
       // Combat toggle
       setInCombat: (val) => set({ inCombat: val }),
 
+      // v2: startFight — single action that resets all fight state atomically
+      startFight: (enemy) => set({
+        inCombat: true,
+        currentEnemy: enemy,
+        enemyHp: enemy.hp,
+        enemyMaxHp: enemy.hp,
+        enemyArmor: 0,
+        enemyFuryStacks: 0,
+        enemyFocusType: null,
+        intentIndex: 0,
+        lockedCards: [],           // RULE: unlock all cards at fight start
+        activeEnemyBuffs: [],
+        chainActive: false,
+        chainType: null,
+        fightQuestionPoolUsed: [], // RULE: reset question pool at fight start
+        cardTypesPlayedThisFight: {},
+        hintUsedThisFight: false,
+        fightCorrect: 0,
+        fightTotal: 0,
+      }),
+
+      // v2: endFight — moves remaining hand to discard to prevent deck shrinkage
+      endFight: () => set(s => ({
+        inCombat: false,
+        currentEnemy: null,
+        lockedCards: [],
+        activeEnemyBuffs: [],
+        activePlayerDebuffs: [],
+        chainActive: false,
+        chainType: null,
+        fightQuestionPoolUsed: [],
+        cardTypesPlayedThisFight: {},
+        // CRITICAL: move remaining hand cards to discard — never lose cards
+        discardPile: [...s.discardPile, ...s.hand],
+        hand: [],
+      })),
+
+
       // Run lifecycle
       startRun: (campaign, character, masteryLevel, startingDeck, starterRelicId) => set({
         runId: crypto.randomUUID(),
@@ -202,23 +291,26 @@ const useRunStore = create(
         floor: 1,
         energy: 3,
         maxEnergy: 3,
-        deck: startingDeck,
+        deck: startingDeck || [],
         hand: [],
         discardPile: [],
         exhaustPile: [],
         relics: starterRelicId ? [starterRelicId] : [],
         activeBuffs: [],
-        activeDebuffs: [],
-        enemyBuffs: [],
-        currentEnemy: null,
+        lockedCards: [],
+        activePlayerDebuffs: [],
+        activeEnemyBuffs: [],
         chainActive: false,
         chainType: null,
         inCombat: false,
+        currentEnemy: null,
         sessionMistakes: [],
         sessionCorrect: 0,
         sessionTotal: 0,
         fightCorrect: 0,
         fightTotal: 0,
+        fightQuestionPoolUsed: [],
+        cardTypesPlayedThisFight: {},
         journalWords: [],
         journalGrammar: [],
         mapNodes: [],
@@ -227,6 +319,9 @@ const useRunStore = create(
         hintUsedThisFight: false,
         turnNumber: 0,
         intentIndex: 0,
+        enemyArmor: 0,
+        enemyFuryStacks: 0,
+        enemyFocusType: null,
       }),
 
       endRun: () => set({
@@ -234,6 +329,9 @@ const useRunStore = create(
         inCombat: false,
         currentEnemy: null,
         hand: [],
+        lockedCards: [],
+        activePlayerDebuffs: [],
+        activeEnemyBuffs: [],
       }),
     }),
     {

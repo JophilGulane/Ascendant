@@ -23,42 +23,61 @@ export function filterQuestionsByFloor(questions, floor) {
 }
 
 /**
- * Sample a question for a given card, weighted toward graveyard mistakes if spaced rep is on
- * @param {Object} card - card data
+ * Sample a question for a given card — v2: no repeats within the same fight.
+ * @param {Object} card          - card data
  * @param {Object[]} allQuestions - all questions for the campaign
  * @param {Object} graveyardEntries - graveyard store entries
- * @param {Object} settings - settingsStore values
- * @param {number} floor - current floor
+ * @param {Object} settings      - settingsStore values
+ * @param {number} floor         - current floor
+ * @param {Object} store         - runStore instance (for fightQuestionPoolUsed + markQuestionUsed)
  * @returns {Object|null} question data or null if none found
  */
-export function sampleQuestionsForCard(card, allQuestions, graveyardEntries, settings, floor) {
-  // Filter by campaign, type, floor tier, and matching tags
+export function sampleQuestionsForCard(card, allQuestions, graveyardEntries, settings, floor, store) {
+  const usedIds = store?.fightQuestionPoolUsed ?? []
+
   const floorFiltered = filterQuestionsByFloor(allQuestions, floor)
+
+  // Primary pool: matching campaign, type, tags — excluding used questions this fight
   let pool = floorFiltered.filter(q =>
     q.campaign === card.campaign &&
     q.type === card.type &&
-    card.question_tags.some(tag => q.tags.includes(tag))
+    card.question_tags.some(tag => q.tags.includes(tag)) &&
+    !usedIds.includes(q.id)
   )
 
+  // If pool exhausted by used IDs, silently reset for this card type (rare edge case)
   if (pool.length === 0) {
-    // Fallback: same type and floor, ignore tags
-    pool = floorFiltered.filter(q =>
+    const exhaustedPool = floorFiltered.filter(q =>
       q.campaign === card.campaign &&
-      q.type === card.type
+      q.type === card.type &&
+      card.question_tags.some(tag => q.tags.includes(tag))
     )
-    if (pool.length > 0) {
-      console.warn(`[Ascendant] sampleQuestionsForCard: no tag match for ${card.id}, using fallback pool`)
+    if (exhaustedPool.length > 0) {
+      console.warn(`[Ascendant] Question pool exhausted for ${card.id} — silently resetting this type's pool`)
+      pool = exhaustedPool
     }
   }
 
+  // Fallback: same type + floor, ignore tags
   if (pool.length === 0) {
-    // Last resort: any question of same type
+    pool = floorFiltered.filter(q =>
+      q.campaign === card.campaign &&
+      q.type === card.type &&
+      !usedIds.includes(q.id)
+    )
+    if (pool.length > 0) {
+      console.warn(`[Ascendant] No tag match for ${card.id}, using tag-agnostic fallback pool`)
+    }
+  }
+
+  // Last resort: any question of same type
+  if (pool.length === 0) {
     pool = allQuestions.filter(q => q.type === card.type)
-    console.warn(`[Ascendant] sampleQuestionsForCard: empty floor pool for ${card.id}, using any question`)
+    console.warn(`[Ascendant] Empty floor pool for ${card.id}, using global fallback`)
   }
 
   if (pool.length === 0) {
-    console.error(`[Ascendant] sampleQuestionsForCard: no questions found anywhere for ${card.id}`)
+    console.error(`[Ascendant] No questions found anywhere for ${card.id}`)
     return null
   }
 
@@ -69,12 +88,17 @@ export function sampleQuestionsForCard(card, allQuestions, graveyardEntries, set
     )
     const weakPool = pool.filter(q => graveyardIds.includes(q.id))
     if (weakPool.length > 0 && Math.random() < 0.4) {
-      return weakPool[Math.floor(Math.random() * weakPool.length)]
+      const chosen = weakPool[Math.floor(Math.random() * weakPool.length)]
+      store?.markQuestionUsed?.(chosen.id)
+      return chosen
     }
   }
 
-  return pool[Math.floor(Math.random() * pool.length)]
+  const chosen = pool[Math.floor(Math.random() * pool.length)]
+  store?.markQuestionUsed?.(chosen.id) // RULE: mark before returning — no repeats this fight
+  return chosen
 }
+
 
 /**
  * Shuffle answer options while tracking the correct answer's new index

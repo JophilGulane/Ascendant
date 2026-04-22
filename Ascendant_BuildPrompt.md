@@ -1,5 +1,6 @@
 # Ascendant — Full Build Prompt
 > Paste this entire document as your prompt into Antigravity to build the complete game.
+> Version 2: includes locked card mechanic, no repeated questions per battle, and full enemy turn system.
 
 ---
 
@@ -18,7 +19,7 @@ Build **Ascendant** — a single-player, turn-based card RPG that runs in a web 
 
 - **Frontend:** React + Tailwind CSS
 - **Animations:** Framer Motion for card animations, combat effects, transitions
-- **State management:** Zustand or Redux
+- **State management:** Zustand
 - **Audio:** Howler.js for SFX and ambient music
 - **Data:** JSON files for all question banks, card definitions, enemy data, event scripts
 - **Storage:** LocalStorage for run state, progress, Mastery Level unlocks, journal
@@ -46,7 +47,7 @@ Each campaign has **4 floors** with this structure:
 
 ## PLAYER CHARACTERS
 
-Each campaign has **3 playable characters** based on fluency level. The character selection screen IS the placement — no separate onboarding quiz.
+Each campaign has **3 playable characters** based on fluency level. The character selection screen IS the placement test — no separate onboarding quiz.
 
 ### Japanese Campaign
 | Character | Fluency | Starting Deck | Script Display | Playstyle |
@@ -69,83 +70,235 @@ Each campaign has **3 playable characters** based on fluency level. The characte
 | **Marco** (The Traveler) | Some basics | Mixed | Standard text | Balanced |
 | **Elena** (The Returnee) | Previously studied | Grammar-heavy | Full conjugation tables visible | Defense/setup |
 
-**Character selection UI:** Show all three characters side by side with their fluency label, a brief personality description, and their starting deck card count breakdown. Player taps to select. No language tests, no popups — the choice is the test.
+**Character selection UI:** Show all three characters side by side with fluency label, personality description, and starting deck breakdown. Player taps to select. No tests, no popups.
 
 ---
 
 ## CORE COMBAT LOOP
 
 ### Turn Structure
+
 1. Player draws **5 cards** from their deck
 2. Player has **3 Energy** per turn
 3. Player selects a card to play → a **question prompt appears**
 4. Player answers the question (multiple choice, 4 options default)
 5. **Correct answer** → card activates at full effect, costs Energy as listed
-6. **Wrong answer** → card does NOT activate, costs 0 Energy, but the **enemy gains a buff** tied to the question type they failed
-7. Player continues playing cards until Energy runs out or they end their turn
-8. Enemy attacks/applies its queued action
-9. Repeat until enemy HP = 0 (win) or player HP = 0 (lose)
+6. **Wrong answer** → card does NOT activate, costs 0 Energy, the card becomes **Locked** (greyed out, unplayable for the rest of this turn), and the enemy gains a buff tied to the question type failed
+7. Player continues playing remaining unlocked cards until Energy runs out or they end their turn
+8. All **Locked cards automatically unlock** at the start of the player's next turn and return to normal
+9. **Enemy executes their full turn** — all queued actions resolve in sequence (see Enemy Turn System section)
+10. Repeat until enemy HP = 0 (win) or player HP = 0 (lose)
+
+**Critical question rule:** Questions used in a battle are tracked in a per-fight pool and **never repeated within the same fight**. Each question is removed from the pool once shown. If all questions for a card type are exhausted mid-fight, the pool silently resets for that fight only. Enforce minimum pool size: at least 10 unique questions per card type per floor tier.
+
+---
 
 ### Energy System
+
 - 3 Energy per turn, resets each turn
 - Cards cost 1–3 Energy depending on rarity and effect
-- Hint system costs 1 Energy (see Hints section)
+- **Wrong answers cost 0 Energy** but lock the card for the rest of this turn
+- Hint system costs **1 Energy**
 - Some relics modify Energy (e.g., gain 1 extra Energy on a correct answer streak)
+
+---
 
 ### Card Types
 
 #### VOCABULARY CARDS (Attack)
 - Question: Translate a word from target language → English, or English → target language
-- Effect on correct answer: Deal damage to enemy
-- Wrong answer enemy buff: *Confusion* — enemy gains +2 attack for 1 turn
+- **Correct answer:** Deal damage to enemy
+- **Wrong answer:** Card Locked this turn + enemy gains *Confusion* (+2 attack for 1 turn)
 - Visual: Sword or strike icon, red/orange color palette
 
 #### GRAMMAR CARDS (Defense)
 - Question: Fix or complete a sentence (fill-in-the-blank or select the correct form)
-- Effect on correct answer: Gain Block (absorbs incoming damage)
-- Wrong answer enemy buff: *Conjugation Armor* — enemy blocks grammar-type cards next turn
+- **Correct answer:** Gain Block (absorbs incoming damage)
+- **Wrong answer:** Card Locked this turn + enemy gains *Conjugation Armor* (blocks grammar-type cards next turn)
 - Visual: Shield icon, blue color palette
 
 #### READING CARDS (Utility)
 - Question: Read a short passage (2–4 sentences) and answer a comprehension question
-- Effect on correct answer: Heal HP, Stun enemy for 1 turn, or Draw 2 cards (varies by card)
-- Wrong answer enemy buff: *Fortify* — enemy gains +5 max HP temporarily
+- **Correct answer:** Heal HP, Stun enemy for 1 turn, or Draw 2 cards (varies by card)
+- **Wrong answer:** Card Locked this turn + enemy gains *Fortify* (+5 max HP temporarily)
 - Visual: Book or scroll icon, green/teal color palette
 
+---
+
 ### Chain Combo System
-- Playing a **Vocabulary card** first *primes* a Grammar card played the same turn → Grammar card deals bonus damage equal to 50% of its block value
-- Playing a **Grammar card** first *primes* a Reading card played the same turn → Reading card's utility effect is doubled (heal twice as much, stun lasts 2 turns, draw 3 cards instead of 2)
-- The chain resets at the start of each turn
-- Chain is shown visually as a glowing line connecting cards in the play area
-- A small "CHAIN ACTIVE" indicator appears when a primer card is played
+
+- Playing a **Vocabulary card correctly** first primes a Grammar card played the same turn → Grammar card deals bonus damage equal to 50% of its block value
+- Playing a **Grammar card correctly** first primes a Reading card played the same turn → Reading card utility effect is doubled
+- **A wrong answer on a primed card breaks the chain entirely** — locked card cannot trigger or receive chain bonuses
+- Chain resets at the start of each new turn
+- Chain shown visually as a glowing line connecting played cards
+- **"CHAIN ACTIVE"** indicator appears when a primer card is successfully played
+
+---
 
 ### Question Answering
-- **Default:** Multiple choice, 4 options
-- **Answer timer:** 20 seconds per question (visible countdown bar)
-- Floor 1–2: Timer is generous, 4 clearly distinct options
-- Floor 3–4: Timer pressure increases, wrong options are more plausible
+
+- Default: Multiple choice, 4 options
+- Answer timer: 20 seconds per question (visible countdown bar)
+- **Questions never repeat within the same battle**
+- Floor 1–2: Timer is generous, options clearly distinct
+- Floor 3–4: Timer pressure increases, wrong options more plausible
 - Mastery Levels (post-game) can reduce options to 3
 
+---
+
 ### Hint System
-- Every question has a **"Reveal Hint" button**
-- Tapping it costs **1 Energy** and shows:
-  - Vocabulary card → the word used in a short example sentence with translation
-  - Grammar card → the incorrect part of the sentence is highlighted + one-line rule explanation
-  - Reading card → the relevant sentence in the passage is highlighted
-- Player still has to choose the correct answer themselves
-- Hint usage is tracked in the post-run summary
+
+- Every question has a **"Reveal Hint"** button
+- Costs **1 Energy**, shows:
+  - Vocabulary → word in a short example sentence with translation
+  - Grammar → incorrect part highlighted + one-line rule explanation
+  - Reading → relevant passage sentence highlighted
+- Player still must choose the correct answer themselves
+- **Hints cannot be used on a Locked card**
+- Hint usage tracked in post-run summary
+
+---
+
+## ENEMY TURN SYSTEM
+
+The enemy turn is one of the most important systems in the game. It must feel threatening, readable, and fair. Players always know exactly what is coming — the challenge is surviving it with correct answers.
+
+### Actions Per Turn by Enemy Tier
+
+| Tier | Actions Per Turn | Notes |
+|---|---|---|
+| Regular enemy | 1 action | Simple, predictable — teaches the system |
+| Elite enemy | 1–2 actions | Can attack AND debuff in the same turn |
+| Boss Phase 1 | 2 actions | Pressure begins |
+| Boss Phase 2 | 2–3 actions | Escalates mid-fight |
+| Boss Phase 3+ | 3 actions | Full threat — forces efficient play |
+
+When a boss phases up, action count increases immediately on the next enemy turn.
+
+---
+
+### Move Categories
+
+| Icon | Category | What It Does |
+|---|---|---|
+| ⚔️ **Strike** | Direct damage | Flat damage reduced by player Block |
+| 🌀 **Debuff** | Weaken player | Reduces card effectiveness, locks types, drains Energy |
+| 🛡️ **Self-Buff** | Strengthen self | Gains armor, heals HP, powers up next attack |
+| 💀 **Special** | Unique per enemy | Signature move tied to each enemy's language concept |
+
+---
+
+### Intent System — Full Transparency
+
+Above every enemy, a clear **intent panel** shows exactly what is coming on their next turn. Updates at the end of each player turn.
+
+The intent panel shows:
+- Move **icon and name**
+- **Exact damage number** for Strike moves
+- **Exact effect description** for Debuffs and Buffs
+- For multi-action enemies: **all queued moves shown left to right** with arrows between them
+
+Example: ⚔️ Strike (18) → 🌀 Silence (Grammar) → 🛡️ Armor Up (+12)
+
+---
+
+### Debuff Move Definitions
+
+**🔇 Silence** — Locks all cards of one specific type for 1 full turn. Shown as a status badge on the player's panel. Example: "Vocabulary cards Silenced — cannot play attack cards next turn."
+
+**⚡ Drain** — Reduces player's starting Energy by 1 next turn (3 → 2). Duration: 1 turn.
+
+**🌫️ Fog** — Hides the visual selection state on answer options. Timer still runs but options don't highlight on hover. Tests genuine knowledge vs. visual reliance. Duration: next 1 question.
+
+**🔗 Bind** — Player draws 1 fewer card on their next draw phase (4 instead of 5). Duration: 1 turn.
+
+**🔀 Confusion** — Shuffles the position of all 4 answer options once, 3 seconds after the timer starts. Tests whether the player knows the answer or is relying on muscle memory from option positioning. Duration: next 1 question.
+
+---
+
+### Self-Buff Move Definitions
+
+**🛡️ Armor Up** — Enemy gains a flat damage reduction shield (e.g., absorbs next 8 damage). Shown as an armor bar beneath enemy HP. Only Vocabulary chain combos bypass it at full damage.
+
+**💉 Recover** — Enemy heals a small portion of HP. Only available when enemy is below 50% HP. Forces players to push hard in the final phase.
+
+**🔥 Power Up** — Enemy gains 1 Fury stack shown as flame icons. At 3 stacks, next Strike deals double damage. Stacks reset if player answers 3 consecutive questions correctly — fluency is the counter.
+
+**👁️ Focus** — Enemy gains resistance to the player's most-used card type this fight. Punishes single-type spam, rewards varied decks.
+
+---
+
+### Special Moves (Per Enemy — Campaign Examples)
+
+Every enemy has exactly one Special move tied to their language concept.
+
+**Japanese — Oni Warrior (Floor 3)**
+> 💀 *Demon Roar* — Forces the player to immediately answer a te-form question before their next turn begins. Not attached to any card — a pure language ambush. Wrong answer: Oni attacks twice next turn instead of once.
+
+**Japanese — Kitsune Trickster (Floor 2)**
+> 💀 *Fox Fire* — Swaps two of the player's hand cards with random cards from the discard pile.
+
+**Korean — Rogue AI (Floor 3)**
+> 💀 *System Override* — Rewrites the player's top 2 hand cards with random cards from the discard pile. Thematically: the AI is rewriting your program.
+
+**Korean — Corporate Enforcer (Floor 2)**
+> 💀 *Contract Clause* — If the player does not play at least 1 Grammar card on their next turn, they take 10 direct damage that ignores Block.
+
+**Spanish — Jungle Colossus (Floor 3)**
+> 💀 *Time Split* — Splits the next Strike across two turns: half damage this turn, half next turn regardless of Block applied. Block mitigates each half separately.
+
+**Spanish — Jungle Spirit (Floor 2)**
+> 💀 *Shapeshift* — Enemy transforms and swaps its vulnerability. If the player used Vocabulary cards to deal damage last turn, it becomes resistant to Vocabulary and vulnerable to Grammar.
+
+---
+
+### Boss Multi-Action Chains
+
+Bosses telegraph their full action chain at the start of the player's turn. A player must plan their entire turn around the known incoming chain.
+
+**Japanese Boss — The Mountain Spirit (三神)**
+- HP: 300 | Phase triggers at 150 HP (Phase 2) and 50 HP (Phase 3)
+- Phase 1 (2 actions): [Strike (14) + Self-Buff Armor Up] alternating with [Strike (14) + Debuff Confusion]
+- Phase 2 (2–3 actions): [Strike (18) + Debuff Silence Grammar + Self-Buff Armor Up]
+- Phase 3 (3 actions): Romanization removed regardless of character. [Strike (22) + Debuff Drain + Special Demon Roar]
+- Pre-fight and defeat dialogue in Japanese with hover-to-translate. 2 response choices on defeat.
+
+**Korean Boss — Chairman KANG**
+- HP: 320 | Phase triggers at 200 HP and 80 HP
+- Phase 1 (2 actions): [Strike (12) + Debuff Bind] → [Strike (12) + Self-Buff Focus]
+- Phase 2 (2 actions): Locks one card type per turn as a passive. [Strike (16) + Debuff Silence rotating type]
+- Phase 3 (3 actions): [Strike (20) + Debuff Drain + Special dual-language question ambush before player turn]
+
+**Spanish Boss — La Guardiana del Tiempo**
+- HP: 290 | Phase triggers at 180 HP and 60 HP
+- Phase 1 (2 actions): [Strike (13) + Debuff Confusion] → [Strike (13) + Self-Buff Power Up]
+- Phase 2 (2 actions + bonus): [Strike (17) + Debuff Bind] + bonus action spawns two mini-guardians (50 HP each)
+- Phase 3 (3 actions): [Strike (20) + Debuff Drain + Special Time Loop — resets to Phase 1 HP once if player hasn't chained 3 combos]
+
+---
+
+### How Wrong Answers Feed Into the Enemy Turn
+
+The enemy turn is the consequence delivery system for wrong answers. Timing:
+
+1. Player answers wrong → card Locked immediately, enemy buff applied immediately (visible icon floats up)
+2. Player finishes their turn
+3. Enemy executes their telegraphed action chain **plus all accumulated wrong-answer buffs on top**
+
+A player who answers two questions wrong in one turn faces a buffed enemy hitting them with a multi-action chain. Punishment compounds naturally. The player always saw it coming.
 
 ---
 
 ## DECK BUILDING
 
 ### Drafting
-- After every combat (including regular enemies), player is offered a **card draft**
-- Draft pool size and quality scales with accuracy:
-  - 80%+ correct answers → choose 1 of 4 cards (includes chance of rare)
-  - 60–79% → choose 1 of 3 cards (commons and uncommons)
+- After every combat, player is offered a **card draft**
+- Pool size scales with fight accuracy:
+  - 80%+ correct → choose 1 of 4 cards (includes chance of rare)
+  - 60–79% → choose 1 of 3 (commons and uncommons)
   - Below 60% → choose 1 of 2 commons only
-- Player can **skip** the draft (no penalty, just no new card)
+- Player can **skip** the draft
 
 ### Card Rarities
 | Rarity | Color | Question Difficulty | Effect Strength | Draft Frequency |
@@ -156,15 +309,11 @@ Each campaign has **3 playable characters** based on fluency level. The characte
 | Story Rare | Red border | Campaign-world sentences | Unique effects | Boss rewards only |
 
 ### Starting Deck
-Every character starts with 10 cards:
-- 4 Vocabulary commons (attack)
-- 3 Grammar commons (defense)
-- 2 Reading commons (utility)
-- 1 character-specific starter rare
+Every character starts with 10 cards: 4 Vocabulary commons, 3 Grammar commons, 2 Reading commons, 1 character-specific starter rare.
 
 ### Deck Size
-- No hard limit, but drafting more than 20 cards starts to dilute draws
-- Merchants sell a "Condense" item that removes 2 duplicate commons from the deck for free
+- No hard limit, but 20+ cards dilutes draws
+- Merchants sell a "Condense" item — removes 2 duplicate commons for free
 
 ---
 
@@ -173,450 +322,275 @@ Every character starts with 10 cards:
 ### Japanese Campaign — Sample Cards
 
 **Strike (Vocabulary, Common, 1 Energy)**
-> Question: What does 食べる (taberu) mean?
-> Effect: Deal 8 damage. If correct on first try, deal 12.
+> Q: What does 食べる (taberu) mean?
+> Effect: Deal 8 damage. If correct with no hint used, deal 12.
 
 **Ward (Grammar, Common, 1 Energy)**
-> Question: Complete the sentence: 私は学校___行きます。
+> Q: Complete: 私は学校___行きます。
 > Effect: Gain 8 Block.
 
 **Spirit Scroll (Reading, Uncommon, 2 Energy)**
-> Passage: Short 3-sentence story about a traveler at a shrine
-> Question: Why did the traveler stop walking?
+> Passage: 3-sentence story about a traveler at a shrine
+> Q: Why did the traveler stop walking?
 > Effect: Heal 10 HP and draw 1 card.
 
 **Kanji Blade (Vocabulary, Rare, 2 Energy)**
-> Question: What is the kanji for "mountain"?
-> Effect: Deal 18 damage. If you have Block active, deal 26.
+> Q: What is the kanji for "mountain"?
+> Effect: Deal 18 damage. If Block is active, deal 26.
 
 **Yokai's Curse (Grammar, Story Rare, 3 Energy)**
-> Question: The yokai speaks: 「お前は___が好きか？」— complete its sentence.
-> Effect: Gain 20 Block. The yokai is Stunned for 1 turn.
+> Q: Complete: 「お前は___が好きか？」
+> Effect: Gain 20 Block. Stun enemy for 1 turn.
 
 ### Korean Campaign — Sample Cards
 
 **Data Burst (Vocabulary, Common, 1 Energy)**
-> Question: What does 안녕하세요 mean?
+> Q: What does 안녕하세요 mean?
 > Effect: Deal 8 damage.
 
 **Firewall (Grammar, Common, 1 Energy)**
-> Question: Correct this sentence: 나는 학교에 갔습니다 (select the correct verb form)
+> Q: Select the correct verb form for: 나는 학교에 ___
 > Effect: Gain 8 Block.
 
 **Signal Tap (Reading, Uncommon, 2 Energy)**
 > Passage: Intercepted corporate memo in Korean (3 sentences)
-> Question: What is the memo's subject?
+> Q: What is the memo's subject?
 > Effect: Stun enemy for 1 turn and draw 2 cards.
 
 ### Spanish Campaign — Sample Cards
 
 **Machete Strike (Vocabulary, Common, 1 Energy)**
-> Question: What does "selva" mean?
-> Effect: Deal 8 damage. Chain bonus: +4 if Grammar card was played this turn.
+> Q: What does "selva" mean?
+> Effect: Deal 8 damage. Chain bonus: +4 if Grammar was played this turn.
 
 **Jungle Guard (Grammar, Uncommon, 2 Energy)**
-> Question: Fill in: Yo ___ (ir) al mercado mañana.
+> Q: Fill in: Yo ___ (ir) al mercado mañana.
 > Effect: Gain 14 Block.
 
 **Ancient Reading (Reading, Rare, 2 Energy)**
-> Passage: Inscription found on ruins (3 sentences in Spanish)
-> Question: What does the inscription warn against?
-> Effect: Heal 15 HP. Add a free Vocabulary card to your hand.
+> Passage: Inscription on ruins (3 sentences in Spanish)
+> Q: What does the inscription warn against?
+> Effect: Heal 15 HP. Add a free Vocabulary card to hand.
 
 ---
 
-## ENEMIES
+## ENEMIES (Full Roster)
 
-### Enemy Design Principles
-- Every enemy is tied to a **specific language concept** — its attacks and buffs relate to what it teaches
-- Enemies **telegraph their next action** with a visible icon showing what type of question will come next turn
-- Enemy HP, damage, and buff strength scale across floors
+### Floor 1 — Regular (1 action/turn)
 
-### Enemy Intent Icons
-Display clearly above enemy each turn:
-- 📖 = Vocabulary question incoming (prepare attack cards)
-- ✏️ = Grammar question incoming (prepare defense cards)
-- 📜 = Reading question incoming (prepare utility cards)
-- 💢 = Enemy attacking directly this turn (no question, just raw damage)
-- 🌀 = Enemy applying a debuff this turn
+**Japanese: Lost Spirit** HP 40 | ATK 6 | Concept: basic nouns
+Intent pattern: Strike → Strike → Debuff Confusion → Strike → Strike
 
-### Floor 1 Enemies (Beginner)
+**Korean: Street Vendor** HP 35 | ATK 5 | Concept: greetings, numbers
+Intent pattern: Strike → Self-Buff Power Up → Strike → Debuff Bind
 
-**Japanese: Lost Spirit**
-- HP: 40 | Attack: 6
-- Concept: Basic hiragana vocabulary (nouns only)
-- Intent: Always telegraphs one turn ahead
-- Buff on player wrong answer: Gains Confusion (+2 ATK for 1 turn)
+**Spanish: Market Rival** HP 38 | ATK 6 | Concept: basic nouns, colors
+Intent pattern: Strike → Strike → Debuff Confusion → Self-Buff Armor Up
 
-**Korean: Street Vendor**
-- HP: 35 | Attack: 5
-- Concept: Basic greetings and numbers
-- Intent: Alternates between attack and vocabulary challenge turns
+### Floor 2 — Regular (1 action/turn + Special unlocked)
 
-**Spanish: Market Rival**
-- HP: 38 | Attack: 6
-- Concept: Basic nouns and colors
-- Intent: Attacks if player skips grammar cards
+**Japanese: Kitsune Trickster** HP 65 | ATK 10 | Concept: particles
+Special: Fox Fire (swaps 2 hand cards with discard)
+Intent pattern: Strike → Special → Debuff Fog → Strike → Strike
 
-### Floor 2 Enemies (Elementary)
+**Korean: Corporate Enforcer** HP 70 | ATK 12 | Concept: verb conjugation
+Special: Contract Clause (must play Grammar or take 10 damage)
+Intent pattern: Special → Strike → Strike → Debuff Silence Grammar
 
-**Japanese: Kitsune Trickster**
-- HP: 65 | Attack: 10
-- Concept: Particles (は, が, を, に, で)
-- Special: If player fails a particle question twice in a row, draws a Curse into player deck
-- Intent: Mixes vocabulary + grammar questions in same fight
+**Spanish: Jungle Spirit** HP 60 | ATK 9 | Concept: ser vs estar
+Special: Shapeshift (swaps vulnerability)
+Intent pattern: Strike → Special → Self-Buff Recover → Strike
 
-**Korean: Corporate Enforcer**
-- HP: 70 | Attack: 12
-- Concept: Present tense verb conjugation
-- Special: Conjugation Armor — if player fails grammar, blocks all grammar cards next turn
+### Floor 3 — Regular (2 actions/turn)
 
-**Spanish: Jungle Spirit**
-- HP: 60 | Attack: 9
-- Concept: Ser vs Estar
-- Special: Shapeshifts between two forms if player confuses the two verbs
+**Japanese: Oni Warrior** HP 110 | ATK 18 | Concept: te-form
+Special: Demon Roar (standalone question ambush)
+Intent: [Strike + Power Up] → [Strike + Drain] → [Demon Roar + Strike]
 
-### Floor 3 Enemies (Intermediate)
+**Korean: Rogue AI** HP 120 | ATK 16 | Concept: honorifics
+Special: System Override (rewrites top 2 hand cards)
+Intent: [Strike + Silence] → [System Override + Strike] → [Drain + Focus]
 
-**Japanese: Oni Warrior**
-- HP: 110 | Attack: 18
-- Concept: Te-form and casual conjugation
-- Special: Each turn gains 1 stack of Fury; at 3 stacks, attacks twice. Stacks reset if player answers 3 questions correctly in a row.
+**Spanish: Jungle Colossus** HP 100 | ATK 15 | Concept: preterite vs imperfect
+Special: Time Split (damage split across 2 turns)
+Intent: [Time Split] → [Strike + Armor Up] → [Strike + Bind]
 
-**Korean: Rogue AI**
-- HP: 120 | Attack: 16
-- Concept: Honorifics and speech levels
-- Special: Switches between formal and casual mode mid-fight; questions change type based on mode
+### Floor 4 — Elites (2 actions/turn)
 
-**Spanish: Jungle Colossus**
-- HP: 100 | Attack: 15
-- Concept: Preterite vs Imperfect past tenses
-- Special: Two heads — each represents one past tense. Defeating one buffs the other.
+**Japanese: Shrine Guardian** HP 150 | ATK 20 | Concept: mixed floors 1–3
+Intent: [Strike + Armor Up] → [Silence + Strike] → [Special: summons Graveyard ghost every 3 turns]
 
-### Floor 4 Elites (Pre-Boss)
+**Korean: Executive** HP 160 | ATK 22 | Concept: complex sentence structure
+Intent: [Contract Clause + Strike] → [Drain + Strike] → [Focus + Strike]
 
-**Japanese: Shrine Guardian**
-- HP: 150 | Attack: 20
-- Concept: Mixed topics from floors 1–3
-- Special: Every 3 turns, summons a ghost from the player's Mistake Graveyard
+**Spanish: Temple Guardian** HP 145 | ATK 19 | Concept: subjunctive
+Intent: [Confusion + Strike] → [Power Up + Strike] → [Special: reflects Vocabulary damage if player failed a Vocabulary card this turn]
 
-**Korean: Executive**
-- HP: 160 | Attack: 22
-- Concept: Complex sentence structure
-- Special: Has a "Contract" mechanic — player must answer one question each turn or take 15 damage
+### Bosses — Floor 4 Finals (multi-phase, see Boss section above for full action chains)
 
-**Spanish: Temple Guardian**
-- HP: 145 | Attack: 19
-- Concept: Subjunctive mood introduction
-- Special: Reflects player attack cards back as damage if player fails a vocabulary question while attacking
-
-### Bosses (Floor 4 Finals)
-
-**Japanese Boss: The Mountain Spirit (三神)**
-- HP: 300 | Phase 1 HP: 300 → Phase 2 triggers at 150 HP
-- Phase 1: Vocabulary and particle focus — tests floors 1–2 content
-- Phase 2: Transforms, gains an armor that only breaks if player uses a Chain Combo
-- Phase 3 (at 50 HP): Speaks only in hiragana/kanji, no romanization regardless of character choice
-- Pre-fight dialogue: In Japanese with hover-to-translate (3–4 lines)
-- Defeat dialogue: In Japanese — player gets 2 response choices, correct choice gives bonus loot
-
-**Korean Boss: Chairman KANG**
-- HP: 320
-- Phase 1: Attacks with debuffs — reduces player hand size by 1
-- Phase 2: Forces player to use only Grammar cards (locks others)
-- Phase 3: Dual-language mode — questions mix formal and casual Korean in same sentence
-- Dialogue: Corporate speech patterns throughout
-
-**Spanish Boss: La Guardiana del Tiempo**
-- HP: 290
-- Phase 1: Past tense gauntlet — alternates preterite/imperfect each turn
-- Phase 2: Summons two mini-guardians (50 HP each) that ask simultaneous questions
-- Phase 3: Time loop — resets to Phase 1 HP once if player hasn't chained 3 correct combos
-- Dialogue: Magical realism flavor, written in Spanish throughout fight
+**The Mountain Spirit (三神)** HP 300 | Japanese | 3 phases
+**Chairman KANG** HP 320 | Korean | 3 phases
+**La Guardiana del Tiempo** HP 290 | Spanish | 3 phases
 
 ---
 
 ## MAP SYSTEM
 
 ### Map Layout
-- Each floor has a **node map** (like Slay the Spire)
-- Player sees 2–3 branching paths from their current position
-- Node types are shown with icons before committing to a path
+- Each floor: node map with 2–3 branching paths
+- Node types shown with icons before committing
 - Cannot revisit nodes
 
 ### Node Types
-
-**⚔️ Combat — Regular Enemy**
-- Standard fight, draft after
-- Most common node on floors 1–2
-
-**💀 Elite Enemy**
-- Harder fight with mixed question types
-- Guaranteed Uncommon or higher card in draft
-- Grants a Relic on first clear per campaign
-
-**🔥 Rest Site**
-- Player chooses ONE of two options:
-  - **Heal** — restore 25% of max HP
-  - **Review** — open Mistake Graveyard, pick one failed word to study; that word's card gets upgraded (deals +3 damage or +3 block permanently for this run)
-
-**🛒 Merchant**
-- Sells 3 random cards (1 Common, 1 Uncommon, 1 Rare)
-- Sells 2 random relics
-- Sells 1 consumable item
-- Has 1 "Remove Card" service (costs gold, removes a card from deck permanently)
-- Merchant speaks in target language with hover-to-translate on all dialogue
-- Currency: Gold earned from combat (10–30 per fight based on accuracy)
-
-**❓ Random Event**
-- Scripted mini-stories with a language-based choice
-- Player chooses between 2 options written in the target language
-- Correct/good choice → reward (card, gold, or HP restore)
-- Wrong/bad choice → minor penalty (lose small HP or add a Doubt card to deck)
-
-**💀 Boss Node**
-- Always at end of each floor
-- Always preceded by a rest site node (guaranteed)
+- ⚔️ **Combat** — standard fight, draft after
+- 💀 **Elite** — harder fight, guaranteed Uncommon+ in draft, Relic on first clear
+- 🔥 **Rest Site** — Heal (25% HP) OR Review (upgrade one Graveyard word's card)
+- 🛒 **Merchant** — 3 cards, 2 relics, 1 consumable, Remove Card service
+- ❓ **Event** — scripted NPC choice in target language, reward or minor penalty
+- 💀 **Boss** — always at floor end, always preceded by rest site
 
 ### Random Event Examples
 
 **Japanese — The Shrine Maiden's Riddle**
-> A shrine maiden blocks your path. She speaks: 「あなたは何を求めているのですか？」
-> Option A: 「知識を求めています。」
-> Option B: 「力を求めています。」
-> (Both are grammatically valid. The "correct" answer for reward is A — thematically fits the learning journey)
-> Reward: Gain a random Reading card upgrade
+> 「あなたは何を求めているのですか？」
+> A: 「知識を求めています。」→ Reading card upgrade
+> B: 「力を求めています。」→ 10 gold
 
 **Korean — The Vending Machine**
-> A glitching vending machine shows: 당신이 원하는 것을 선택하세요
-> Option A: 커피 (coffee)
-> Option B: 물 (water)
-> The machine dispenses based on which word you recognize and pick
-> Reward: Consumable item
+> 당신이 원하는 것을 선택하세요
+> A: 커피 → Consumable item
+> B: 물 → Heal 5 HP
 
 **Spanish — Market Haggling**
-> A vendor calls out: ¿Cuánto quieres pagar?
-> Option A: Quiero pagar menos. (I want to pay less)
-> Option B: Está bien, lo compro. (That's fine, I'll buy it)
-> Choosing A correctly triggers a follow-up grammar check
-> Reward: 30 gold vs 15 gold
+> ¿Cuánto quieres pagar?
+> A: Quiero pagar menos. → Follow-up grammar check, 30 gold reward
+> B: Está bien, lo compro. → 15 gold, no follow-up
 
 ---
 
 ## RELICS
 
-Relics are passive items that modify the run. Player starts with 1 (character-specific). Gain more from Elite fights, Merchants, and boss clears.
+Player starts with 1 character-specific relic. Gain more from Elite fights, Merchants, boss clears.
 
-### Starter Relics (one per character archetype)
-
-**The Newcomer's Phrasebook** — Once per fight, the first wrong answer of the fight deals no enemy buff. "You're just getting started."
-
+### Starter Relics
+**The Newcomer's Phrasebook** — Once per fight, the first wrong answer deals no enemy buff and does not lock the card.
 **The Traveler's Compass** — After 3 correct answers in a row, gain 1 bonus Energy next turn.
+**The Returnee's Old Notes** — Grammar cards show a faint hint for 2 seconds before the timer starts.
 
-**The Returnee's Old Notes** — Grammar cards show a faint memory hint (previous example sentence) for 2 seconds before the question starts. Cannot be turned off.
-
-### General Relics (found during runs)
-
-**Worn Dictionary**
-> Effect: Once per fight, tap to reveal the answer on a Vocabulary card — but that card deals half damage.
-> Flavor: The pages are worn from use.
-
-**Cracked Hourglass**
-> Effect: No time limit on questions. Wrong answers give the enemy TWO buffs instead of one.
-> Flavor: Time is infinite. So are consequences.
-
-**Scholar's Lens**
-> Effect: Grammar cards always highlight the incorrect part of the sentence before the question timer starts (+3 seconds).
-> Flavor: Belonging to someone who passed these halls before.
-
-**Chain Bracelet**
-> Effect: Chain combos can now extend — Grammar can also prime Vocabulary cards (reverse chain direction).
-> Flavor: Links that bind and connect.
-
-**Ghost Ink**
-> Effect: Once per run, a Mistake Graveyard word appears as a bonus question between two nodes. Answer it correctly to gain a free card upgrade.
-> Flavor: They never truly leave.
-
-**Merchant's Scale**
-> Effect: Cards bought from the Merchant cost 20% less gold.
-> Flavor: Know your worth.
-
-**Iron Will**
-> Effect: When HP drops below 20%, the next 3 correct answers deal double damage.
-> Flavor: Desperation sharpens the mind.
-
-**The Red Thread**
-> Effect: The first Vocabulary card played each turn automatically chains into the next Grammar card regardless of order.
-> Flavor: An unbreakable connection between meaning and structure.
+### General Relics
+**Worn Dictionary** — Once per fight, reveal the answer on a Vocabulary card. That card deals half damage.
+**Cracked Hourglass** — No time limit. Wrong answers give TWO enemy buffs (card still Locked).
+**Scholar's Lens** — Grammar cards highlight the incorrect sentence part before the timer (+3 seconds).
+**Chain Bracelet** — Chain combos extend in reverse: Grammar can also prime Vocabulary.
+**Ghost Ink** — Once per run, a Graveyard word appears as a bonus question. Correct = free card upgrade.
+**Merchant's Scale** — Merchant cards cost 20% less gold.
+**Iron Will** — Below 20% HP, next 3 correct answers deal double damage.
+**The Red Thread** — First Vocabulary card each turn auto-chains into the next Grammar card.
+**Quicklock Key** — When a card is Locked by a wrong answer, gain 1 Energy as compensation.
+**Second Chance Scroll** — Once per fight, spend 2 Energy to immediately unlock a Locked card.
 
 ---
 
 ## MISTAKE GRAVEYARD
 
-### What It Is
-A persistent tracker of every question the player has answered wrong, stored across all runs. Available from the main menu and as an in-run journal tab.
+A persistent tracker of every wrong answer, stored across all runs. Available from main menu and in-run journal.
 
-### How It Works
-- Every wrong answer logs: the word/grammar concept, the question asked, the correct answer, and which run/floor it happened on
-- Entries are sorted by most recently wrong, most frequently wrong
-- Each entry has a small ★ counter that fills as the player answers it correctly in future runs (needs 3 correct answers to be "mastered")
-- Mastered words get a green checkmark — they stay in the graveyard forever as a record of growth
-
-### Graveyard Haunting (Optional Toggle)
-- When enabled, words from the Mistake Graveyard occasionally **reappear as ghost enemies** on the map
-- Ghost enemies are wispy, semi-transparent versions of past enemies
-- They only ask the one question the player got wrong
-- Defeating a ghost enemy permanently marks that word as "haunting cleared" (counts as one correct answer toward mastery)
-- Ghost enemies drop no gold, no cards — only mastery progress
-
-### Visual Design
-- The Graveyard screen looks like a stylized cemetery/memorial wall themed to each campaign world
-- Japanese: Stone lanterns with kanji carved on them
-- Korean: Holographic grave markers in a server room
-- Spanish: Colorful ofrenda (Day of the Dead altar) style
+- Every wrong answer logs: word/concept, question, correct answer, which run/floor
+- Sorted by most recently wrong, most frequently wrong
+- Each entry has a ★ counter — 3 correct answers = mastered, shown with green checkmark
+- Optional haunting mode: wrong-answer words appear as ghost enemies (1 HP) on the map
+- Ghost enemies ask only the one failed question. Defeating = 1 mastery progress. No gold, no cards.
+- Japanese visual: stone lanterns with kanji | Korean: holographic markers in server room | Spanish: ofrenda altar
 
 ---
 
 ## JOURNAL SYSTEM
 
-### In-Run Journal
-Accessible anytime via a small book icon in the corner. Two tabs:
+In-run journal accessible anytime via book icon in the corner.
 
-**Words Tab**
-- Every vocabulary card the player has activated this run
-- Sorted by most recently encountered
-- Shows: target language word → English translation → example sentence
-- Words answered correctly 3 times in a row this run show a ★
+**Words Tab** — all vocabulary activated this run, sorted by recency. Target word → translation → example sentence. ★ after 3 correct in a row.
 
-**Grammar Tab**
-- Every grammar concept encountered this run
-- Written as a simple pattern, not a textbook rule
-- Example: instead of "The て-form is used for..." show "食べて + います = currently eating"
-- One example sentence per entry
+**Grammar Tab** — all grammar concepts encountered, written as patterns not rules. One example sentence each.
 
-### Journal Visual Style
-The journal looks like a hand-drawn traveler's notebook matching each campaign:
-- Japanese: Ink-brush style, washi paper texture
-- Korean: Digital notepad, neon highlights on dark background
-- Spanish: Worn leather journal, watercolor illustrations
+Visual style: Japanese (washi paper, ink-brush) / Korean (digital notepad, neon) / Spanish (worn leather, watercolor)
 
 ---
 
 ## POST-RUN SUMMARY SCREEN
 
-Shown after every run (win or lose). Three sections:
+**1. What You Learned** — all new words and grammar rules with example sentences. Cards flip over as a reveal, not a list dump.
 
-### 1. What You Learned
-- All new words and grammar rules encountered this run
-- Each shown with their example sentence one final time
-- Presented as cards flipping over, not a list dump
+**2. Where You Struggled** — top 3 most missed questions: question → correct answer → one-line explanation of WHY. No judgment.
 
-### 2. Where You Struggled
-- Top 3 most missed questions from this run
-- Shows: the question → the correct answer → a one-line explanation of WHY
-- No judgment in tone. "Here's what tripped you up." framing.
+**3. Your Pattern** — generated label: "Strong at vocabulary, struggles with verb endings" / "Grammar specialist — expand your vocabulary next run." Subtle suggestion for next run.
 
-### 3. Your Pattern
-- A generated label based on performance data:
-  - "Strong at vocabulary, struggles with verb endings"
-  - "Great accuracy early, lost focus in floor 3"
-  - "Grammar specialist — expand your vocabulary next run"
-- This label subtly suggests which character to try next or which card types to prioritize
-
-### Win Screen Additions
-- If it's a first-time campaign clear: unlock Mastery Level 1 and show a short campaign epilogue cutscene
-- Boss defeat replayed with the story dialogue
-- Total accuracy percentage, hint usage count, gold earned, rarest card drafted
+**Win Screen additions:** first-time clear unlocks Mastery Level 1 + epilogue cutscene. Shows: accuracy %, hint count, gold earned, rarest card drafted, locked card count ("Cards locked by wrong answers: 7").
 
 ---
 
-## MASTERY LEVEL SYSTEM (Post-Game Replayability)
+## MASTERY LEVEL SYSTEM
 
-Unlocked after first clear of any campaign. Inspired by Slay the Spire's Ascension system.
-
-Each Mastery Level adds one permanent modifier to the campaign. Layers stack — Mastery 3 includes rules from 1, 2, and 3.
-
-| Mastery Level | Rule Added | Learning Intent |
+| Level | Rule | Learning Intent |
 |---|---|---|
-| 1 | Romanization completely removed for all cards | Forces real script reading |
-| 2 | Multiple choice options reduced from 4 to 3 | Less guessing, more recall |
-| 3 | One random card per floor is presented in full target script with no hints available | Deep reading challenge |
-| 4 | Answer timer reduced by 5 seconds | Fluency pressure |
-| 5 | Enemy buffs on wrong answers are doubled | Accuracy over speed |
-| 6 | Rest sites no longer offer Heal — only Review | Prioritizes learning over survival |
+| 1 | Romanization removed for all cards | Forces real script reading |
+| 2 | Multiple choice reduced to 3 options | Less guessing |
+| 3 | One card per floor has no hints | Deep reading challenge |
+| 4 | Timer reduced by 5 seconds | Fluency pressure |
+| 5 | Enemy buffs on wrong answers doubled (card still Locked) | Accuracy over speed |
+| 6 | Rest sites only offer Review — no Heal | Prioritizes learning |
 | 7 | Merchant speaks only in target language — no hover translation | Full immersion |
-| 8 | Mistake Graveyard haunting is always ON and cannot be disabled | Face your weaknesses |
-| 9 | Draft pools are reduced by 1 card each tier | Tighter deck building |
-| 10 | Final boss has an additional Phase 4 — all questions are typed answers (no multiple choice) | True mastery test |
-
-Mastery Levels are tracked per campaign, per character. Clearing Mastery 10 with all 3 characters in a campaign unlocks a cosmetic "Master" badge for that language.
+| 8 | Graveyard haunting always ON | Face your weaknesses |
+| 9 | Draft pools reduced by 1 card each tier | Tighter deck building |
+| 10 | Final boss Phase 4: typed answers only, no multiple choice | True mastery test |
 
 ---
 
 ## IMMERSION SYSTEM — THREE-LAYER RULE
 
-Apply this rule consistently across the entire game:
-
 | Location | Target Language | Native Language |
 |---|---|---|
-| Combat — questions | All question text, word being asked, sentences | Answer choices labeled in native language |
-| Combat — cards | Card name and flavor text in target language | Card effect description in native language |
-| Enemy names | Target language name shown first | Native language name shown smaller underneath |
-| Map & Event dialogue | All NPC/event speech | Player's choice options in native language |
-| Merchant | All merchant dialogue | Item descriptions in native language |
-| Boss cutscenes | All boss dialogue | Subtitle always available one line below |
+| Combat — questions | All question text, word, sentences | Answer choices |
+| Combat — cards | Card name and flavor text | Card effect description |
+| Enemy names | Target language first | Native name smaller underneath |
+| Map & Events | All NPC/event speech | Player choice options |
+| Merchant | All merchant dialogue | Item descriptions |
+| Boss cutscenes | All boss dialogue | Subtitle always available below |
 | UI buttons | Native language | — |
 | Journal | Both side by side | — |
 
-**Hover-to-translate is available on EVERY piece of target language text in the game.** Players tap/hover any foreign text to see the translation. This is non-intrusive — the translation appears in a small tooltip, not replacing the original text.
+**Hover-to-translate available on EVERY piece of target language text in the game.**
 
 ---
 
 ## STORY & NARRATIVE
 
-### Narrative Delivery
-- No walls of text
-- Story is delivered through: enemy dialogue, boss cutscenes, event scripts, and merchant conversations
-- Each floor has 1 key story beat (not combat-related) — a short cutscene or NPC encounter that advances the world
+**Japanese — The Mountain Pilgrimage:** A spirit apprentice climbs to prove themselves worthy of the Mountain Spirit's blessing. The Spirit is a gatekeeper, not a villain. The final boss dialogue is a conversation.
 
-### Campaign Story Outlines
+**Korean — The Corporate Ascent:** A young hacker infiltrates a corporate megastructure. Chairman KANG believes language barriers protect power. The player's fluency threatens that.
 
-**Japanese — The Mountain Pilgrimage**
-> A spirit apprentice climbs the shrine mountain to prove themselves worthy of the Mountain Spirit's blessing. Each floor they encounter yokai who test their knowledge and character. The Mountain Spirit at the summit is not a villain — it is a gatekeeper. Only the worthy may pass. The final boss dialogue is a conversation, not a battle cry.
+**Spanish — The Road to La Piedra Viva:** A traveler seeks a living stone that grants one wish. La Guardiana guards it because past seekers misused it. The final boss is about proving intent, not just skill.
 
-**Korean — The Corporate Ascent**
-> A young hacker infiltrates a corporate megastructure to expose a conspiracy. Each floor is a different corporate division with its own faction and language-based security system. Chairman KANG is not purely evil — he believes language barriers protect power, and the player's fluency threatens that. His defeat dialogue explores this tension.
-
-**Spanish — The Road to La Piedra Viva**
-> A traveler follows a map through magical Latin America toward a living stone that is said to grant a single wish. The road is the journey — each floor is a different region with its own culture and dialect flavor. La Guardiana del Tiempo guards the stone because she has watched too many seekers use the wish selfishly. The final boss is about proving intent, not just skill.
-
-### Boss Defeat Dialogue Mechanic
-After defeating each boss, a short cutscene plays with 3–5 lines of boss dialogue in the target language. At the end, player is given **2 response options** — both written in the target language.
-
-- The "correct" response (thematically fitting) gives bonus loot and the best ending variant
-- The "wrong" response gives no bonus but is still acknowledged by the boss
-- Players can hover any word in the dialogue or choices to translate
+**Boss defeat dialogue:** Short cutscene in target language, 2 response choices in target language. Correct response = bonus loot. All words hover-translatable.
 
 ---
 
 ## AUDIO DESIGN
 
 ### Music
-- Each campaign has its own ambient soundtrack
-- Japanese: traditional instruments (shamisen, koto, shakuhachi) with subtle electronic undertones
+- Japanese: shamisen, koto, shakuhachi with subtle electronic undertones
 - Korean: lo-fi synthwave with traditional percussion
-- Spanish: acoustic guitar, marimba, with magical ambient pads
-
-- Music shifts dynamically during combat: tension builds when enemy HP is high, softens when player is winning
-- Boss fights have dedicated battle themes with phase transitions
+- Spanish: acoustic guitar, marimba, magical ambient pads
+- Dynamic shifting: tension builds as enemy HP rises, softens when player is winning
+- Boss fights: dedicated themes with phase transition stings
 
 ### Sound Effects
-- Card draw: distinct sound per card type (Vocabulary = whoosh, Grammar = click, Reading = page turn)
-- Correct answer: satisfying chime, slightly different per language campaign
-- Wrong answer: low thud, not harsh — never punishing-sounding
-- Chain combo activation: layered chime building with each chain link
-- Level up / boss clear: triumphant, culturally themed fanfare
-- Merchant shop: ambient market sounds per campaign world
+- Card draw: per type (Vocabulary = whoosh, Grammar = click, Reading = page turn)
+- Correct answer: satisfying chime, campaign-specific variation
+- Wrong answer + lock: low thud + brief lock click — never harsh
+- Chain combo: layered chime building with each link
+- Enemy turn start: distinct whoosh indicating enemy is acting
+- Enemy buff applied: rising tone SFX per buff type
+- Locked card interaction attempt: short shake + tooltip sound
 
 ---
 
@@ -624,49 +598,39 @@ After defeating each boss, a short cutscene plays with 3–5 lines of boss dialo
 
 ### Combat Screen Layout
 ```
-[Enemy portrait + name + HP bar + intent icon]      [Relic strip — horizontal row]
+[Enemy portrait + name + HP + INTENT PANEL (full action chain)]    [Relic strip]
 
-                    [Combat area — animations play here]
+                      [Combat animation area]
 
-[Player HP + Block]                                  [Deck count | Discard count]
+[Player HP + Block + Status badges (debuffs, locked count)]        [Deck | Discard]
 
-           [Hand of 5 cards — fanned display at bottom]
+             [Hand of 5 cards — fanned display at bottom]
+             [Locked cards: greyed out with lock icon overlay]
 
-[End Turn button]   [Hint (costs 1 Energy)]   [Journal icon]   [Energy: 3/3]
+[End Turn]   [Hint (1 Energy)]   [Journal icon]   [Energy: ●●● 3/3]
 ```
-
-### Card Visual Design
-Each card shows:
-- Card name (in target language, smaller English underneath)
-- Card type icon (sword / shield / book)
-- Energy cost (top left)
-- Rarity gem (top right)
-- Flavor text (2–3 words in target language at bottom)
-- Effect description (in native language, clear and brief)
-- A small illustration matching campaign world aesthetic
 
 ### Card States
 - **Default:** Normal display
 - **Playable:** Glows softly based on card type color
 - **Not enough Energy:** Grayed out, slightly transparent
 - **Primed (chain ready):** Golden outline pulsing
-- **Selected:** Lifted slightly from hand, question prompt appears above
+- **Selected:** Lifted from hand, question prompt appears
+- **Locked:** Fully greyed, lock icon overlaid, red border, cannot be selected
+
+### Locked Card Behavior
+- Locked cards remain visible in hand with a lock icon overlay
+- Tapping a Locked card: brief shake animation + "Locked until next turn" tooltip
+- Start of next turn: all Locked cards animate a brief "unlock" flash, return to normal
 
 ### Question Prompt UI
-When a card is selected:
 - Card rises to center of screen
-- Question text appears clearly above the card in a styled panel
-- 4 answer options appear as buttons below (styled per campaign)
-- Timer bar runs across the top of the prompt (20 seconds)
-- "Reveal Hint (1 Energy)" button sits in corner, small but accessible
-- Correct answer: Green flash, card activates with animation
-- Wrong answer: Red pulse, card returns to hand, enemy buff icon floats up
-
-### Main Menu
-- Campaign select as three large illustrated panels (Japanese / Korean / Spanish)
-- Each panel shows campaign world art with ambient animation (falling cherry blossoms, neon rain, fireflies)
-- On hover: panel expands slightly, shows campaign tagline in target language
-- Options: New Run, Continue, Mistake Graveyard, Settings, Mastery Records
+- Question text in styled panel above
+- 4 answer buttons below (A/B/C/D, always same positions)
+- Timer bar across top (20 seconds)
+- "Reveal Hint (1 Energy)" button in corner
+- Correct: green flash, card activates with animation
+- Wrong: red pulse, card snaps back with lock icon appearing, enemy buff floats up
 
 ---
 
@@ -677,32 +641,48 @@ When a card is selected:
 {
   "id": "jp_vocab_001",
   "campaign": "japanese",
-  "floor": 1,
+  "floor_tier": 1,
   "type": "vocabulary",
   "question": "What does 食べる (taberu) mean?",
   "options": ["To eat", "To drink", "To sleep", "To walk"],
-  "correct": 0,
+  "correct_index": 0,
   "hint": "Used in: 私は寿司を食べる — I eat sushi.",
-  "graveyard_label": "食べる (taberu)",
-  "tags": ["verb", "basic", "food"]
+  "graveyard_label": "食べる",
+  "graveyard_reading": "taberu",
+  "explanation": "食べる is a Group 2 verb meaning 'to eat'. The ます form is 食べます.",
+  "tags": ["verb", "group2", "food", "basic"]
 }
 ```
 
-### Card Definition Format (JSON)
+### Enemy Schema (JSON)
 ```json
 {
-  "id": "jp_vocab_strike",
-  "name_target": "斬撃",
-  "name_native": "Strike",
-  "type": "vocabulary",
-  "rarity": "common",
-  "energy_cost": 1,
-  "effect": { "damage": 8, "bonus_first_try": 4 },
-  "question_pool": ["jp_vocab_001", "jp_vocab_002", "jp_vocab_003"],
-  "flavor": "切る。",
+  "id": "jp_oni_warrior",
   "campaign": "japanese",
-  "upgradeable": true,
-  "upgraded_effect": { "damage": 11, "bonus_first_try": 5 }
+  "floor": 3,
+  "tier": "regular",
+  "name_target": "鬼戦士",
+  "name_native": "Oni Warrior",
+  "hp": 110,
+  "base_attack": 18,
+  "actions_per_turn": 2,
+  "concept_tags": ["te-form", "casual-conjugation"],
+  "intent_pattern": [
+    ["strike", "self_buff_power_up"],
+    ["strike", "debuff_drain"],
+    ["special_demon_roar", "strike"]
+  ],
+  "wrong_answer_buffs": {
+    "vocabulary": { "type": "confusion", "attack_bonus": 2, "duration_turns": 1 },
+    "grammar": { "type": "conjugation_armor", "blocks_type": "grammar", "duration_turns": 1 },
+    "reading": { "type": "fortify", "hp_bonus": 5, "duration_turns": 2 }
+  },
+  "special_ability": {
+    "id": "demon_roar",
+    "description": "Forces a te-form question before player next turn. Wrong = enemy attacks twice.",
+    "trigger": "intent_pattern"
+  },
+  "portrait": "enemies/japanese/oni_warrior.png"
 }
 ```
 
@@ -716,11 +696,17 @@ When a card is selected:
   "node": 4,
   "hp": 65,
   "max_hp": 80,
+  "block": 0,
   "gold": 45,
-  "deck": ["jp_vocab_strike", "jp_gram_ward", "..."],
-  "relics": ["travelers_compass", "worn_dictionary"],
+  "energy": 3,
+  "deck": ["jp_vocab_strike", "jp_gram_ward"],
+  "hand": [],
+  "locked_cards": [],
+  "relics": ["travelers_compass"],
+  "active_player_debuffs": [],
   "mastery_level": 0,
-  "graveyard_session": [{ "question_id": "jp_vocab_001", "wrong_at": "floor_1_node_2" }]
+  "fight_question_pool_used": [],
+  "session_mistakes": [{ "question_id": "jp_vocab_001", "wrong_at": "floor_1_node_2" }]
 }
 ```
 
@@ -728,102 +714,74 @@ When a card is selected:
 
 ## QUESTION BANKS — MINIMUM VIABLE CONTENT
 
-Build at minimum the following question counts before launch:
-
 | Campaign | Vocabulary | Grammar | Reading | Total |
 |---|---|---|---|---|
-| Japanese | 120 questions | 80 questions | 40 passages | 240 |
-| Korean | 120 questions | 80 questions | 40 passages | 240 |
-| Spanish | 120 questions | 80 questions | 40 passages | 240 |
+| Japanese | 120 | 80 | 40 passages | 240 |
+| Korean | 120 | 80 | 40 passages | 240 |
+| Spanish | 120 | 80 | 40 passages | 240 |
 
-Questions should be organized by floor tier:
-- Floor 1 (25% of bank): Absolute beginner — basic nouns, greetings, simple present
-- Floor 2 (30% of bank): Elementary — common verbs, basic grammar patterns, simple sentences
-- Floor 3 (30% of bank): Pre-intermediate — tense variation, particles/conjunctions, longer sentences
-- Floor 4 (15% of bank): Intermediate — mixed concepts, contextual reading, nuanced grammar
+Floor tier distribution: Floor 1 = 25%, Floor 2 = 30%, Floor 3 = 30%, Floor 4 = 15%.
+**Minimum 10 unique questions per card type per floor tier** to prevent in-fight pool exhaustion.
 
 ---
 
 ## CARD SETS — MINIMUM VIABLE CONTENT
 
-Per campaign, build:
-- 20 Vocabulary cards (10 Common, 6 Uncommon, 4 Rare)
-- 15 Grammar cards (8 Common, 5 Uncommon, 2 Rare)
-- 10 Reading cards (5 Common, 3 Uncommon, 2 Rare)
-- 3 Story Rare cards (boss rewards only)
-- 5 Curse/Debuff cards (added to deck by enemies or events, all upgradeable to remove)
-
-Total per campaign: ~53 cards
+Per campaign: 20 Vocabulary cards, 15 Grammar cards, 10 Reading cards, 3 Story Rare cards, 5 Curse cards.
+Total per campaign: ~53 cards.
 
 ---
 
 ## ACCESSIBILITY
 
-- **Colorblind mode:** Card type differentiated by icon shape, not just color
-- **Font size toggle:** Small / Medium / Large for all question text
-- **Timer toggle:** Can set timer to Relaxed (30s), Normal (20s), or Off in Settings
-- **Screen reader support:** All question text and answer options labeled with aria attributes
-- **High contrast mode:** For UI elements
-- **Answer option layout:** Options always in same position (A/B/C/D) with keyboard shortcuts
+- Colorblind mode: card types differentiated by shape, not only color
+- Font size toggle: Small / Medium / Large
+- Timer toggle: Relaxed (30s) / Normal (20s) / Off
+- Screen reader support: all question text and answers aria-labeled
+- High contrast mode
+- Answer options always at fixed A/B/C/D positions with keyboard shortcuts
 
 ---
 
 ## SETTINGS MENU
 
-- **Spaced Repetition (Mistake Graveyard Haunting):** Toggle ON/OFF
-- **Timer Speed:** Relaxed / Normal / Fast
-- **Romanization:** Always Show / Fade Progressively / Always Hide (overrides character setting)
-- **Subtitles:** Always ON / Always OFF / Auto (shows on hover)
-- **SFX Volume**
-- **Music Volume**
-- **Language of UI:** English / [target language] (advanced toggle)
-- **Card Animation Speed:** Normal / Fast / Instant
+Spaced Repetition (Graveyard Haunting): ON/OFF | Timer Speed: Relaxed/Normal/Fast | Romanization: Always Show / Fade / Always Hide | Subtitles: ON/OFF/Auto | SFX Volume | Music Volume | UI Language | Card Animation Speed
 
 ---
 
 ## PHASED DEVELOPMENT PLAN
 
-### Phase 1 — Core Loop (Build First)
-- Single campaign: Japanese
-- Single character: The Traveler (Kenji)
-- 2 floors only
-- 30 vocabulary questions, 20 grammar questions, 10 reading passages
+### Phase 1 — Core Loop
+- Japanese only, Kenji only, Floors 1–2 only
+- 30 vocab + 20 grammar + 10 reading questions
 - 15 cards total
-- Basic combat loop, drafting, one rest site and one merchant
+- **Full combat loop: locked card mechanic, no repeated questions per fight, full enemy turn system with all 4 move categories for floor 1–2 enemies**
+- Basic drafting, rest site, merchant
 - No relics, no events, no graveyard
 
-### Phase 2 — Full Campaign
-- All 3 characters for Japanese
-- All 4 floors + boss
-- Full question bank (240 questions)
-- Full card set (53 cards)
-- All room types (events, merchant, rest sites)
-- 8 relics
-- Mistake Graveyard
-- Post-run summary screen
+### Phase 2 — Full Japanese Campaign
+- All 3 characters, all 4 floors + boss
+- Full 240-question bank, full 53-card set
+- All room types, 8 relics, Graveyard, Journal, post-run summary
+- **Full enemy turn system including boss multi-phase action chains**
 
 ### Phase 3 — All Campaigns
 - Korean and Spanish campaigns
-- Mastery Level system
-- Full journal system
-- Full audio implementation
+- Mastery Level system, full audio
 
 ### Phase 4 — Polish
-- All animations and transitions
-- Full narrative/cutscene implementation
-- Accessibility features
-- Mobile responsiveness
+- All Framer Motion animations, cutscene system
+- Accessibility, mobile responsiveness
 
 ---
 
 ## WHAT MAKES THIS DIFFERENT
 
-Do not let any feature drift into making this feel like Duolingo with a combat skin. The design philosophy is:
-
-1. **The question IS the gameplay decision** — not a gate in front of it. Players choose which card to play BECAUSE of what question they want to answer right now.
-2. **Wrong answers are tactical problems**, not failures. The enemy buff they cause must be visible, understandable, and recoverable.
-3. **The language is everywhere**, not just in question boxes. Enemy names, merchant dialogue, card flavor text, story cutscenes — the player is swimming in the language, not just tested on it.
-4. **Momentum matters.** A run that feels fast, strategic, and satisfying beats one that is more "complete." Prioritize the combat feel first. Everything else serves the combat.
+1. **The question IS the gameplay decision.** Players choose which card to play BECAUSE of what question they want to answer right now.
+2. **Wrong answers are tactical problems.** Locked card + enemy buff creates real hand management decisions — not punishment for its own sake.
+3. **The enemy turn is earned consequence.** Everything the player did wrong compounds into the enemy's action chain. The player always saw it coming.
+4. **The language is everywhere.** Enemy names, merchant dialogue, card flavor text, story cutscenes — the player swims in it at all times.
+5. **Momentum matters.** A fast, strategic, satisfying run beats a more "complete" one. Prioritize combat feel first.
 
 ---
 

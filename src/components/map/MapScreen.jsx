@@ -62,7 +62,9 @@ export function MapScreen() {
         break
       }
       case NODE_TYPES.BOSS: {
+        // Primary: find boss for this exact floor. Fallback: any boss in dataset.
         const boss = enemiesData.find(e => e.floor === store.floor && e.tier === 'boss')
+          || enemiesData.find(e => e.tier === 'boss')
         if (boss) store.setEnemy(boss)
         navigate('/combat')
         break

@@ -1,7 +1,8 @@
 // components/combat/PlayerStatus.jsx
-// Player HP bar, block indicator, energy pips — NO knowledge of enemy state
+// Player HP bar, block indicator, energy pips, active debuff badges
 
 import { motion } from 'framer-motion'
+import { DebuffBadges } from './DebuffBadges.jsx'
 
 /**
  * @param {number} hp
@@ -9,15 +10,24 @@ import { motion } from 'framer-motion'
  * @param {number} block
  * @param {number} energy
  * @param {number} maxEnergy
- * @param {string[]} relics - active relic IDs
+ * @param {Object[]} debuffs  - activePlayerDebuffs from runStore
+ * @param {boolean} isHit    - triggers red flash when enemy attacks
+ * @param {string[]} relics  - active relic IDs
  */
-export function PlayerStatus({ hp, maxHp, block, energy, maxEnergy, relics = [] }) {
+export function PlayerStatus({ hp, maxHp, block, energy, maxEnergy, debuffs = [], isHit = false, relics = [] }) {
   const hpPercent = Math.max(0, (hp / maxHp) * 100)
   const hpColor = hpPercent > 50 ? 'bg-emerald-500' : hpPercent > 25 ? 'bg-yellow-500' : 'bg-red-600'
   const criticalHp = hpPercent <= 20
 
   return (
-    <div className="flex flex-col gap-2 p-3 bg-gray-950/80 border border-gray-800 rounded-xl min-w-36">
+    <motion.div
+      className="flex flex-col gap-2 p-3 bg-gray-950/80 border border-gray-800 rounded-xl min-w-36"
+      animate={{
+        borderColor: isHit ? '#ef4444' : '#1f2937',
+        boxShadow: isHit ? '0 0 16px #ef444488' : '0 0 0px transparent',
+      }}
+      transition={{ duration: 0.3 }}
+    >
       {/* Player label */}
       <div className="flex items-center gap-1.5">
         <span className="text-base">🧘</span>
@@ -61,6 +71,9 @@ export function PlayerStatus({ hp, maxHp, block, energy, maxEnergy, relics = [] 
         </motion.div>
       )}
 
+      {/* v2: Active player debuffs */}
+      <DebuffBadges debuffs={debuffs} />
+
       {/* Relic strip */}
       {relics.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-0.5">
@@ -75,7 +88,7 @@ export function PlayerStatus({ hp, maxHp, block, energy, maxEnergy, relics = [] 
           ))}
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }
 

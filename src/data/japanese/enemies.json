@@ -7,16 +7,21 @@
     "name_target": "迷い霊",
     "name_native": "Lost Spirit",
     "hp": 40,
-    "attack": 6,
+    "base_attack": 6,
+    "actions_per_turn": 1,
+    "silence_type": "vocabulary",
     "concept_tags": ["noun", "basic", "basic_nouns"],
-    "intent_pattern": ["vocabulary", "attack", "vocabulary", "vocabulary", "attack"],
-    "wrong_answer_buff": {
-      "type": "confusion",
-      "effect": "enemy_attack_plus_2",
-      "effect_value": 2,
-      "duration_turns": 1,
-      "icon": "💢",
-      "description": "Confusion: +2 ATK this turn"
+    "intent_pattern": [
+      ["strike"],
+      ["strike"],
+      ["debuff_silence"],
+      ["strike"],
+      ["self_buff_armor_up"]
+    ],
+    "wrong_answer_buffs": {
+      "vocabulary": { "type": "confusion", "attack_bonus": 2, "duration_turns": 1 },
+      "grammar":    { "type": "confusion", "attack_bonus": 1, "duration_turns": 1 },
+      "reading":    { "type": "fortify",   "hp_bonus": 3,     "duration_turns": 2 }
     },
     "special_ability": null,
     "portrait": "/images/enemies/japanese/lost_spirit.png",
@@ -33,16 +38,22 @@
     "name_target": "下級守護",
     "name_native": "Minor Shrine Guard",
     "hp": 45,
-    "attack": 7,
+    "base_attack": 8,
+    "actions_per_turn": 1,
+    "silence_type": "grammar",
     "concept_tags": ["particle", "basic"],
-    "intent_pattern": ["grammar", "attack", "grammar", "attack"],
-    "wrong_answer_buff": {
-      "type": "conjugation_armor",
-      "effect": "block_grammar_cards_1_turn",
-      "effect_value": 1,
-      "duration_turns": 1,
-      "icon": "🛡️",
-      "description": "Conjugation Armor: Grammar cards blocked next turn"
+    "intent_pattern": [
+      ["strike"],
+      ["self_buff_power_up"],
+      ["strike"],
+      ["debuff_drain"],
+      ["strike"],
+      ["debuff_silence"]
+    ],
+    "wrong_answer_buffs": {
+      "vocabulary": { "type": "confusion",         "attack_bonus": 2, "duration_turns": 1 },
+      "grammar":    { "type": "conjugation_armor", "attack_bonus": 0, "duration_turns": 1 },
+      "reading":    { "type": "fortify",            "hp_bonus": 5,     "duration_turns": 2 }
     },
     "special_ability": null,
     "portrait": null,
@@ -52,6 +63,53 @@
     "defeat_dialogue_translation": "My power...is still lacking."
   },
   {
+    "id": "jp_guardian_spirit",
+    "campaign": "japanese",
+    "floor": 1,
+    "tier": "boss",
+    "name_target": "守護霊神",
+    "name_native": "Guardian Spirit",
+    "hp": 120,
+    "base_attack": 11,
+    "actions_per_turn": 2,
+    "silence_type": "grammar",
+    "concept_tags": ["basic", "noun", "particle"],
+    "intent_pattern": [
+      ["strike", "self_buff_power_up"],
+      ["debuff_drain", "strike"],
+      ["self_buff_armor_up", "strike"],
+      ["strike", "debuff_silence"],
+      ["debuff_fog", "strike"]
+    ],
+    "wrong_answer_buffs": {
+      "vocabulary": { "type": "confusion",         "attack_bonus": 3, "duration_turns": 1 },
+      "grammar":    { "type": "conjugation_armor", "attack_bonus": 2, "duration_turns": 1 },
+      "reading":    { "type": "fortify",            "hp_bonus": 6,     "duration_turns": 2 }
+    },
+    "special_ability": {
+      "id": "spirit_shield",
+      "name": "Spirit Shield",
+      "description": "Gains 10 Armor whenever a chain breaks",
+      "trigger": "on_chain_break",
+      "effect": "add_armor_10"
+    },
+    "portrait": null,
+    "portrait_placeholder_color": "#1a1a3a",
+    "defeat_sfx": "boss_dissolve",
+    "pre_fight_dialogue": [
+      { "line": "この土地を守る。", "translation": "I protect this land." },
+      { "line": "お前の言葉を試そう。", "translation": "Let me test your words." }
+    ],
+    "defeat_dialogue": [
+      { "line": "…よく戦った。", "translation": "...You fought well." },
+      { "line": "先に進め。", "translation": "Move forward." }
+    ],
+    "defeat_choices": [
+      { "text": "「ありがとうございます。」", "translation": "Thank you very much.", "outcome": "reward", "reward": { "type": "card", "rarity": "uncommon" } },
+      { "text": "「次の挑戦へ。」", "translation": "On to the next challenge.", "outcome": "neutral", "reward": { "type": "gold", "amount": 25 } }
+    ]
+  },
+  {
     "id": "jp_kitsune_trickster",
     "campaign": "japanese",
     "floor": 2,
@@ -59,21 +117,25 @@
     "name_target": "狐の妖術師",
     "name_native": "Kitsune Trickster",
     "hp": 65,
-    "attack": 10,
+    "base_attack": 10,
+    "actions_per_turn": 2,
+    "silence_type": "vocabulary",
     "concept_tags": ["particle", "ni", "de", "wo", "wa", "ga"],
-    "intent_pattern": ["vocabulary", "grammar", "attack", "vocabulary", "grammar", "attack"],
-    "wrong_answer_buff": {
-      "type": "curse_draw",
-      "effect": "add_curse_to_deck",
-      "effect_value": 1,
-      "duration_turns": -1,
-      "icon": "🌀",
-      "description": "Trick: A Doubt card is shuffled into your deck"
+    "intent_pattern": [
+      ["strike", "debuff_fog"],
+      ["debuff_confusion", "strike"],
+      ["self_buff_power_up", "strike"],
+      ["strike", "debuff_bind"]
+    ],
+    "wrong_answer_buffs": {
+      "vocabulary": { "type": "confusion", "attack_bonus": 2, "duration_turns": 1 },
+      "grammar":    { "type": "confusion", "attack_bonus": 1, "duration_turns": 1 },
+      "reading":    { "type": "fortify",   "hp_bonus": 4,     "duration_turns": 2 }
     },
     "special_ability": {
       "id": "particle_trap",
       "name": "Particle Trap",
-      "description": "If player fails a particle question twice in a row, draws a Curse into player deck",
+      "description": "If player fails a particle question twice in a row, a Curse card is shuffled into the player deck",
       "trigger": "on_wrong_answer_consecutive",
       "threshold": 2,
       "effect": "add_curse_to_deck"
@@ -92,21 +154,25 @@
     "name_target": "寺の修行者",
     "name_native": "Temple Acolyte",
     "hp": 60,
-    "attack": 9,
+    "base_attack": 9,
+    "actions_per_turn": 2,
+    "silence_type": "reading",
     "concept_tags": ["verb-form", "te-form", "elementary"],
-    "intent_pattern": ["grammar", "grammar", "attack", "attack", "grammar"],
-    "wrong_answer_buff": {
-      "type": "fortify",
-      "effect": "enemy_max_hp_plus_5",
-      "effect_value": 5,
-      "duration_turns": 2,
-      "icon": "💪",
-      "description": "Fortify: Enemy gains temporary HP"
+    "intent_pattern": [
+      ["strike", "self_buff_armor_up"],
+      ["debuff_drain", "strike"],
+      ["self_buff_recover", "strike"],
+      ["debuff_bind", "debuff_silence"]
+    ],
+    "wrong_answer_buffs": {
+      "vocabulary": { "type": "confusion",         "attack_bonus": 2, "duration_turns": 1 },
+      "grammar":    { "type": "conjugation_armor", "attack_bonus": 0, "duration_turns": 1 },
+      "reading":    { "type": "fortify",            "hp_bonus": 5,     "duration_turns": 2 }
     },
     "special_ability": {
       "id": "meditate",
       "name": "Meditate",
-      "description": "After taking damage, the acolyte meditates — blocking next turn automatically gains +4 block.",
+      "description": "After taking 10+ damage in one hit, gains +4 armor next turn",
       "trigger": "on_take_damage",
       "threshold": 10,
       "effect": "next_block_plus_4"
@@ -118,37 +184,33 @@
     "defeat_dialogue_translation": "My training...was not enough."
   },
   {
-    "id": "jp_mountain_spirit_phase1",
+    "id": "jp_mountain_spirit",
     "campaign": "japanese",
     "floor": 2,
     "tier": "boss",
     "name_target": "山の霊神",
     "name_native": "Mountain Spirit",
     "hp": 180,
-    "attack": 14,
+    "base_attack": 14,
+    "actions_per_turn": 3,
+    "silence_type": "grammar",
     "concept_tags": ["verb", "basic", "particle", "grammar"],
-    "phases": [
-      {
-        "phase": 1,
-        "hp_threshold": 180,
-        "intent_pattern": ["vocabulary", "attack", "grammar", "attack", "vocabulary", "attack"],
-        "special": "Standard patterns from floors 1-2"
-      },
-      {
-        "phase": 2,
-        "hp_threshold": 90,
-        "intent_pattern": ["grammar", "grammar", "attack", "vocabulary", "attack"],
-        "special": "Gains Armor that only breaks if player uses a Chain Combo"
-      }
+    "intent_pattern": [
+      ["strike", "self_buff_power_up"],
+      ["strike", "debuff_drain"],
+      ["self_buff_armor_up", "strike", "debuff_silence"],
+      ["strike", "self_buff_power_up"],
+      ["debuff_fog", "debuff_confusion"]
     ],
-    "wrong_answer_buff": {
-      "type": "mountain_wrath",
-      "effect": "enemy_attack_plus_3",
-      "effect_value": 3,
-      "duration_turns": 1,
-      "icon": "⛰️",
-      "description": "Mountain Wrath: +3 ATK this turn"
+    "wrong_answer_buffs": {
+      "vocabulary": { "type": "confusion",         "attack_bonus": 3, "duration_turns": 1 },
+      "grammar":    { "type": "conjugation_armor", "attack_bonus": 2, "duration_turns": 1 },
+      "reading":    { "type": "fortify",            "hp_bonus": 8,     "duration_turns": 2 }
     },
+    "phases": [
+      { "phase": 1, "hp_threshold": 180, "description": "Standard attack patterns" },
+      { "phase": 2, "hp_threshold": 90,  "description": "Gains Chain Armor — only breaks with a successful Chain Combo", "on_enter": "add_chain_armor_15" }
+    ],
     "special_ability": {
       "id": "chain_armor",
       "name": "Chain Armor",
@@ -170,7 +232,7 @@
     ],
     "defeat_choices": [
       { "text": "「もっと学びたいです。」", "translation": "I want to learn more.", "outcome": "reward", "reward": { "type": "card", "rarity": "rare" } },
-      { "text": "「これで終わりです。」", "translation": "This is the end.", "outcome": "neutral", "reward": { "type": "gold", "amount": 30 } }
+      { "text": "「これで終わりです。」", "translation": "This is the end.", "outcome": "neutral",  "reward": { "type": "gold", "amount": 30 } }
     ]
   }
 ]
