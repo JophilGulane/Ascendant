@@ -224,6 +224,11 @@ export function useCombat() {
         freshS.queueBonusEnergyNextTurn(1)
       }
 
+      // Potion: scholar's_blood — +3 HP per correct answer this fight
+      if (freshS.potionEffects?.scholarsBloodActive) {
+        freshS.healHp(3)
+      }
+
       // Track card type for enemy focus move
       s.trackCardTypePlayed(card.type)
 
@@ -257,10 +262,17 @@ export function useCombat() {
         s.activateChain(card.type)
       }
 
-      // Card effect
+      // Card effect (apply once normally)
       let mult = chainResult.bonusMultiplier
       if (halfDamage) mult *= 0.5
       applyCardEffect(card, mult, isFirstTry, s)
+
+      // Potion: echo_tonic — apply card effect a second time
+      const afterS = useRunStore.getState()
+      if (afterS.potionEffects?.echoTonicActive) {
+        afterS.setPotionEffect('echoTonicActive', false)
+        applyCardEffect(card, mult, false, useRunStore.getState()) // second hit, no first-try bonus
+      }
 
       // Spend energy + move to discard
       s.spendEnergy(card.energy_cost)

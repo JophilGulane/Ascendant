@@ -18,6 +18,17 @@ const useRunStore = create(
       lastCardTypePlayed: null,  // for type_lock curse
       lastStandUsed: false,       // for last_stand blessing (once per run)
 
+      // Potions (max 3 slots — array of potion IDs or null)
+      potions: [],
+      // Active combat potion effects (reset each fight)
+      potionEffects: {
+        clarityActive: false,      // next question shows 2 options
+        memoryFlaskActive: false,  // next question timer frozen
+        echoTonicActive: false,    // next card plays twice
+        autoCorrectActive: false,  // next question auto-correct
+        scholarsBloodActive: false, // rest of fight: correct = +3 HP
+      },
+
       // Player state
       hp: 80,
       maxHp: 80,
@@ -230,6 +241,36 @@ const useRunStore = create(
       // Modifier tracking
       setLastCardTypePlayed: (type) => set({ lastCardTypePlayed: type }),
       useLastStand: () => set({ lastStandUsed: true }),
+
+      // Potions
+      addPotion: (potionId) => set(s => {
+        if (s.potions.length >= 3) return {} // full, drop is lost (handled in UI)
+        return { potions: [...s.potions, potionId] }
+      }),
+      removePotion: (potionId) => set(s => {
+        const idx = s.potions.indexOf(potionId)
+        if (idx === -1) return {}
+        const next = [...s.potions]
+        next.splice(idx, 1)
+        return { potions: next }
+      }),
+      removePotionByIndex: (index) => set(s => {
+        const next = [...s.potions]
+        next.splice(index, 1)
+        return { potions: next }
+      }),
+      setPotionEffect: (key, value) => set(s => ({
+        potionEffects: { ...s.potionEffects, [key]: value }
+      })),
+      resetPotionEffects: () => set({
+        potionEffects: {
+          clarityActive: false,
+          memoryFlaskActive: false,
+          echoTonicActive: false,
+          autoCorrectActive: false,
+          scholarsBloodActive: false,
+        }
+      }),
 
       // Mistakes & journal
       logMistake: (questionId, label, reading) => set(s => ({

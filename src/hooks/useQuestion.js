@@ -17,15 +17,26 @@ const TIMER_SECONDS = {
 export function useQuestion({ question, masteryLevel = 0, onResult, noTimer = false, autoHint = false, isPaused = false }) {
   const timerSpeed = useSettingsStore(s => s.timerSpeed)
   const activeModifier = useRunStore(s => s.activeModifier)
+  const potionEffects = useRunStore(s => s.potionEffects)
 
   // Curse: timer_reduction overrides the settings timer
   const curseEffect = activeModifier?.curse?.effect
   const blessingEffect = activeModifier?.blessing?.effect
   const overrideSeconds = curseEffect?.type === 'timer_reduction' ? curseEffect.value : null
-  const maxSeconds = noTimer ? null : (overrideSeconds ?? TIMER_SECONDS[timerSpeed] ?? 20)
+  const baseMaxSeconds = noTimer ? null : (overrideSeconds ?? TIMER_SECONDS[timerSpeed] ?? 20)
 
-  // Blessing: free_hints means hint never costs energy (handled externally, we just export the flag)
+  // Potion: memory_flask freezes timer for +20 extra seconds on this question
+  const memoryBonus = potionEffects?.memoryFlaskActive ? 20 : 0
+  const maxSeconds = baseMaxSeconds !== null ? baseMaxSeconds + memoryBonus : null
+
+  // Blessing: free_hints means hint never costs energy
   const hasFreeHints = blessingEffect?.type === 'free_hints'
+
+  // Potion: clarity reduces options to 2 (exported as flag for QuestionPrompt to use)
+  const hasClarityActive = potionEffects?.clarityActive ?? false
+
+  // Potion: auto_correct — next question auto-resolves as correct
+  const hasAutoCorrect = potionEffects?.autoCorrectActive ?? false
 
   // Mastery 4+: reduce timer by 5 seconds
   const effectiveMax = (masteryLevel >= 4 && maxSeconds !== null)
@@ -87,16 +98,34 @@ export function useQuestion({ question, masteryLevel = 0, onResult, noTimer = fa
     clearInterval(timerRef.current)
     setSelectedIndex(index)
     const timeUsed = (Date.now() - startRef.current) / 1000
+
+    // Potion: auto_correct — treat any answer as correct, consume the effect
+    const s = useRunStore.getState()
+    if (s.potionEffects?.autoCorrectActive) {
+      s.setPotionEffect('autoCorrectActive', false)
+      setTimeout(() => {
+        onResult({ result: 'correct', selectedIndex: index, timeUsed, isFirstTry: true, halfDamage: false })
+      }, 650)
+      return
+    }
+
+    // Potion: clarity — consume flag when answer is submitted
+    if (s.potionEffects?.clarityActive) {
+      s.setPotionEffect('clarityActive', false)
+    }
+    // Potion: memory_flask — consume flag when answer is submitted
+    if (s.potionEffects?.memoryFlaskActive) {
+      s.setPotionEffect('memoryFlaskActive', false)
+    }
+
     const correct = index === question.correct_index
-    // Show feedback colors for 650ms BEFORE firing the result
-    // This keeps the prompt visible so the player sees what they got
     setTimeout(() => {
       onResult({
         result: correct ? 'correct' : 'wrong',
         selectedIndex: index,
         timeUsed,
         isFirstTry,
-        halfDamage
+        halfDamage,
       })
     }, 650)
   }, [answered, question, isFirstTry, halfDamage, onResult])
@@ -121,6 +150,8 @@ export function useQuestion({ question, masteryLevel = 0, onResult, noTimer = fa
     isFirstTry,
     halfDamage,
     hasFreeHints,
+    hasClarityActive,
+    hasAutoCorrect,
     selectAnswer,
     revealHint,
     setHalfDamage,

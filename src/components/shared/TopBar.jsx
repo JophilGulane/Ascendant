@@ -1,12 +1,14 @@
-// components/shared/TopBar.jsx
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate, useLocation } from 'react-router-dom'
 import useRunStore from '../../stores/runStore.js'
 import { useAudio } from '../../hooks/useAudio.js'
 import { JournalOverlay } from '../journal/JournalOverlay.jsx'
+import { PotionSlots } from '../combat/PotionSlots.jsx'
+import { usePotions } from '../../hooks/usePotions.js'
 
-export function TopBar({ hideMapButton = false }) {
+// components/shared/TopBar.jsx
+export function TopBar({ hideMapButton = false, potionsLocked = false }) {
   const store = useRunStore()
   const navigate = useNavigate()
   const location = useLocation()
@@ -20,6 +22,8 @@ export function TopBar({ hideMapButton = false }) {
     playSFX('button_click')
     setOpenModal(modal)
   }
+
+  const { usePotion } = usePotions({ isQuestionOpen: potionsLocked, playSFX })
 
   return (
     <>
@@ -43,6 +47,16 @@ export function TopBar({ hideMapButton = false }) {
           <div className="flex items-center gap-1 ml-2">
             <span className="text-yellow-400">🪙</span>
             <span className="font-bold text-yellow-100">{store.gold}</span>
+          </div>
+
+          {/* Potion Slots — always visible, empty slots show faint outlines */}
+          <div className="flex items-center gap-1 ml-3 border-l border-gray-600 pl-3">
+            <PotionSlots
+              potions={store.potions}
+              onUse={usePotion}
+              isLocked={potionsLocked}
+              campaign={store.campaign}
+            />
           </div>
           
           {/* Relics Button */}

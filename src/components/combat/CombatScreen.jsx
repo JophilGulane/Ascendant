@@ -21,6 +21,7 @@ import DraftScreen from '../menus/DraftScreen.jsx'
 import { BossDefeatScreen } from './BossDefeatScreen.jsx'
 import { ScreenTransition } from '../shared/ScreenTransition.jsx'
 import { TopBar, DeckOverlay } from '../shared/TopBar.jsx'
+import { getRandomPotionDrop, getPotionDropRate } from '../../data/potions.js'
 
 // Turn phases — explicit state machine per AGENT.md v2
 const PHASE = {
@@ -108,6 +109,7 @@ export function CombatScreen() {
   const [wrongFlash, setWrongFlash] = useState(false)
   const [journalOpen, setJournalOpen] = useState(false)
   const [openPile, setOpenPile] = useState(null) // 'draw' | 'discard' | null
+  const [potionDropped, setPotionDropped] = useState(null) // { id, shattered } or null
 
   const fightStarted = useRef(false)
 
@@ -241,6 +243,23 @@ export function CombatScreen() {
     const isBoss = s.currentEnemy?.tier === 'boss'
     const accuracy = s.fightTotal > 0 ? s.fightCorrect / s.fightTotal : 1
 
+    // Potion drop logic
+    const dropRate = getPotionDropRate(s.currentEnemy?.tier, isBoss)
+    if (Math.random() < dropRate) {
+      const potionId = getRandomPotionDrop(s.floor)
+      if (s.potions.length >= 3) {
+        // Slots full — show shatter notification only
+        setPotionDropped({ id: potionId, shattered: true })
+        setTimeout(() => setPotionDropped(null), 2000)
+      } else {
+        s.addPotion(potionId)
+        setPotionDropped({ id: potionId, shattered: false })
+        setTimeout(() => setPotionDropped(null), 1800)
+      }
+    }
+
+    // Reset potion combat effects for next fight
+    s.resetPotionEffects()
     s.endFight()
     
     let baseGold = Math.floor(10 + accuracy * 20)
@@ -317,7 +336,7 @@ export function CombatScreen() {
           }}
         />
 
-        <TopBar hideMapButton={true} />
+        <TopBar hideMapButton={true} potionsLocked={!!activeQuestion || !isPlayerTurn} />
 
         {/* Wrong answer flash */}
         <AnimatePresence>
@@ -419,9 +438,34 @@ export function CombatScreen() {
                     ${type === 'damage' ? 'text-red-500' : 'text-orange-400'}`}
                   style={{ textShadow: '2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000' }}
                 >
-                  -{value}
+                  {type === 'damage' ? `-${value}` : `+${value}`}
                 </motion.div>
               ))}
+            </AnimatePresence>
+
+            {/* Potion drop notification */}
+            <AnimatePresence>
+              {potionDropped && (
+                <motion.div
+                  key={potionDropped.id + potionDropped.shattered}
+                  initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -20, scale: 0.5 }}
+                  className="absolute right-[25%] top-[30%] flex flex-col items-center gap-1 z-30"
+                >
+                  {potionDropped.shattered ? (
+                    <>
+                      <div className="text-3xl">💢</div>
+                      <div className="text-xs font-bold text-red-400 bg-black/80 px-2 py-1 rounded">Bag Full!</div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-3xl animate-bounce">🧪</div>
+                      <div className="text-xs font-bold text-green-400 bg-black/80 px-2 py-1 rounded">Potion Found!</div>
+                    </>
+                  )}
+                </motion.div>
+              )}
             </AnimatePresence>
           </div>
 

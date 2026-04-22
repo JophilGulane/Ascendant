@@ -48,6 +48,8 @@ export function QuestionPrompt({ questionData, masteryLevel = 0, canHint = true,
     halfDamage,
     setHalfDamage,
     hasFreeHints,
+    hasClarityActive,
+    hasAutoCorrect,
   } = useQuestion({
     question: { ...question, correct_index: newCorrectIndex },
     masteryLevel,
@@ -210,6 +212,12 @@ export function QuestionPrompt({ questionData, masteryLevel = 0, canHint = true,
 
           {/* Answer options / Typed input */}
           <div className="px-4 pb-4 grid grid-cols-1 gap-2">
+            {/* Auto-correct indicator */}
+            {hasAutoCorrect && (
+              <div className="text-center text-xs font-bold text-amber-400 bg-amber-950/60 border border-amber-700/50 rounded-lg py-1.5 mb-1">
+                ✨ The Answer — next selection auto-correct
+              </div>
+            )}
             {isTypedPhase ? (
               <form onSubmit={handleTypeSubmit} className="flex flex-col gap-2 mt-2">
                 <input
@@ -228,8 +236,16 @@ export function QuestionPrompt({ questionData, masteryLevel = 0, canHint = true,
                   <p className="text-red-400 text-sm mt-1">Correct answer: {question.options[question.correct_index]}</p>
                 )}
               </form>
-            ) : (
-              shuffledOptions.map((option, idx) => (
+            ) : (() => {
+              // Clarity potion: show only correct + 1 wrong option
+              const displayOptions = hasClarityActive
+                ? shuffledOptions.filter((_, idx) => idx === newCorrectIndex || shuffledOptions.indexOf(shuffledOptions.find((o, i) => i !== newCorrectIndex)) === idx).slice(0, 2)
+                : shuffledOptions
+              const displayIndices = hasClarityActive
+                ? shuffledOptions.map((_, idx) => idx).filter(idx => idx === newCorrectIndex || idx === shuffledOptions.findIndex((_, i) => i !== newCorrectIndex)).slice(0, 2)
+                : shuffledOptions.map((_, i) => i)
+
+              return displayIndices.map(idx => (
                 <motion.button
                   key={idx}
                   className={`
@@ -251,10 +267,10 @@ export function QuestionPrompt({ questionData, masteryLevel = 0, canHint = true,
                   `}>
                     {OPTION_LABELS[idx]}
                   </span>
-                  {option}
+                  {shuffledOptions[idx]}
                 </motion.button>
               ))
-            )}
+            })()}
           </div>
 
           {/* Hint button */}
