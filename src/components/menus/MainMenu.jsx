@@ -1,274 +1,233 @@
-// components/menus/MainMenu.jsx
-import { useEffect, useRef, useState } from 'react'
+// components/menus/MainMenu.jsx — STS style redesign
+// Inspired by Slay the Spire: full-bleed background, gold title, plain left-side menu items
+
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import useRunStore from '../../stores/runStore.js'
-import { CAMPAIGN_THEMES } from '../../constants/campaigns.js'
-import { HoverTranslate } from '../shared/HoverTranslate.jsx'
 
-// Cherry blossom particle for Japanese campaign
-function BlossomParticle({ delay }) {
-  const startX = Math.random() * 100
-  const duration = 6 + Math.random() * 6
-  const size = 6 + Math.random() * 8
+// Floating ember particle (like STS burning embers)
+function Ember({ delay }) {
+  const startX = 5 + Math.random() * 25 // mostly left side near tower
+  const size = 2 + Math.random() * 4
+  const duration = 4 + Math.random() * 6
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -20, x: `${startX}vw`, rotate: 0 }}
+      initial={{ opacity: 0, x: `${startX}vw`, y: '100vh' }}
       animate={{
-        opacity: [0, 0.8, 0.8, 0],
-        y: '110vh',
-        x: [`${startX}vw`, `${startX + (Math.random() - 0.5) * 15}vw`],
-        rotate: [0, 360 * (Math.random() > 0.5 ? 1 : -1)]
+        opacity: [0, 0.9, 0.9, 0],
+        y: '-10vh',
+        x: [`${startX}vw`, `${startX + (Math.random() - 0.5) * 8}vw`],
       }}
-      transition={{ duration, delay, ease: 'linear', repeat: Infinity, repeatDelay: Math.random() * 4 }}
+      transition={{ duration, delay, ease: 'easeOut', repeat: Infinity, repeatDelay: Math.random() * 3 }}
       style={{
         position: 'absolute',
-        width: size, height: size,
-        background: '#E8B86D33',
-        borderRadius: '50% 0 50% 0',
-        fontSize: size,
+        width: size,
+        height: size,
+        borderRadius: '50%',
+        background: `radial-gradient(circle, #ffaa44, #ff6600)`,
+        boxShadow: `0 0 ${size * 2}px #ff6600`,
+        pointerEvents: 'none',
       }}
-    >
-      🌸
-    </motion.div>
+    />
   )
 }
 
-const CAMPAIGNS = [
-  {
-    id: 'japanese',
-    theme: CAMPAIGN_THEMES.japanese,
-    taglineEn: 'Climb the shrine mountain. Learn through every encounter.',
-    locked: false,
-    lockedMessage: null,
-  },
-  {
-    id: 'korean',
-    theme: CAMPAIGN_THEMES.korean,
-    taglineEn: 'Infiltrate the megacorp. Fluency is your access key.',
-    locked: true,
-    lockedMessage: 'Coming in Phase 3',
-  },
-  {
-    id: 'spanish',
-    theme: CAMPAIGN_THEMES.spanish,
-    taglineEn: 'Walk the magical roads. Follow the language.',
-    locked: true,
-    lockedMessage: 'Coming in Phase 3',
-  },
+const MENU_ITEMS = [
+  { id: 'play',     label: 'Play' },
+  { id: 'settings', label: 'Settings' },
+  { id: 'about',    label: 'About' },
 ]
 
 export function MainMenu() {
   const navigate = useNavigate()
   const store = useRunStore()
-  const [hoveredCampaign, setHoveredCampaign] = useState(null)
+  const [hoveredItem, setHoveredItem] = useState(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
 
   const hasActiveRun = Boolean(store.runId)
 
-  return (
-    <div
-      className="relative w-full h-screen overflow-hidden flex flex-col"
-      style={{ background: 'linear-gradient(180deg, #050208 0%, #0a0516 40%, #0d0d0d 100%)' }}
-    >
-      {/* Cherry blossom particles for Japanese theme */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {Array.from({ length: 15 }).map((_, i) => (
-          <BlossomParticle key={i} delay={i * 0.5} />
-        ))}
-      </div>
+  const handleMenuClick = (id) => {
+    if (id === 'play') navigate('/character-select')
+    if (id === 'settings') setSettingsOpen(true)
+    if (id === 'about') {} // placeholder
+  }
 
-      {/* Background: main menu art */}
+  return (
+    <div className="relative w-full h-screen overflow-hidden" style={{ fontFamily: "'Crimson Text', 'Georgia', serif" }}>
+      {/* ── Full-bleed background art ── */}
       <div
-        className="absolute inset-0 opacity-25"
+        className="absolute inset-0"
         style={{
-          backgroundImage: 'url(/images/ui/main_menu_japanese.png)',
+          backgroundImage: 'url(/images/ui/main_menu_tower_bg.png)',
           backgroundSize: 'cover',
-          backgroundPosition: 'center top',
-          filter: 'saturate(0.7)',
+          backgroundPosition: 'center',
         }}
       />
-      <div className="absolute inset-0"
-        style={{ background: 'linear-gradient(180deg, transparent 40%, #0a0516 70%, #050208 100%)' }}
-      />
+      {/* Dark vignette overlay — heavier at bottom */}
+      <div className="absolute inset-0" style={{
+        background: 'linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.3) 40%, rgba(0,0,0,0.75) 100%)',
+      }} />
+      {/* Left edge darkening (menu area) */}
+      <div className="absolute inset-0" style={{
+        background: 'linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 30%, transparent 55%)',
+      }} />
 
-      {/* Logo / Title */}
-      <div className="relative z-10 text-center pt-12 pb-6">
-        <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <div className="text-5xl font-bold tracking-wider text-white mb-1"
-            style={{ textShadow: '0 0 40px #C41E3A66, 0 0 80px #C41E3A33' }}
-          >
-            ASCENDANT
-          </div>
-          <div className="text-sm text-gray-400 tracking-[0.3em] uppercase">言語で戦え — Fight with Language</div>
-        </motion.div>
+      {/* Floating embers */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {Array.from({ length: 20 }).map((_, i) => <Ember key={i} delay={i * 0.4} />)}
       </div>
 
-      {/* Campaign Panels */}
-      <div className="relative z-10 flex-1 flex items-center justify-center px-6">
-        <div className="flex gap-4 w-full max-w-3xl">
-          {CAMPAIGNS.map((camp, i) => {
-            const isHovered = hoveredCampaign === camp.id
-            const isActive = !camp.locked
-
-            return (
-              <motion.div
-                key={camp.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.15 }}
-                onHoverStart={() => !camp.locked && setHoveredCampaign(camp.id)}
-                onHoverEnd={() => setHoveredCampaign(null)}
-                whileHover={isActive ? { scale: 1.03, y: -4 } : {}}
-                onClick={() => isActive && navigate('/character-select')}
-                className={`
-                  flex-1 relative rounded-2xl overflow-hidden border-2 transition-all duration-300
-                  ${camp.locked
-                    ? 'border-gray-700/30 opacity-50 cursor-not-allowed'
-                    : 'border-gray-700/60 hover:border-amber-600/60 cursor-pointer'}
-                `}
-                style={{
-                  minHeight: 280,
-                  background: camp.locked
-                    ? 'linear-gradient(160deg, #0d0d0d, #111111)'
-                    : `linear-gradient(160deg, ${camp.theme.primary}cc, #0d0d0d)`,
-                  boxShadow: !camp.locked && isHovered
-                    ? `0 0 30px ${camp.theme.accent}22, 0 8px 32px rgba(0,0,0,0.6)`
-                    : '0 4px 20px rgba(0,0,0,0.5)',
-                }}
-              >
-                {/* Campaign world art overlay */}
-                {camp.id === 'japanese' && (
-                  <div
-                    className="absolute inset-0 opacity-20"
-                    style={{
-                      backgroundImage: 'url(/images/ui/main_menu_japanese.png)',
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                    }}
-                  />
-                )}
-                <div className="absolute inset-0"
-                  style={{ background: `linear-gradient(180deg, transparent 40%, ${camp.theme.primary}ee 100%)` }}
-                />
-
-                {/* Panel content */}
-                <div className="relative z-10 p-5 h-full flex flex-col justify-end" style={{ minHeight: 280 }}>
-                  {/* Language flag area */}
-                  <div className="text-3xl mb-2">
-                    {camp.id === 'japanese' ? '🗾' : camp.id === 'korean' ? '🌆' : '🌎'}
-                  </div>
-
-                  {/* Campaign name */}
-                  <div className="text-lg font-bold text-white mb-0.5">
-                    {camp.theme.language}
-                  </div>
-                  <div className="text-xs font-medium mb-2" style={{ color: camp.theme.accent }}>
-                    <HoverTranslate translation={camp.theme.language}>
-                      {camp.theme.language_target}
-                    </HoverTranslate>
-                  </div>
-
-                  {/* Tagline */}
-                  <AnimatePresence>
-                    {(isHovered || camp.id === 'japanese') && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 5 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                      >
-                        <div className="text-xs text-gray-400 mb-1">
-                          <HoverTranslate translation={camp.taglineEn}>
-                            {camp.theme.tagline.split(' — ')[0]}
-                          </HoverTranslate>
-                        </div>
-                        <div className="text-[10px] text-gray-600 italic">{camp.taglineEn}</div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Locked badge */}
-                  {camp.locked && (
-                    <div className="mt-2 text-xs text-gray-500 border border-gray-700 rounded-lg px-2 py-1 inline-block">
-                      🔒 {camp.lockedMessage}
-                    </div>
-                  )}
-
-                  {/* Play button (Japanese only) */}
-                  {!camp.locked && (
-                    <motion.div
-                      animate={isHovered ? { opacity: 1, y: 0 } : { opacity: 0.7, y: 4 }}
-                      className="mt-3 text-xs font-bold py-2 rounded-lg text-center"
-                      style={{ background: camp.theme.accent + '33', color: camp.theme.accent, border: `1px solid ${camp.theme.accent}44` }}
-                    >
-                      Begin Journey →
-                    </motion.div>
-                  )}
-                </div>
-              </motion.div>
-            )
-          })}
+      {/* ── Player name badge (top-left) ── */}
+      <div className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-black/40 border border-gray-700/50 rounded px-3 py-1.5">
+        <div className="w-5 h-5 bg-gray-700 rounded-sm flex items-center justify-center">
+          <span className="text-[10px] text-gray-300">◆</span>
+        </div>
+        <div>
+          <div className="text-xs font-bold text-white leading-none">Player</div>
+          <div className="text-[9px] text-amber-400/70 leading-none mt-0.5">click to edit</div>
         </div>
       </div>
 
-      {/* Bottom nav */}
-      <div className="relative z-10 flex items-center justify-center gap-6 pb-6">
-        {hasActiveRun && (
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => navigate('/map')}
-            className="px-5 py-2 rounded-xl bg-amber-700/40 border border-amber-600/40 text-amber-200 text-sm font-medium hover:bg-amber-700/60 transition-all"
+      {/* ── Title (center) ── */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: 'easeOut' }}
+        className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
+        style={{ paddingBottom: '8vh' }}
+      >
+        <div className="text-center" style={{ marginLeft: '10vw' }}>
+          {/* Main title — big gold display font */}
+          <div
+            className="font-bold leading-none select-none"
+            style={{
+              fontSize: 'clamp(3rem, 8vw, 7rem)',
+              color: '#F5C842',
+              textShadow: '0 0 60px #F5C84266, 0 4px 8px rgba(0,0,0,0.8), -2px -2px 0 #7a5f00, 2px 2px 0 #7a5f00',
+              fontFamily: "'Cinzel Decorative', 'Cinzel', 'Crimson Text', Georgia, serif",
+              letterSpacing: '0.05em',
+            }}
           >
-            ↩ Continue Run
-          </motion.button>
+            ASCENDANT
+          </div>
+          {/* Subtitle */}
+          <div
+            className="text-gray-300 mt-2 tracking-widest"
+            style={{ fontSize: 'clamp(0.6rem, 1.2vw, 0.9rem)', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}
+          >
+            言語で戦え — Fight with Language
+          </div>
+        </div>
+      </motion.div>
+
+      {/* ── Menu items (lower-left, STS style) ── */}
+      <div className="absolute bottom-0 left-0 z-20 flex flex-col gap-1 p-8 pb-12">
+        {/* Continue run — shown above Play if active run */}
+        {hasActiveRun && (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="mb-3"
+          >
+            <button
+              onClick={() => navigate('/map')}
+              onMouseEnter={() => setHoveredItem('continue')}
+              onMouseLeave={() => setHoveredItem(null)}
+              className="flex items-center gap-2 group"
+            >
+              <motion.span
+                animate={{ x: hoveredItem === 'continue' ? 6 : 0 }}
+                className="text-amber-300"
+                style={{
+                  fontSize: 'clamp(1rem, 2.5vw, 1.5rem)',
+                  fontFamily: "'Cinzel', Georgia, serif",
+                  textShadow: hoveredItem === 'continue'
+                    ? '0 0 20px #F5C842, 0 2px 4px rgba(0,0,0,0.8)'
+                    : '0 2px 4px rgba(0,0,0,0.8)',
+                  color: hoveredItem === 'continue' ? '#F5C842' : '#d4a843',
+                }}
+              >
+                Continue
+              </motion.span>
+            </button>
+          </motion.div>
         )}
-        <button
-          onClick={() => setSettingsOpen(true)}
-          className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
-        >
-          Settings
-        </button>
-        <div className="text-xs text-gray-700">v0.1 · Phase 1</div>
+
+        {MENU_ITEMS.map((item, i) => (
+          <motion.div
+            key={item.id}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 + i * 0.08 }}
+          >
+            <button
+              onClick={() => handleMenuClick(item.id)}
+              onMouseEnter={() => setHoveredItem(item.id)}
+              onMouseLeave={() => setHoveredItem(null)}
+              className="flex items-center gap-2 group"
+            >
+              <motion.span
+                animate={{ x: hoveredItem === item.id ? 8 : 0 }}
+                style={{
+                  fontSize: 'clamp(1.1rem, 2.8vw, 1.8rem)',
+                  fontFamily: "'Cinzel', Georgia, serif",
+                  fontWeight: 600,
+                  letterSpacing: '0.02em',
+                  textShadow: hoveredItem === item.id
+                    ? '0 0 30px #F5C842, 0 2px 6px rgba(0,0,0,0.9)'
+                    : '0 2px 6px rgba(0,0,0,0.9)',
+                  color: hoveredItem === item.id ? '#F5C842' : '#e8e8e8',
+                  transition: 'color 0.15s, text-shadow 0.15s',
+                }}
+              >
+                {item.label}
+              </motion.span>
+            </button>
+          </motion.div>
+        ))}
+
+        {/* Version */}
+        <div className="mt-4 text-[10px] text-gray-600" style={{ fontFamily: 'monospace' }}>
+          v0.1 · Phase 1
+        </div>
       </div>
 
-      {/* Settings overlay (minimal) */}
+      {/* ── Settings Overlay ── */}
       <AnimatePresence>
         {settingsOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center"
+            className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center"
             onClick={() => setSettingsOpen(false)}
           >
             <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
               onClick={e => e.stopPropagation()}
-              className="bg-gray-950 border border-gray-700 rounded-2xl p-6 w-80"
+              className="rounded-2xl border border-gray-600 p-8 w-96"
+              style={{ background: 'linear-gradient(160deg, #1a1208, #0d0d0d)', boxShadow: '0 0 60px rgba(0,0,0,0.8)' }}
             >
-              <h2 className="text-lg font-bold text-white mb-4">Settings</h2>
-              <p className="text-sm text-gray-400 mb-6">Full settings panel available in Phase 2.</p>
-              <div className="flex flex-col gap-3 mb-6">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-300">Timer</span>
-                  <span className="text-xs text-gray-500">20s (Normal)</span>
+              <h2 className="text-2xl font-bold text-amber-300 mb-6" style={{ fontFamily: "'Cinzel', serif" }}>Settings</h2>
+              <div className="flex flex-col gap-4 mb-6 text-sm text-gray-300">
+                <div className="flex justify-between">
+                  <span>Answer Timer</span>
+                  <span className="text-amber-400">20s</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-300">Romanization</span>
-                  <span className="text-xs text-gray-500">Progressive Fade</span>
+                <div className="flex justify-between">
+                  <span>Romanization</span>
+                  <span className="text-amber-400">Progressive Fade</span>
                 </div>
+                <p className="text-xs text-gray-500 border-t border-gray-700 pt-3">Full settings available in Phase 2.</p>
               </div>
               <button
                 onClick={() => setSettingsOpen(false)}
-                className="w-full py-2.5 rounded-xl bg-gray-800 border border-gray-700 text-gray-200 text-sm hover:bg-gray-700 transition-all"
+                className="w-full py-2.5 rounded-lg border border-gray-600 text-gray-200 text-sm hover:border-amber-600 hover:text-amber-200 transition-all"
+                style={{ background: '#1a1a1a' }}
               >
                 Close
               </button>

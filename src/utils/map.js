@@ -1,160 +1,168 @@
 // utils/map.js
-// Map generation — floors, node placement, path branching
-// Always guarantees: ≥1 rest site and ≥1 merchant per floor, boss always after rest node
+// Map generation — Slay the Spire accurate pathing and node constraints
 
 import { NODE_TYPES } from '../constants/nodeTypes.js'
-import { shuffle } from './deck.js'
 
-/**
- * Generate a full floor map
- * @param {number} floor - floor number (1-4)
- * @param {number} masteryLevel
- * @returns {{ nodes: MapNode[], paths: [string, string][] }}
- *
- * MapNode: { id, type, row, col, available, visited }
- * paths: arrays of [fromId, toId]
- */
 export function generateFloorMap(floor, masteryLevel = 0) {
-  const rows = 6 // rows of nodes before boss
-  const cols = 3 // branching paths
+  const ROWS = 15 // STS Acts have exactly 15 floors of content before the boss
+  const COLS = 7  // STS maps are exactly 7 columns wide
 
-  const nodes = []
-  const paths = []
+  const nodesMap = {} // `${row},${col}` -> MapNode
+  const paths = [] // [fromId, toId]
 
-  // Row 0: Single start node
-  const startNode = {
-    id: `node_start`,
-    type: NODE_TYPES.START,
-    row: 0,
-    col: 1,
-    available: true,
-    visited: false,
-  }
-  nodes.push(startNode)
-
-  // Rows 1-5: Content nodes
-  // Guaranteed slots to place (injected at tracked positions)
-  let restPlaced = false
-  let merchantPlaced = false
-
-  for (let row = 1; row <= rows; row++) {
-    if (row === rows) break // row 5 reserved for pre-boss rest
-
-    const colCount = row <= 2 ? 3 : row <= 4 ? 2 : 3 // slight variation
-    for (let col = 0; col < colCount; col++) {
-      const type = pickNodeType(floor, masteryLevel, { restPlaced, merchantPlaced, row, rows })
-      if (type === NODE_TYPES.REST) restPlaced = true
-      if (type === NODE_TYPES.MERCHANT) merchantPlaced = true
-
-      nodes.push({
-        id: `node_${row}_${col}`,
-        type,
-        row,
-        col,
+  // 1. Initialize grid
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      nodesMap[`${r},${c}`] = {
+        id: `node_${r}_${c}`,
+        type: NODE_TYPES.COMBAT, // placeholder
+        row: r,
+        col: c,
         available: false,
         visited: false,
-      })
-    }
-  }
-
-  // Pre-boss rest (always)
-  nodes.push({
-    id: 'node_preboss_rest',
-    type: NODE_TYPES.REST,
-    row: rows,
-    col: 1,
-    available: false,
-    visited: false,
-  })
-
-  // Boss node
-  nodes.push({
-    id: 'node_boss',
-    type: NODE_TYPES.BOSS,
-    row: rows + 1,
-    col: 1,
-    available: false,
-    visited: false,
-  })
-
-  // Create paths: connect start to row1, row rows to rows, ending at boss
-  const nodesByRow = {}
-  for (const node of nodes) {
-    if (!nodesByRow[node.row]) nodesByRow[node.row] = []
-    nodesByRow[node.row].push(node)
-  }
-
-  const sortedRows = Object.keys(nodesByRow).map(Number).sort((a, b) => a - b)
-  for (let ri = 0; ri < sortedRows.length - 1; ri++) {
-    const thisRowNodes = nodesByRow[sortedRows[ri]]
-    const nextRowNodes = nodesByRow[sortedRows[ri + 1]]
-
-    for (const from of thisRowNodes) {
-      // Each node connects to 1-2 nodes in the next row
-      const targets = nextRowNodes.length === 1
-        ? nextRowNodes
-        : shuffle([...nextRowNodes]).slice(0, Math.min(2, nextRowNodes.length))
-      for (const to of targets) {
-        paths.push([from.id, to.id])
       }
     }
   }
 
-  // Make row-1 nodes available from start
-  for (const node of nodesByRow[1] || []) {
-    node.available = true
+  // 2. Generate Paths (STS Style Walkers)
+  // Slay the spire typically spawns 6 starting paths
+  const startCols = [0, 1, 2, 4, 5, 6]
+  let currentPositions = [...startCols]
+
+  for (let r = 0; r < ROWS - 1; r++) {
+    const nextPositions = []
+    const connections = [] // Track { fromCol, toCol } to prevent crossing
+
+    for (const c of currentPositions) {
+      const choices = []
+      if (c > 0) choices.push(c - 1)
+      choices.push(c)
+      if (c < COLS - 1) choices.push(c + 1)
+
+      // Prevent crossing lines
+      const minCol = connections.length > 0 ? connections[connections.length - 1].toCol : 0
+      let validChoices = choices.filter(choice => choice >= minCol)
+      if (validChoices.length === 0) validChoices = [c]
+
+      // 1 or 2 connections (rarely 3, keeping to 1-2 for cleanliness)
+      const numConnections = Math.random() < 0.35 && validChoices.length >= 2 ? 2 : 1
+      const selectedChoices = []
+      
+      for (let i = 0; i < numConnections; i++) {
+        if (validChoices.length === 0) break
+        const idx = Math.floor(Math.random() * validChoices.length)
+        selectedChoices.push(validChoices[idx])
+        validChoices.splice(idx, 1)
+      }
+
+      // CRITICAL: Sort to prevent the next iteration from thinking minCol is lower than it is
+      selectedChoices.sort((a, b) => a - b)
+
+      for (const nextCol of selectedChoices) {
+        connections.push({ fromCol: c, toCol: nextCol })
+        if (!nextPositions.includes(nextCol)) {
+          nextPositions.push(nextCol)
+        }
+        paths.push([`node_${r}_${c}`, `node_${r+1}_${nextCol}`])
+      }
+    }
+    currentPositions = nextPositions.sort((a,b) => a-b)
   }
 
-  return { nodes, paths }
+  // 3. Filter unused nodes and build parents map
+  const usedIds = new Set()
+  const parentsMap = {} // childId -> array of parent nodes
+  
+  paths.forEach(([from, to]) => {
+    usedIds.add(from)
+    usedIds.add(to)
+    if (!parentsMap[to]) parentsMap[to] = []
+    parentsMap[to].push(nodesMap[from.replace('node_', '').replace('_', ',')])
+  })
+
+  // Add the final Boss node (Row 15)
+  const bossId = 'node_boss'
+  nodesMap['boss'] = {
+    id: bossId,
+    type: NODE_TYPES.BOSS,
+    row: ROWS,
+    col: 3, // Centered
+    available: false,
+    visited: false,
+  }
+
+  // 4. Assign Node Types with STS Constraints
+  // Row 0 is Floor 1, Row 14 is Floor 15 (pre-boss rest)
+  const finalNodes = []
+  
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const node = nodesMap[`${r},${c}`]
+      if (!usedIds.has(node.id)) continue
+
+      if (r === 0) {
+        // Floor 1: Always available, always Combat
+        node.type = NODE_TYPES.COMBAT
+        node.available = true
+      } else if (r === ROWS - 1) {
+        // Floor 15: Always Rest Site
+        node.type = NODE_TYPES.REST
+      } else if (r === Math.floor(ROWS / 2)) {
+        // Middle of act (STS Treasure room replacement)
+        node.type = Math.random() > 0.5 ? NODE_TYPES.REST : NODE_TYPES.MERCHANT
+      } else {
+        // Standard random assignment with constraints
+        const parents = parentsMap[node.id] || []
+        const parentTypes = parents.map(p => p.type)
+        
+        node.type = pickValidNodeType(r, parentTypes)
+      }
+      
+      finalNodes.push(node)
+      
+      // Connect row 14 to Boss
+      if (r === ROWS - 1) {
+        paths.push([node.id, bossId])
+      }
+    }
+  }
+
+  finalNodes.push(nodesMap['boss'])
+
+  return { nodes: finalNodes, paths }
 }
 
-/**
- * Determine node type based on weights and guarantees
- */
-function pickNodeType(floor, masteryLevel, { restPlaced, merchantPlaced, row, rows }) {
-  // If nearing end without rest/merchant, force them
-  const isLastContentRow = row >= rows - 1
-  if (isLastContentRow && !restPlaced) return NODE_TYPES.REST
-  if (isLastContentRow && !merchantPlaced) return NODE_TYPES.MERCHANT
+function pickValidNodeType(row, parentTypes) {
+  // STS Rules:
+  // - No back-to-back Rest Sites, Merchants, or Elites on any path
+  // - Elites only spawn on Floor 6 (row 5) or later
+  
+  const canBeRest = !parentTypes.includes(NODE_TYPES.REST)
+  const canBeMerchant = !parentTypes.includes(NODE_TYPES.MERCHANT)
+  const canBeElite = row >= 5 && !parentTypes.includes(NODE_TYPES.ELITE)
 
-  const weights = getNodeWeights(floor)
+  // STS approximate spawn weights
+  let weights = {
+    [NODE_TYPES.COMBAT]: 45,
+    [NODE_TYPES.EVENT]: 22,
+    [NODE_TYPES.MERCHANT]: canBeMerchant ? 12 : 0,
+    [NODE_TYPES.REST]: canBeRest ? 12 : 0,
+    [NODE_TYPES.ELITE]: canBeElite ? 16 : 0,
+  }
+
+  // Calculate total weight and pick
   const total = Object.values(weights).reduce((a, b) => a + b, 0)
   let rand = Math.random() * total
 
   for (const [type, weight] of Object.entries(weights)) {
+    if (weight === 0) continue
     rand -= weight
     if (rand <= 0) return type
   }
+  
   return NODE_TYPES.COMBAT
 }
 
-function getNodeWeights(floor) {
-  if (floor >= 3) {
-    return {
-      [NODE_TYPES.COMBAT]: 30,
-      [NODE_TYPES.ELITE]: 25,
-      [NODE_TYPES.REST]: 20,
-      [NODE_TYPES.MERCHANT]: 15,
-      [NODE_TYPES.EVENT]: 10,
-    }
-  }
-  return {
-    [NODE_TYPES.COMBAT]: 40,
-    [NODE_TYPES.ELITE]: 15,
-    [NODE_TYPES.REST]: 20,
-    [NODE_TYPES.MERCHANT]: 15,
-    [NODE_TYPES.EVENT]: 10,
-  }
-}
-
-/**
- * Mark reachable nodes from the current node as available
- * Also locks any remaining available nodes in the current row (you chose your path)
- * @param {MapNode[]} nodes
- * @param {[string, string][]} paths
- * @param {string} currentNodeId
- * @returns {MapNode[]} updated nodes
- */
 export function unlockNextNodes(nodes, paths, currentNodeId) {
   const reachable = paths
     .filter(([from]) => from === currentNodeId)
@@ -166,21 +174,15 @@ export function unlockNextNodes(nodes, paths, currentNodeId) {
   }))
 }
 
-/**
- * Mark a node as visited AND lock all sibling nodes at the same row.
- * Once you walk into a room, the other doors in that row close.
- */
 export function visitNode(nodes, nodeId) {
   const visitedNode = nodes.find(n => n.id === nodeId)
   const visitedRow = visitedNode?.row
 
   return nodes.map(n => {
     if (n.id === nodeId) {
-      // This node: mark visited
       return { ...n, visited: true, available: false }
     }
     if (n.row === visitedRow && n.available) {
-      // Sibling at same row: lock it — you chose your path
       return { ...n, available: false }
     }
     return n

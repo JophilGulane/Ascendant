@@ -1,4 +1,4 @@
-// components/combat/CombatScreen.jsx — v2
+// components/combat/CombatScreen.jsx — STS style redesign
 // Turn state machine: PLAYER_DRAW → PLAYER_TURN → ENEMY_TURN → FIGHT_END
 // Assembles all combat components. Owns phase transitions.
 
@@ -12,8 +12,6 @@ import { useDraft } from '../../hooks/useDraft.js'
 import { useAudio } from '../../hooks/useAudio.js'
 import { generateFloorMap } from '../../utils/map.js'
 import { EnemyDisplay } from './EnemyDisplay.jsx'
-import { PlayerStatus } from './PlayerStatus.jsx'
-import { EnergyBar } from './EnergyBar.jsx'
 import { ChainIndicator } from './ChainIndicator.jsx'
 import { EnemyTurnResolver } from './EnemyTurnResolver.jsx'
 import CardHand from './CardHand.jsx'
@@ -30,6 +28,59 @@ const PHASE = {
   FIGHT_END:   'FIGHT_END',
 }
 
+// Energy Orb (STS style bottom-left)
+function EnergyOrb({ energy, maxEnergy }) {
+  return (
+    <div className="relative w-24 h-24 flex items-center justify-center">
+      {/* Outer ring */}
+      <div className="absolute inset-0 rounded-full border-[6px] border-[#8a4a1c]"
+        style={{
+          boxShadow: '0 0 15px rgba(0,0,0,0.8), inset 0 0 10px rgba(0,0,0,0.8)',
+          background: '#3a1804'
+        }}
+      />
+      {/* Inner glowing core */}
+      <motion.div
+        className="absolute inset-2 rounded-full"
+        animate={{
+          background: energy > 0
+            ? ['radial-gradient(circle, #ffaa00, #ff4400, #3a1804)', 'radial-gradient(circle, #ffcc33, #ff5500, #3a1804)']
+            : 'radial-gradient(circle, #553311, #221100)',
+          scale: energy > 0 ? [1, 1.05, 1] : 1,
+        }}
+        transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse' }}
+      />
+      {/* Numbers */}
+      <div className="relative z-10 text-white font-black text-3xl" style={{ textShadow: '2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000' }}>
+        {energy}/{maxEnergy}
+      </div>
+    </div>
+  )
+}
+
+// Deck/Discard Pile (STS style bottom corners)
+function CardPile({ count, type, side }) {
+  return (
+    <div className="relative flex flex-col items-center justify-end h-20 w-16" title={type === 'draw' ? 'Draw Pile' : 'Discard Pile'}>
+      {/* Stack of cards visuals */}
+      <div className="relative w-12 h-16 bg-gray-300 rounded border-2 border-gray-600"
+        style={{
+          boxShadow: '0 4px 6px rgba(0,0,0,0.6)',
+          transform: `rotate(${side === 'left' ? '-5deg' : '5deg'})`
+        }}
+      >
+        <div className="absolute inset-0 flex items-center justify-center opacity-30 text-2xl">
+          {type === 'draw' ? '📚' : '🗑️'}
+        </div>
+      </div>
+      {/* Count badge */}
+      <div className="absolute -bottom-2 -right-2 bg-black border-2 border-gray-500 rounded-full w-8 h-8 flex items-center justify-center text-white font-bold text-sm">
+        {count}
+      </div>
+    </div>
+  )
+}
+
 export function CombatScreen() {
   const navigate = useNavigate()
   const store = useRunStore()
@@ -37,13 +88,12 @@ export function CombatScreen() {
   const {
     cardMap, activeQuestion, activeCardId, animState, damageNumbers,
     isEnemyDefeated, isPlayerDefeated,
-    drawHand, selectCard, resolveAnswer, revealHint, getCard,
+    drawHand, selectCard, resolveAnswer, revealHint,
   } = useCombat()
 
   const { draftCards, isDrafting, openDraft, pickCard, skipDraft } = useDraft()
   const { playMusic } = useAudio()
 
-  // ── Turn state machine ──
   const [turnPhase, setTurnPhase] = useState(PHASE.PLAYER_DRAW)
   const [bossPhase, setBossPhase] = useState(1)
   const [isShakingEnemy, setIsShakingEnemy] = useState(false)
@@ -51,70 +101,58 @@ export function CombatScreen() {
   const [wrongFlash, setWrongFlash] = useState(false)
   const [journalOpen, setJournalOpen] = useState(false)
 
-  // Fight-start ref guard (prevents StrictMode double-fire)
   const fightStarted = useRef(false)
 
-  // Derive silenced card types from active player debuffs
   const silencedTypes = store.activePlayerDebuffs
     .filter(d => d.type === 'silence')
     .map(d => d.target)
 
-  // ── Enemy turn hook ──
   const { executeEnemyTurn, isExecuting: isEnemyTurnRunning, currentAction: enemyAction } = useEnemyTurn({
     onTurnComplete: () => {
-      // After enemy turn finishes → transition back to PLAYER_DRAW
       setTurnPhase(PHASE.PLAYER_DRAW)
     },
   })
 
-  // ── Music on mount ──
   useEffect(() => {
     playMusic(store.campaign || 'japanese', store.floor)
   }, [])
 
-  // ── Fight initialization on mount ──
   useEffect(() => {
     if (fightStarted.current) return
     fightStarted.current = true
     if (store.currentEnemy) {
-      // v2: use store.startFight() which atomically resets all fight state
       useRunStore.getState().startFight(store.currentEnemy)
       setTurnPhase(PHASE.PLAYER_DRAW)
     }
-  }, [])  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
-  // ── Phase transitions ──
   useEffect(() => {
     if (turnPhase === PHASE.PLAYER_DRAW) {
       drawHand()
-      // Small delay so unlock flash is visible, then open player turn
       setTimeout(() => setTurnPhase(PHASE.PLAYER_TURN), 200)
     }
-  }, [turnPhase])  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [turnPhase])
 
-  // Auto-end turn when energy reaches 0 during PLAYER_TURN
   useEffect(() => {
     if (turnPhase === PHASE.PLAYER_TURN && store.energy === 0 && !activeQuestion) {
       handleEndTurn()
     }
-  }, [store.energy, turnPhase, activeQuestion])  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [store.energy, turnPhase, activeQuestion])
 
-  // ── Win/Lose detection ──
   useEffect(() => {
     if (isEnemyDefeated && turnPhase !== PHASE.FIGHT_END) {
       setTurnPhase(PHASE.FIGHT_END)
       handleVictory()
     }
-  }, [isEnemyDefeated])  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isEnemyDefeated])
 
   useEffect(() => {
     if (isPlayerDefeated && turnPhase !== PHASE.FIGHT_END) {
       setTurnPhase(PHASE.FIGHT_END)
       navigate('/summary', { replace: true })
     }
-  }, [isPlayerDefeated])  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isPlayerDefeated])
 
-  // ── Boss phase transition ──
   useEffect(() => {
     const enemy = store.currentEnemy
     if (!enemy?.phases) return
@@ -124,7 +162,6 @@ export function CombatScreen() {
     }
   }, [store.enemyHp, bossPhase])
 
-  // ── animState reactions ──
   useEffect(() => {
     if (animState === 'correct') {
       setIsShakingEnemy(true)
@@ -136,7 +173,6 @@ export function CombatScreen() {
     }
   }, [animState])
 
-  // ── Player hit flash (triggered during enemy turn) ──
   useEffect(() => {
     if (isEnemyTurnRunning && enemyAction?.type === 'damage' && enemyAction.value > 0) {
       setIsHitPlayer(true)
@@ -144,7 +180,6 @@ export function CombatScreen() {
     }
   }, [enemyAction])
 
-  // ── Handlers ──
   const handleEndTurn = useCallback(() => {
     if (turnPhase !== PHASE.PLAYER_TURN) return
     if (activeQuestion) return
@@ -154,15 +189,12 @@ export function CombatScreen() {
 
   const handleVictory = useCallback(async () => {
     const s = useRunStore.getState()
-
-    // CRITICAL: capture boss status BEFORE endFight nulls currentEnemy
     const isBoss = s.currentEnemy?.tier === 'boss'
     const accuracy = s.fightTotal > 0 ? s.fightCorrect / s.fightTotal : 1
 
     s.endFight()
     s.addGold(Math.floor(10 + accuracy * 20))
 
-    // Boss defeat → advance to next floor and regenerate map
     if (isBoss) {
       const newFloor = s.floor + 1
       s.setFloor(newFloor)
@@ -174,13 +206,11 @@ export function CombatScreen() {
     openDraft(accuracy)
   }, [openDraft])
 
-
   const handleDraftDone = useCallback((card) => {
     pickCard(card)
     navigate('/map')
   }, [pickCard, navigate])
 
-  // ── Render draft screen ──
   if (isDrafting) {
     const accuracy = store.fightTotal > 0 ? store.fightCorrect / store.fightTotal : 1
     return (
@@ -201,78 +231,149 @@ export function CombatScreen() {
     <ScreenTransition>
       <div
         className="relative w-full h-screen flex flex-col overflow-hidden"
-        style={{ background: 'linear-gradient(180deg, #0a0516 0%, #1a0a00 60%, #0d0d0d 100%)' }}
+        style={{ fontFamily: "'Crimson Text', Georgia, serif" }}
       >
-        {/* Background glow */}
-        <div className="absolute inset-0 opacity-5"
-          style={{ backgroundImage: 'radial-gradient(circle at 50% 0%, #C41E3A33 0%, transparent 70%)' }}
+        {/* ── Background: Dungeon Art ── */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'url(/images/ui/dungeon_combat_bg.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'brightness(0.7) contrast(1.1)',
+          }}
         />
+
+        {/* ── STS Header Bar ── */}
+        <div
+          className="relative z-30 flex items-center justify-between px-4 py-1.5"
+          style={{
+            background: 'linear-gradient(180deg, #2b353f 0%, #1a2228 100%)',
+            borderBottom: '2px solid #111',
+            boxShadow: '0 4px 10px rgba(0,0,0,0.6)',
+            color: '#ddd',
+            fontSize: '0.85rem'
+          }}
+        >
+          {/* Player Name & HP/Gold */}
+          <div className="flex items-center gap-4">
+            <div className="font-bold text-white text-base mr-2">{store.character?.name || 'Traveler'}</div>
+            <div className="flex items-center gap-1">
+              <span className="text-red-400">❤️</span>
+              <span className="font-bold text-red-100">{store.hp}/{store.maxHp}</span>
+            </div>
+            <div className="flex items-center gap-1 ml-2">
+              <span className="text-yellow-400">🪙</span>
+              <span className="font-bold text-yellow-100">{store.gold}</span>
+            </div>
+            {/* Relics placeholder */}
+            <div className="ml-4 flex gap-1">
+              {store.relics.slice(0,3).map((r, i) => (
+                <div key={i} className="w-5 h-5 bg-gray-700 border border-gray-500 rounded-sm opacity-60" title={r} />
+              ))}
+            </div>
+          </div>
+
+          {/* Floor & Settings */}
+          <div className="flex items-center gap-4">
+            <div className="bg-gray-800/80 px-2 py-0.5 rounded border border-gray-600 font-bold">
+              Floor {store.floor}
+            </div>
+            <button onClick={() => setJournalOpen(true)} className="text-xl" title="Open Journal">📖</button>
+            <button className="text-xl" title="Settings">⚙️</button>
+          </div>
+        </div>
 
         {/* Wrong answer flash */}
         <AnimatePresence>
           {wrongFlash && (
             <motion.div
-              initial={{ opacity: 0 }} animate={{ opacity: 0.15 }} exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }} animate={{ opacity: 0.2 }} exit={{ opacity: 0 }}
               className="absolute inset-0 bg-red-600 pointer-events-none z-10"
             />
           )}
         </AnimatePresence>
 
-        {/* ─── TOP: Enemy area ─── */}
-        <div className="flex-1 flex flex-col items-center justify-center pt-4 px-4 relative">
-          {/* Deck / discard / gold */}
-          <div className="absolute top-3 right-4 flex gap-3 text-xs text-gray-500">
-            <span>📚 {store.deck.length}</span>
-            <span>🗑️ {store.discardPile.length}</span>
-          </div>
-          <div className="absolute top-3 left-4 flex items-center gap-1 text-xs text-yellow-400">
-            <span>🪙</span><span>{store.gold}</span>
+        {/* ── Main Combat Arena ── */}
+        <div className="flex-1 relative">
+          
+          {/* Player Character Sprite (Left) */}
+          <div className="absolute left-[15%] bottom-[35%] flex flex-col items-center">
+             <motion.div
+               animate={isHitPlayer ? { x: [-10, 10, -10, 10, 0], filter: 'brightness(2) sepia(1) hue-rotate(-50deg) saturate(5)' } : {}}
+               transition={{ duration: 0.3 }}
+               className="relative"
+             >
+                {store.character?.id === 'kenji' ? (
+                  <img
+                    src="/images/characters/japanese/kenji.png"
+                    alt="Player"
+                    className="w-48 h-48 object-contain object-bottom filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)]"
+                  />
+                ) : (
+                  <div className="w-32 h-48 bg-gray-800/80 border-2 border-gray-600 rounded flex items-center justify-center text-4xl">
+                    👤
+                  </div>
+                )}
+             </motion.div>
+             {/* Player HP Bar below sprite */}
+             <div className="mt-2 w-32">
+                <div className="w-full bg-red-950 border border-black rounded-sm h-3 relative">
+                  <div className="bg-red-600 h-full" style={{ width: `${Math.max(0, (store.hp / store.maxHp) * 100)}%` }} />
+                  {store.block > 0 && (
+                    <div className="absolute top-0 right-0 h-full bg-blue-400" style={{ width: `${Math.min(100, (store.block / store.maxHp) * 100)}%` }} />
+                  )}
+                  <div className="absolute inset-0 flex items-center justify-center text-[9px] font-bold text-white shadow-black drop-shadow-md">
+                    {store.hp}/{store.maxHp}
+                  </div>
+                </div>
+                {store.block > 0 && (
+                  <div className="flex justify-center mt-1">
+                    <span className="text-xs text-blue-300 font-bold bg-blue-900/80 px-1.5 rounded-sm border border-blue-500">🛡️ {store.block}</span>
+                  </div>
+                )}
+             </div>
+             {/* Debuffs */}
+             {store.activePlayerDebuffs.length > 0 && (
+               <div className="flex gap-1 mt-2">
+                 {store.activePlayerDebuffs.map((d, i) => (
+                   <span key={i} className="text-xs bg-purple-900/80 text-purple-200 px-1 rounded border border-purple-500">
+                     {d.type} {d.duration}
+                   </span>
+                 ))}
+               </div>
+             )}
           </div>
 
-          {/* Turn phase badge */}
-          <div className="absolute top-3 left-1/2 -translate-x-1/2">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={turnPhase}
-                initial={{ opacity: 0, y: -4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 4 }}
-                transition={{ duration: 0.2 }}
-                className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded
-                  ${isEnemyPhase ? 'text-red-400 bg-red-950/60' : 'text-gray-500 bg-transparent'}`}
-              >
-                {isEnemyPhase ? '⚔ Enemy Turn' : isPlayerTurn ? 'Your Turn' : ''}
-              </motion.div>
-            </AnimatePresence>
+          {/* Enemy Display (Right) */}
+          <div className="absolute right-[15%] bottom-[35%] flex flex-col items-center">
+            <EnemyDisplay
+              enemy={store.currentEnemy}
+              hp={store.enemyHp}
+              maxHp={store.enemyMaxHp}
+              block={store.enemyArmor}
+              armor={store.enemyArmor}
+              furyStacks={store.enemyFuryStacks}
+              intentIndex={store.intentIndex}
+              activeBuffs={store.activeEnemyBuffs}
+              isShaking={isShakingEnemy}
+              phase={bossPhase > 1 ? bossPhase : undefined}
+            />
           </div>
-
-          {/* Enemy display */}
-          <EnemyDisplay
-            enemy={store.currentEnemy}
-            hp={store.enemyHp}
-            maxHp={store.enemyMaxHp}
-            block={store.enemyArmor}
-            armor={store.enemyArmor}
-            furyStacks={store.enemyFuryStacks}
-            intentIndex={store.intentIndex}
-            activeBuffs={store.activeEnemyBuffs}
-            isShaking={isShakingEnemy}
-            phase={bossPhase > 1 ? bossPhase : undefined}
-          />
 
           {/* Floating damage numbers */}
-          <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute inset-0 pointer-events-none z-20">
             <AnimatePresence>
               {damageNumbers.map(({ id, value, type }) => (
                 <motion.div
                   key={id}
-                  initial={{ opacity: 1, y: 0, x: type === 'player_damage' ? -30 : 40 }}
+                  initial={{ opacity: 1, y: 0, x: type === 'player_damage' ? '-25vw' : '25vw' }}
                   animate={{ opacity: 0, y: -70 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.9, ease: 'easeOut' }}
-                  className={`absolute top-1/2 left-1/2 font-black text-2xl pointer-events-none
-                    ${type === 'damage' ? 'text-red-400' : 'text-orange-400'}
-                    drop-shadow-lg`}
+                  className={`absolute top-[40%] left-1/2 font-black text-4xl pointer-events-none
+                    ${type === 'damage' ? 'text-red-500' : 'text-orange-400'}`}
+                  style={{ textShadow: '2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000' }}
                 >
                   -{value}
                 </motion.div>
@@ -280,79 +381,80 @@ export function CombatScreen() {
             </AnimatePresence>
           </div>
 
-          {/* Chain indicator */}
-          <div className="mt-2">
+          {/* Chain indicator (Top Center) */}
+          <div className="absolute top-10 left-1/2 -translate-x-1/2">
             <ChainIndicator chainActive={store.chainActive} chainType={store.chainType} />
           </div>
+
+          {/* Turn phase badge (Top Center below chain) */}
+          <div className="absolute top-20 left-1/2 -translate-x-1/2">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={turnPhase}
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 4 }}
+                transition={{ duration: 0.2 }}
+                className={`text-sm font-bold uppercase tracking-widest px-4 py-1 rounded
+                  ${isEnemyPhase ? 'text-red-400 bg-red-950/80 border border-red-800' : 'text-amber-400 bg-amber-950/80 border border-amber-800'}`}
+              >
+                {isEnemyPhase ? 'Enemy Turn' : isPlayerTurn ? 'Player Turn' : ''}
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
 
-        {/* ─── BOTTOM: Player area ─── */}
-        <div className="flex flex-col gap-2 pb-2">
-          {/* Player status row — z-20 ensures it renders above card z-indexes */}
-          <div className="relative z-20 flex items-center justify-between px-4">
-            <PlayerStatus
-              hp={store.hp}
-              maxHp={store.maxHp}
-              block={store.block}
-              energy={store.energy}
-              maxEnergy={store.maxEnergy}
-              debuffs={store.activePlayerDebuffs}
-              isHit={isHitPlayer}
-              relics={store.relics}
-            />
+        {/* ── Bottom HUD ── */}
+        <div className="relative z-30 h-[30vh] flex items-end justify-between px-8 pb-6">
+          
+          {/* Bottom-Left: Draw Pile & Energy */}
+          <div className="flex items-end gap-6 pb-2">
+            <CardPile count={store.deck.length} type="draw" side="left" />
+            <EnergyOrb energy={store.energy} maxEnergy={store.maxEnergy} />
+          </div>
 
-            {/* Action buttons */}
-            <div className="flex flex-col items-end gap-2">
-              <EnergyBar energy={store.energy} maxEnergy={store.maxEnergy} />
-              <div className="flex gap-2">
-                {/* Journal */}
-                <button
-                  onClick={() => setJournalOpen(true)}
-                  className="p-2 text-gray-400 hover:text-amber-300 hover:bg-gray-800/60 rounded-lg transition-colors"
-                  title="Open Journal"
-                >
-                  📖
-                </button>
-
-                {/* End Turn */}
-                <motion.button
-                  whileHover={isPlayerTurn && !activeQuestion ? { scale: 1.05 } : {}}
-                  whileTap={isPlayerTurn && !activeQuestion ? { scale: 0.97 } : {}}
-                  onClick={handleEndTurn}
+          {/* Center: Cards (Absolute positioned so they fan out properly) */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-full max-w-3xl h-48 pointer-events-none" style={{ perspective: 1000 }}>
+             <div className="relative w-full h-full flex justify-center pointer-events-auto">
+               <CardHand
+                  handIds={store.hand}
+                  cardMap={cardMap}
+                  currentEnergy={store.energy}
+                  lockedCards={store.lockedCards}
+                  silencedTypes={silencedTypes}
+                  selectedCardId={activeCardId}
+                  chainActive={store.chainActive}
+                  chainType={store.chainType}
                   disabled={!isPlayerTurn || !!activeQuestion}
-                  className={`
-                    px-5 py-2 rounded-xl font-bold text-sm border transition-all
-                    ${(!isPlayerTurn || activeQuestion)
-                      ? 'bg-gray-800 border-gray-700 text-gray-600 cursor-default'
-                      : 'bg-red-900/60 border-red-700 text-red-200 hover:bg-red-800/60 hover:border-red-500 cursor-pointer'}
-                  `}
-                >
-                  {isEnemyPhase ? 'Enemy...' : 'End Turn'}
-                </motion.button>
-              </div>
-            </div>
+                  onCardSelect={selectCard}
+                />
+             </div>
           </div>
 
-          {/* Card hand — isolation:isolate contains card z-indexes */}
-          <div style={{ isolation: 'isolate' }}>
-            <CardHand
-              handIds={store.hand}
-              cardMap={cardMap}
-              currentEnergy={store.energy}
-              lockedCards={store.lockedCards}
-              silencedTypes={silencedTypes}
-              selectedCardId={activeCardId}
-              chainActive={store.chainActive}
-              chainType={store.chainType}
+          {/* Bottom-Right: End Turn & Discard */}
+          <div className="flex items-end gap-6 pb-2 relative z-40">
+            <motion.button
+              whileHover={isPlayerTurn && !activeQuestion ? { scale: 1.05 } : {}}
+              whileTap={isPlayerTurn && !activeQuestion ? { scale: 0.95 } : {}}
+              onClick={handleEndTurn}
               disabled={!isPlayerTurn || !!activeQuestion}
-              onCardSelect={selectCard}
-            />
+              className={`
+                px-6 py-4 rounded font-bold text-lg border-2 shadow-[0_4px_10px_rgba(0,0,0,0.6)]
+                transition-all
+                ${(!isPlayerTurn || activeQuestion)
+                  ? 'bg-[#1a2228] border-[#111] text-gray-600 cursor-default'
+                  : 'bg-gradient-to-b from-[#2a627a] to-[#163e52] border-[#4a9ec0] text-white hover:brightness-110 cursor-pointer'}
+              `}
+              style={{ fontFamily: "'Cinzel', serif" }}
+            >
+              {isEnemyPhase ? 'Enemy Turn' : 'End Turn'}
+            </motion.button>
+            
+            <CardPile count={store.discardPile.length} type="discard" side="right" />
           </div>
         </div>
 
-        {/* ─── OVERLAYS ─── */}
-
-        {/* Question Prompt */}
+        {/* ── OVERLAYS ── */}
         <AnimatePresence>
           {activeQuestion && (
             <QuestionPrompt
@@ -365,10 +467,8 @@ export function CombatScreen() {
           )}
         </AnimatePresence>
 
-        {/* Enemy Turn Resolver — animated action banner */}
         <EnemyTurnResolver isActive={isEnemyTurnRunning} action={enemyAction} />
 
-        {/* Journal */}
         <AnimatePresence>
           {journalOpen && (
             <JournalOverlay
