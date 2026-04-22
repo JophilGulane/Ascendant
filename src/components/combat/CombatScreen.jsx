@@ -18,13 +18,16 @@ import CardHand from './CardHand.jsx'
 import { QuestionPrompt } from './QuestionPrompt.jsx'
 import { JournalOverlay } from '../journal/JournalOverlay.jsx'
 import DraftScreen from '../menus/DraftScreen.jsx'
+import { BossDefeatScreen } from './BossDefeatScreen.jsx'
 import { ScreenTransition } from '../shared/ScreenTransition.jsx'
+import { TopBar, DeckOverlay } from '../shared/TopBar.jsx'
 
 // Turn phases — explicit state machine per AGENT.md v2
 const PHASE = {
   PLAYER_DRAW: 'PLAYER_DRAW',
   PLAYER_TURN: 'PLAYER_TURN',
   ENEMY_TURN: 'ENEMY_TURN',
+  BOSS_DEFEAT: 'BOSS_DEFEAT',
   FIGHT_END: 'FIGHT_END',
 }
 
@@ -59,9 +62,13 @@ function EnergyOrb({ energy, maxEnergy }) {
 }
 
 // Deck/Discard Pile (STS style bottom corners)
-function CardPile({ count, type, side }) {
+function CardPile({ count, type, side, onClick }) {
   return (
-    <div className="relative flex flex-col items-center justify-end h-20 w-16" title={type === 'draw' ? 'Draw Pile' : 'Discard Pile'}>
+    <button 
+      onClick={onClick}
+      className="relative flex flex-col items-center justify-end h-20 w-16 cursor-pointer hover:scale-105 transition-transform" 
+      title={type === 'draw' ? 'Draw Pile' : 'Discard Pile'}
+    >
       {/* Stack of cards visuals */}
       <div className="relative w-12 h-16 bg-gray-300 rounded border-2 border-gray-600"
         style={{
@@ -77,7 +84,7 @@ function CardPile({ count, type, side }) {
       <div className="absolute -bottom-2 -right-2 bg-black border-2 border-gray-500 rounded-full w-8 h-8 flex items-center justify-center text-white font-bold text-sm">
         {count}
       </div>
-    </div>
+    </button>
   )
 }
 
@@ -92,7 +99,7 @@ export function CombatScreen() {
   } = useCombat()
 
   const { draftCards, isDrafting, openDraft, pickCard, skipDraft } = useDraft()
-  const { playMusic } = useAudio()
+  const { playMusic, playSFX } = useAudio()
 
   const [turnPhase, setTurnPhase] = useState(null)
   const [bossPhase, setBossPhase] = useState(1)
@@ -100,6 +107,7 @@ export function CombatScreen() {
   const [isHitPlayer, setIsHitPlayer] = useState(false)
   const [wrongFlash, setWrongFlash] = useState(false)
   const [journalOpen, setJournalOpen] = useState(false)
+  const [openPile, setOpenPile] = useState(null) // 'draw' | 'discard' | null
 
   const fightStarted = useRef(false)
 
@@ -152,11 +160,16 @@ export function CombatScreen() {
   }, [store.energy, turnPhase, activeQuestion])
 
   useEffect(() => {
-    if (isEnemyDefeated && turnPhase !== PHASE.FIGHT_END) {
-      setTurnPhase(PHASE.FIGHT_END)
-      handleVictory()
+    if (isEnemyDefeated && turnPhase !== PHASE.FIGHT_END && turnPhase !== PHASE.BOSS_DEFEAT) {
+      if (store.currentEnemy?.tier === 'boss' && store.currentEnemy?.defeat_choices) {
+        setTurnPhase(PHASE.BOSS_DEFEAT)
+      } else {
+        setTurnPhase(PHASE.FIGHT_END)
+        handleVictory()
+        playSFX('victory')
+      }
     }
-  }, [isEnemyDefeated])
+  }, [isEnemyDefeated, playSFX])
 
   useEffect(() => {
     if (isPlayerDefeated && turnPhase !== PHASE.FIGHT_END) {
@@ -192,9 +205,10 @@ export function CombatScreen() {
           }
         }
       }
+      playSFX('boss_appear')
       setBossPhase(newPhase)
     }
-  }, [store.enemyHp, bossPhase])
+  }, [store.enemyHp, bossPhase, playSFX])
 
   useEffect(() => {
     if (animState === 'correct') {
@@ -217,20 +231,28 @@ export function CombatScreen() {
   const handleEndTurn = useCallback(() => {
     if (turnPhase !== PHASE.PLAYER_TURN) return
     if (activeQuestion) return
+    playSFX('button_click')
     setTurnPhase(PHASE.ENEMY_TURN)
     executeEnemyTurn()
-  }, [turnPhase, activeQuestion, executeEnemyTurn])
+  }, [turnPhase, activeQuestion, executeEnemyTurn, playSFX])
 
-  const handleVictory = useCallback(async () => {
+  const handleVictory = useCallback(async (choice = null) => {
     const s = useRunStore.getState()
     const isBoss = s.currentEnemy?.tier === 'boss'
     const accuracy = s.fightTotal > 0 ? s.fightCorrect / s.fightTotal : 1
 
     s.endFight()
     
-    const baseGold = Math.floor(10 + accuracy * 20)
+    let baseGold = Math.floor(10 + accuracy * 20)
+    if (choice?.reward?.type === 'gold') baseGold += choice.reward.amount
+    
     const relicGold = s.relics.includes('lucky_coin') ? 15 : 0
     s.addGold(baseGold + relicGold)
+    
+    let draftRarity = null
+    if (choice?.reward?.type === 'card') {
+      draftRarity = choice.reward.rarity
+    }
 
     if (isBoss) {
       const newFloor = s.floor + 1
@@ -240,7 +262,7 @@ export function CombatScreen() {
       s.setCurrentNode(null)
     }
 
-    openDraft(accuracy)
+    openDraft(accuracy, draftRarity)
   }, [openDraft])
 
   const handleDraftDone = useCallback((card) => {
@@ -258,6 +280,18 @@ export function CombatScreen() {
         onPick={handleDraftDone}
         onSkip={() => { skipDraft(); sessionStorage.removeItem('active_encounter'); navigate('/map') }}
         accuracy={accuracy}
+      />
+    )
+  }
+
+  if (turnPhase === PHASE.BOSS_DEFEAT) {
+    return (
+      <BossDefeatScreen 
+        enemy={store.currentEnemy}
+        onChoice={(choice) => {
+          setTurnPhase(PHASE.FIGHT_END)
+          handleVictory(choice)
+        }}
       />
     )
   }
@@ -283,45 +317,7 @@ export function CombatScreen() {
           }}
         />
 
-        {/* ── STS Header Bar ── */}
-        <div
-          className="relative z-30 flex items-center justify-between px-4 py-1.5"
-          style={{
-            background: 'linear-gradient(180deg, #2b353f 0%, #1a2228 100%)',
-            borderBottom: '2px solid #111',
-            boxShadow: '0 4px 10px rgba(0,0,0,0.6)',
-            color: '#ddd',
-            fontSize: '0.85rem'
-          }}
-        >
-          {/* Player Name & HP/Gold */}
-          <div className="flex items-center gap-4">
-            <div className="font-bold text-white text-base mr-2">{store.character?.name || 'Traveler'}</div>
-            <div className="flex items-center gap-1">
-              <span className="text-red-400">❤️</span>
-              <span className="font-bold text-red-100">{store.hp}/{store.maxHp}</span>
-            </div>
-            <div className="flex items-center gap-1 ml-2">
-              <span className="text-yellow-400">🪙</span>
-              <span className="font-bold text-yellow-100">{store.gold}</span>
-            </div>
-            {/* Relics placeholder */}
-            <div className="ml-4 flex gap-1">
-              {store.relics.slice(0, 3).map((r, i) => (
-                <div key={i} className="w-5 h-5 bg-gray-700 border border-gray-500 rounded-sm opacity-60" title={r} />
-              ))}
-            </div>
-          </div>
-
-          {/* Floor & Settings */}
-          <div className="flex items-center gap-4">
-            <div className="bg-gray-800/80 px-2 py-0.5 rounded border border-gray-600 font-bold">
-              Floor {store.floor}
-            </div>
-            <button onClick={() => setJournalOpen(true)} className="text-xl" title="Open Journal">📖</button>
-            <button className="text-xl" title="Settings">⚙️</button>
-          </div>
-        </div>
+        <TopBar hideMapButton={true} />
 
         {/* Wrong answer flash */}
         <AnimatePresence>
@@ -457,7 +453,7 @@ export function CombatScreen() {
 
           {/* Bottom-Left: Draw Pile & Energy */}
           <div className="flex items-end gap-6 pb-2">
-            <CardPile count={store.deck.length} type="draw" side="left" />
+            <CardPile count={store.deck.length} type="draw" side="left" onClick={() => { playSFX('button_click'); setOpenPile('draw') }} />
             <EnergyOrb energy={store.energy} maxEnergy={store.maxEnergy} />
           </div>
 
@@ -500,7 +496,7 @@ export function CombatScreen() {
               {isEnemyPhase ? 'Enemy Turn' : 'End Turn'}
             </motion.button>
 
-            <CardPile count={store.discardPile.length} type="discard" side="right" />
+            <CardPile count={store.discardPile.length} type="discard" side="right" onClick={() => { playSFX('button_click'); setOpenPile('discard') }} />
           </div>
         </div>
 
@@ -513,6 +509,7 @@ export function CombatScreen() {
               canHint={store.energy >= 1 && !store.hintUsedThisFight}
               onAnswer={resolveAnswer}
               onHint={revealHint}
+              bossPhase={bossPhase}
             />
           )}
         </AnimatePresence>
@@ -526,6 +523,12 @@ export function CombatScreen() {
               grammar={store.journalGrammar}
               onClose={() => setJournalOpen(false)}
             />
+          )}
+          {openPile === 'draw' && (
+            <DeckOverlay onClose={() => setOpenPile(null)} deck={store.deck} title="Draw Pile" />
+          )}
+          {openPile === 'discard' && (
+            <DeckOverlay onClose={() => setOpenPile(null)} deck={store.discardPile} title="Discard Pile" />
           )}
         </AnimatePresence>
       </div>

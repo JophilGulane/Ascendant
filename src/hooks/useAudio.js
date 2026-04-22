@@ -78,10 +78,16 @@ export function useAudio() {
     if (!Howl) return
 
     try {
-      // Stop all playing music
-      Object.values(musicRef.current).forEach(m => {
-        if (m && m.playing()) m.fade(musicVolume, 0, 800)
-        setTimeout(() => m && m.stop(), 800)
+      // Check if already playing the exact same track
+      const currentTrack = musicRef.current[key]
+      if (currentTrack && currentTrack.playing()) return
+
+      // Stop all other playing music
+      Object.entries(musicRef.current).forEach(([k, m]) => {
+        if (m && m.playing() && k !== key) {
+          m.fade(musicVolume, 0, 800)
+          setTimeout(() => m && m.stop(), 800)
+        }
       })
 
       if (!musicRef.current[key]) {

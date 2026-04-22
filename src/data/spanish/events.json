@@ -1,0 +1,26 @@
+[
+  {
+    "id": "es_event_1",
+    "floor_tier": 1,
+    "title": "A Strange Merchant",
+    "title_target": "Un Mercader Extraño",
+    "setup_text": "You meet a strange merchant on the road.",
+    "npc_dialogue": "¿Quieres comprar?",
+    "npc_dialogue_translation": "Do you want to buy?",
+    "options": [
+      {
+        "text": "Comprar",
+        "translation": "Buy",
+        "outcome": "reward",
+        "outcome_text": "You bought a potion.",
+        "reward": { "type": "heal", "amount": 10, "description": "Heal 10 HP" }
+      },
+      {
+        "text": "Ignorar",
+        "translation": "Ignore",
+        "outcome": "neutral",
+        "outcome_text": "You ignored the merchant."
+      }
+    ]
+  }
+]

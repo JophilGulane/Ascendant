@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import useRunStore from '../../stores/runStore.js'
 import useProgressStore from '../../stores/progressStore.js'
+import usePantheonStore from '../../stores/pantheonStore.js'
 import { useGraveyard } from '../../hooks/useGraveyard.js'
 import { ScreenTransition } from '../shared/ScreenTransition.jsx'
 
@@ -24,8 +25,10 @@ export function PostRunSummary() {
   const navigate = useNavigate()
   const store = useRunStore()
   const progressStore = useProgressStore()
+  const pantheon = usePantheonStore()
   const graveyard = useGraveyard()
   const [phase, setPhase] = useState(0) // 0=learned, 1=struggled, 2=pattern
+  const [earnedXp, setEarnedXp] = useState(0)
 
   const isWin = store.enemyHp <= 0 && store.floor >= 2
   const accuracy = store.sessionTotal > 0 ? store.sessionCorrect / store.sessionTotal : 1
@@ -50,6 +53,16 @@ export function PostRunSummary() {
       isWin,
       accuracy
     )
+    // Record in Pantheon and calculate XP earned
+    const xpBefore = pantheon.xp
+    pantheon.recordRunEnd({
+      correct: store.sessionCorrect,
+      wrong: store.sessionTotal - store.sessionCorrect,
+      floors: store.floor,
+      victory: isWin,
+    })
+    const xpAfter = usePantheonStore.getState().xp
+    setEarnedXp(xpAfter - xpBefore)
     // Advance through phases
     const timer = setTimeout(() => setPhase(1), 1200)
     const timer2 = setTimeout(() => setPhase(2), 2400)
@@ -75,6 +88,16 @@ export function PostRunSummary() {
           <p className="text-gray-400 text-sm mt-1">
             Floor {store.floor} · {Math.round(accuracy * 100)}% accuracy · {store.sessionTotal} questions
           </p>
+          {earnedXp > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="inline-flex items-center gap-1.5 mt-3 px-3 py-1 bg-purple-900/40 border border-purple-700/50 rounded-full text-purple-300 text-sm"
+            >
+              ✦ +{earnedXp} Pantheon XP
+            </motion.div>
+          )}
         </motion.div>
 
         <div className="w-full max-w-lg flex flex-col gap-6">

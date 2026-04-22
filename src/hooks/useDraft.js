@@ -47,9 +47,18 @@ export function useDraft() {
   const [draftCards, setDraftCards] = useState([])
   const [isDrafting, setIsDrafting] = useState(false)
 
-  const openDraft = useCallback(async (fightAccuracy) => {
+  const openDraft = useCallback(async (fightAccuracy, guaranteedRarity = null) => {
     const pool = calculateDraftPool(fightAccuracy, store.masteryLevel)
     const allCards = await loadCards(store.campaign)
+
+    // Boss rewards bypass normal pool logic
+    if (guaranteedRarity) {
+      const eligible = allCards.filter(c => c.campaign === store.campaign && c.rarity === guaranteedRarity)
+      const sampled = shuffle(eligible).slice(0, 3) // Give 3 choices of that rarity
+      setDraftCards(sampled)
+      setIsDrafting(true)
+      return
+    }
 
     const eligible = allCards.filter(c =>
       c.campaign === store.campaign &&

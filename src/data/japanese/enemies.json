@@ -685,6 +685,12 @@
         "hp_threshold": 100,
         "description": "Gains 5 Fury stacks instantly",
         "on_enter": "add_fury_5"
+      },
+      {
+        "phase": 4,
+        "hp_threshold": 50,
+        "description": "Mastery 10 Typed Phase",
+        "on_enter": null
       }
     ],
     "special_ability": {

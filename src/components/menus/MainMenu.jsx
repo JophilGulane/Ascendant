@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import useRunStore from '../../stores/runStore.js'
+import { CAMPAIGN_THEMES } from '../../constants/campaigns.js'
 
 // Floating ember particle (like STS burning embers)
 function Ember({ delay }) {
@@ -36,6 +37,7 @@ function Ember({ delay }) {
 
 const MENU_ITEMS = [
   { id: 'play',     label: 'Play' },
+  { id: 'pantheon', label: 'The Pantheon' },
   { id: 'graveyard',label: 'Mistake Graveyard' },
   { id: 'settings', label: 'Settings' },
   { id: 'about',    label: 'About' },
@@ -46,12 +48,14 @@ export function MainMenu() {
   const store = useRunStore()
   const [hoveredItem, setHoveredItem] = useState(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [view, setView] = useState('main') // 'main' | 'campaign'
 
   const hasActiveRun = Boolean(store.runId)
 
   const handleMenuClick = (id) => {
-    if (id === 'play') navigate('/character-select')
+    if (id === 'play') setView('campaign')
     if (id === 'graveyard') navigate('/graveyard')
+    if (id === 'pantheon') navigate('/pantheon')
     if (id === 'settings') setSettingsOpen(true)
     if (id === 'about') {} // placeholder
   }
@@ -192,9 +196,85 @@ export function MainMenu() {
 
         {/* Version */}
         <div className="mt-4 text-[10px] text-gray-600" style={{ fontFamily: 'monospace' }}>
-          v0.1 · Phase 1
+          v0.2 · Phase 3
         </div>
       </div>
+
+      {/* ── Campaign Select View ── */}
+      <AnimatePresence>
+        {view === 'campaign' && (
+          <motion.div
+            initial={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+            animate={{ opacity: 1, backdropFilter: 'blur(8px)' }}
+            exit={{ opacity: 0, backdropFilter: 'blur(0px)' }}
+            className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/60"
+          >
+            <div className="absolute top-12 left-12">
+              <button
+                onClick={() => setView('main')}
+                className="text-gray-400 hover:text-white text-xl font-bold tracking-widest uppercase transition-colors"
+                style={{ fontFamily: "'Cinzel', serif" }}
+              >
+                ← Back
+              </button>
+            </div>
+            
+            <h2 className="text-4xl text-amber-300 font-bold mb-12" style={{ fontFamily: "'Cinzel', serif", textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>
+              Select Campaign
+            </h2>
+            
+            <div className="flex gap-6 items-stretch justify-center max-w-6xl px-12 w-full">
+              {Object.values(CAMPAIGN_THEMES).map((campaign, i) => (
+                <motion.button
+                  key={campaign.id}
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  whileHover={!campaign.locked ? { scale: 1.05, y: -10 } : {}}
+                  whileTap={!campaign.locked ? { scale: 0.95 } : {}}
+                  onClick={() => {
+                    if (!campaign.locked) {
+                      sessionStorage.setItem('selected_campaign', campaign.id)
+                      navigate('/character-select')
+                    }
+                  }}
+                  className={`
+                    relative flex-1 rounded-2xl overflow-hidden border-2 transition-all
+                    ${campaign.locked ? 'border-gray-800 cursor-default grayscale' : 'border-gray-600 cursor-pointer'}
+                  `}
+                  style={{
+                    minHeight: '400px',
+                    background: campaign.bgGradient,
+                    boxShadow: campaign.locked ? 'none' : `0 10px 30px rgba(0,0,0,0.8), 0 0 20px ${campaign.accent}44`,
+                  }}
+                >
+                  <div className="absolute inset-0 p-8 flex flex-col items-center justify-center text-center">
+                    <div className="text-6xl mb-6 drop-shadow-lg">{campaign.particleEmoji}</div>
+                    
+                    <h3 className="text-2xl font-bold mb-2 text-white" style={{ fontFamily: "'Cinzel', serif" }}>
+                      {campaign.name}
+                    </h3>
+                    
+                    <div className="text-sm font-bold tracking-widest mb-6 uppercase" style={{ color: campaign.accent }}>
+                      {campaign.language}
+                    </div>
+                    
+                    <p className="text-gray-300 text-sm italic mb-auto">
+                      "{campaign.tagline}"
+                    </p>
+                    
+                    {campaign.locked && (
+                      <div className="mt-8 bg-gray-900/80 text-gray-500 font-bold uppercase tracking-widest px-4 py-2 rounded-lg border border-gray-700">
+                        Locked
+                      </div>
+                    )}
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Settings Overlay ── */}
       <AnimatePresence>

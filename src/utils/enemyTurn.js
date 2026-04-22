@@ -34,7 +34,17 @@ export async function resolveEnemyAction(action, enemy, store, playSFX) {
       const blocked = Math.min(currentBlock, damage)
       const remaining = damage - blocked
       if (blocked > 0) store.spendBlock(blocked)
-      if (remaining > 0) store.setHp(store.hp - remaining)
+      if (remaining > 0) {
+        const newHp = store.hp - remaining
+        // Blessing: last_stand — survive one killing blow at 1 HP (once per run)
+        const lastStandBlessing = store.activeModifier?.blessing?.effect?.type === 'last_stand'
+        if (lastStandBlessing && !store.lastStandUsed && newHp <= 0) {
+          store.setHp(1)
+          store.useLastStand()
+        } else {
+          store.setHp(newHp)
+        }
+      }
 
       playSFX?.('enemy_strike')
       return {

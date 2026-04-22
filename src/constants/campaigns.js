@@ -43,7 +43,7 @@ export const CAMPAIGN_THEMES = {
     particleEmoji: '✨',
     floors: 4,
     campaignWorld: 'Cyberpunk Seoul — corporate towers, neon markets, server districts',
-    locked: true,
+    locked: false,
   },
   spanish: {
     id: 'spanish',
@@ -64,7 +64,7 @@ export const CAMPAIGN_THEMES = {
     particleEmoji: '🌿',
     floors: 4,
     campaignWorld: 'Magical Latin America — jungle roads, ancient ruins, colonial plazas',
-    locked: true,
+    locked: false,
   },
 }
 
@@ -148,6 +148,67 @@ export const CARDS = {
     startingVocabCards: ['jp_vocab_strike', 'jp_vocab_strike', 'jp_vocab_wild_slash', 'jp_vocab_swift_strike'],
     startingGrammarCards: ['jp_gram_ward', 'jp_gram_ward', 'jp_gram_particle_shield'],
     startingReadingCards: ['jp_read_spirit_scroll', 'jp_read_spirit_scroll'],
-    // Rare is character-specific (Kenji gets Traveler's Wisdom)
   },
+  korean: {
+    characters: [
+      {
+        id: 'minjun',
+        name: 'Min-jun',
+        title: 'The Analyst',
+        type: CHARACTER_TYPES.NEWCOMER,
+        fluency: 'Zero knowledge',
+        description: 'Logical and precise. Breaking down language into systems and formulas.',
+        startingDeckBreakdown: { vocabulary: 4, grammar: 3, reading: 2, rare: 1 },
+        starterRelic: 'newcomers_phrasebook', // We can use same relics for now or unique ones
+        hp: 80,
+        locked: false,
+      },
+      {
+        id: 'jiwoo',
+        name: 'Ji-woo',
+        title: 'The Negotiator',
+        type: CHARACTER_TYPES.TRAVELER,
+        fluency: 'Some basics',
+        description: 'Smooth talker, quick thinker. Adapts to corporate pressure seamlessly.',
+        startingDeckBreakdown: { vocabulary: 4, grammar: 3, reading: 2, rare: 1 },
+        starterRelic: 'travelers_compass',
+        hp: 80,
+        locked: false,
+      }
+    ],
+    startingVocabCards: ['kr_vocab_strike', 'kr_vocab_strike', 'kr_vocab_wild_slash', 'kr_vocab_swift_strike'],
+    startingGrammarCards: ['kr_gram_ward', 'kr_gram_ward', 'kr_gram_particle_shield'],
+    startingReadingCards: ['kr_read_spirit_scroll', 'kr_read_spirit_scroll'],
+  },
+  spanish: {
+    characters: [
+      {
+        id: 'mateo',
+        name: 'Mateo',
+        title: 'The Explorer',
+        type: CHARACTER_TYPES.NEWCOMER,
+        fluency: 'Zero knowledge',
+        description: 'Fearless and adventurous. Jumps in without looking.',
+        startingDeckBreakdown: { vocabulary: 4, grammar: 3, reading: 2, rare: 1 },
+        starterRelic: 'newcomers_phrasebook',
+        hp: 80,
+        locked: false,
+      },
+      {
+        id: 'elena',
+        name: 'Elena',
+        title: 'The Historian',
+        type: CHARACTER_TYPES.TRAVELER,
+        fluency: 'Some basics',
+        description: 'Fascinated by the past, eager to piece together the narrative.',
+        startingDeckBreakdown: { vocabulary: 4, grammar: 3, reading: 2, rare: 1 },
+        starterRelic: 'travelers_compass',
+        hp: 80,
+        locked: false,
+      }
+    ],
+    startingVocabCards: ['es_vocab_strike', 'es_vocab_strike', 'es_vocab_wild_slash', 'es_vocab_swift_strike'],
+    startingGrammarCards: ['es_gram_ward', 'es_gram_ward', 'es_gram_particle_shield'],
+    startingReadingCards: ['es_read_spirit_scroll', 'es_read_spirit_scroll'],
+  }
 }

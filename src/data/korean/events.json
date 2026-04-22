@@ -1,0 +1,26 @@
+[
+  {
+    "id": "kr_event_1",
+    "floor_tier": 1,
+    "title": "A Corporate Memo",
+    "title_target": "기업 메모",
+    "setup_text": "You find a glowing memo pad.",
+    "npc_dialogue": "결재 바랍니다.",
+    "npc_dialogue_translation": "Please approve.",
+    "options": [
+      {
+        "text": "Approve",
+        "translation": "결재",
+        "outcome": "reward",
+        "outcome_text": "You approved the memo. You feel slightly healthier.",
+        "reward": { "type": "heal", "amount": 10, "description": "Heal 10 HP" }
+      },
+      {
+        "text": "Ignore",
+        "translation": "무시",
+        "outcome": "neutral",
+        "outcome_text": "You ignored the memo. Nothing happened."
+      }
+    ]
+  }
+]

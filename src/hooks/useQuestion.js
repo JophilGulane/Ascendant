@@ -5,6 +5,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import useSettingsStore from '../stores/settingsStore.js'
+import useRunStore from '../stores/runStore.js'
 
 const TIMER_SECONDS = {
   relaxed: 30,
@@ -13,9 +14,18 @@ const TIMER_SECONDS = {
   off: null, // no timer
 }
 
-export function useQuestion({ question, masteryLevel = 0, onResult, noTimer = false, autoHint = false }) {
+export function useQuestion({ question, masteryLevel = 0, onResult, noTimer = false, autoHint = false, isPaused = false }) {
   const timerSpeed = useSettingsStore(s => s.timerSpeed)
-  const maxSeconds = noTimer ? null : (TIMER_SECONDS[timerSpeed] ?? 20)
+  const activeModifier = useRunStore(s => s.activeModifier)
+
+  // Curse: timer_reduction overrides the settings timer
+  const curseEffect = activeModifier?.curse?.effect
+  const blessingEffect = activeModifier?.blessing?.effect
+  const overrideSeconds = curseEffect?.type === 'timer_reduction' ? curseEffect.value : null
+  const maxSeconds = noTimer ? null : (overrideSeconds ?? TIMER_SECONDS[timerSpeed] ?? 20)
+
+  // Blessing: free_hints means hint never costs energy (handled externally, we just export the flag)
+  const hasFreeHints = blessingEffect?.type === 'free_hints'
 
   // Mastery 4+: reduce timer by 5 seconds
   const effectiveMax = (masteryLevel >= 4 && maxSeconds !== null)
@@ -42,7 +52,7 @@ export function useQuestion({ question, masteryLevel = 0, onResult, noTimer = fa
     setHalfDamage(false)
     startRef.current = Date.now()
 
-    if (effectiveMax === null) return // no timer mode
+    if (effectiveMax === null || isPaused) return // no timer mode or paused
 
     timerRef.current = setInterval(() => {
       setTimeLeft(t => {
@@ -55,7 +65,7 @@ export function useQuestion({ question, masteryLevel = 0, onResult, noTimer = fa
     }, 1000)
 
     return () => clearInterval(timerRef.current)
-  }, [question?.id]) // reset on question change
+  }, [question?.id, isPaused]) // reset on question change or pause toggle
 
   // Handle timeout
   useEffect(() => {
@@ -110,6 +120,7 @@ export function useQuestion({ question, masteryLevel = 0, onResult, noTimer = fa
     selectedIndex,
     isFirstTry,
     halfDamage,
+    hasFreeHints,
     selectAnswer,
     revealHint,
     setHalfDamage,

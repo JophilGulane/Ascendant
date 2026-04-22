@@ -1,16 +1,23 @@
 // components/rooms/EventRoom.jsx
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import useRunStore from '../../stores/runStore.js'
 import { HoverTranslate } from '../shared/HoverTranslate.jsx'
 import { ScreenTransition } from '../shared/ScreenTransition.jsx'
+import { useAudio } from '../../hooks/useAudio.js'
+import { TopBar } from '../shared/TopBar.jsx'
 
 export function EventRoom() {
   const navigate = useNavigate()
   const store = useRunStore()
+  const { playSFX, playMusic } = useAudio()
   const [chosen, setChosen] = useState(null)
   const [outcome, setOutcome] = useState(null)
+
+  useEffect(() => {
+    playMusic(store.campaign || 'japanese', store.floor)
+  }, [playMusic, store.campaign, store.floor])
 
   // Load event from sessionStorage
   const eventData = (() => {
@@ -31,6 +38,7 @@ export function EventRoom() {
 
   const handleChoice = (option, idx) => {
     if (chosen !== null) return
+    playSFX('button_click')
     setChosen(idx)
     setOutcome(option)
 
@@ -51,10 +59,16 @@ export function EventRoom() {
 
   return (
     <ScreenTransition>
-      <div
-        className="w-full h-screen flex flex-col items-center justify-center px-4"
-        style={{ background: 'linear-gradient(180deg, #0a0516 0%, #0d0a1a 100%)' }}
-      >
+      <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden">
+        
+        <div className="absolute top-0 left-0 w-full z-50">
+          <TopBar />
+        </div>
+
+        <div
+          className="w-full h-full flex flex-col items-center justify-center px-4 pt-16"
+          style={{ background: 'linear-gradient(180deg, #0a0516 0%, #0d0a1a 100%)' }}
+        >
         <div className="absolute inset-0 opacity-15"
           style={{ backgroundImage: 'radial-gradient(ellipse at 50% 30%, #9333EA 0%, transparent 60%)' }}
         />
@@ -135,13 +149,14 @@ export function EventRoom() {
               transition={{ delay: 0.5 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => { sessionStorage.removeItem('active_encounter'); navigate('/map') }}
+              onClick={() => { playSFX('button_click'); sessionStorage.removeItem('active_encounter'); navigate('/map') }}
               className="mt-5 w-full py-3 rounded-xl bg-gray-800/60 border border-gray-700 text-gray-200 hover:bg-gray-700/60 transition-all font-medium"
             >
               Continue →
             </motion.button>
           )}
         </motion.div>
+        </div>
       </div>
     </ScreenTransition>
   )

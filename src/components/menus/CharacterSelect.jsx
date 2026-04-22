@@ -139,12 +139,15 @@ function CharTile({ char, isSelected, onClick }) {
   )
 }
 
-const CHARS = CAMPAIGN_CHARS.japanese?.characters || []
+
 
 export function CharacterSelect() {
   const navigate = useNavigate()
   const store = useRunStore()
   const [selectedChar, setSelectedChar] = useState(null)
+  
+  const campaignId = sessionStorage.getItem('selected_campaign') || 'japanese'
+  const CHARS = CAMPAIGN_CHARS[campaignId]?.characters || []
 
   const handleTileClick = (char) => {
     if (char.locked) return
@@ -153,7 +156,7 @@ export function CharacterSelect() {
 
   const handleEmbark = () => {
     if (!selectedChar) return
-    const campaign = CAMPAIGN_CHARS.japanese
+    const campaign = CAMPAIGN_CHARS[campaignId]
     
     // Choose rare card based on character
     const rareCard = selectedChar.id === 'hana' ? 'jp_read_newcomers_luck'
@@ -161,14 +164,21 @@ export function CharacterSelect() {
                    : 'jp_read_travelers_wisdom'
 
     const deck = buildStartingDeck(
-      campaign.startingVocabCards,
-      campaign.startingGrammarCards,
-      campaign.startingReadingCards,
+      campaign.startingVocabCards || [],
+      campaign.startingGrammarCards || [],
+      campaign.startingReadingCards || [],
       rareCard
     )
-    store.startRun('japanese', selectedChar, 0, deck, selectedChar.starterRelic)
+    // Store run config in sessionStorage — startRun will be called by ModifierSelect
+    // after the modifier is chosen, so starting HP/energy/gold apply correctly.
+    sessionStorage.setItem('pending_run', JSON.stringify({
+      campaignId,
+      character: selectedChar,
+      deck,
+      starterRelic: selectedChar.starterRelic,
+    }))
     sessionStorage.removeItem('active_encounter')
-    navigate('/map')
+    navigate('/modifier-select')
   }
 
   return (
@@ -294,10 +304,10 @@ export function CharacterSelect() {
               className="absolute right-0 top-0 bottom-0 z-10"
               style={{ width: '55%', paddingBottom: '6rem' }}
             >
-              {['kenji', 'hana', 'yuki'].includes(selectedChar.id) ? (
+              {['kenji', 'hana', 'yuki', 'minjun', 'jiwoo', 'mateo', 'elena'].includes(selectedChar.id) ? (
                 <div className="relative w-full h-full">
                   <img
-                    src={`/images/characters/japanese/${selectedChar.id}.png`}
+                    src={`/images/characters/${campaignId}/${selectedChar.id}.png`}
                     alt={selectedChar.name}
                     className="absolute inset-0 w-full h-full object-contain object-bottom z-10"
                     onError={e => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex' }}

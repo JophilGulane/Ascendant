@@ -110,12 +110,25 @@ export function useCombat() {
     const drawCount = getEffectiveDrawCount(s, 5)
     const effectiveEnergy = getEffectiveMaxEnergy(s)
 
+    // Blessing: bonus_draw adds to draw count
+    const modBlessing = s.activeModifier?.blessing?.effect
+    const modCurse = s.activeModifier?.curse?.effect
+    const bonusDraw = modBlessing?.type === 'bonus_draw' ? (modBlessing.value ?? 1) : 0
+    const effectiveDrawCount = drawCount + bonusDraw
+
     // v3: Retained cards stay in the hand — only draw enough to fill up to drawCount
-    const slotsToFill = Math.max(0, drawCount - retained.length)
+    const slotsToFill = Math.max(0, effectiveDrawCount - retained.length)
     // Cards currently in hand that are NOT retained go to discard
     const nonRetainedInHand = currentHand.filter(id => !retained.includes(id))
     const currentDeck = [...s.deck]
-    const currentDiscard = [...s.discardPile, ...nonRetainedInHand]
+
+    // Curse: chaos_hand — every other turn, shuffle non-retained hand cards back to deck
+    let currentDiscard = [...s.discardPile, ...nonRetainedInHand]
+    if (modCurse?.type === 'chaos_hand' && s.turnNumber % 2 === 0 && s.turnNumber > 0) {
+      currentDiscard = [...s.discardPile, ...nonRetainedInHand, ...retained]
+      // retained cards also get reshuffled this turn (chaos!)
+    }
+
     const { drawn, deck: newDeck, discard: newDiscard } = drawCards(currentDeck, currentDiscard, slotsToFill)
 
     // New hand = retained cards (still in hand) + newly drawn cards
@@ -151,6 +164,14 @@ export function useCombat() {
 
     // v2: Silence debuff — silenced card type cannot be played
     if (isCardTypeSilenced(card.type, s)) {
+      setShakingCardId(cardId)
+      setTimeout(() => setShakingCardId(null), 500)
+      return
+    }
+
+    // Curse: type_lock — cannot play the same card type consecutively
+    const typeLockCurse = s.activeModifier?.curse?.effect?.type === 'type_lock'
+    if (typeLockCurse && s.lastCardTypePlayed && s.lastCardTypePlayed === card.type) {
       setShakingCardId(cardId)
       setTimeout(() => setShakingCardId(null), 500)
       return
@@ -226,6 +247,15 @@ export function useCombat() {
 
       // Chain resolution
       const chainResult = resolveChain(card.type, { chainActive: s.chainActive, chainType: s.chainType }, s, s.relics.includes('chain_bracelet'))
+      if (chainResult.bonusMultiplier > 1) {
+        playSFX('chain_activate')
+      }
+
+      // Blessing: chain_starter — first correct answer each turn auto-activates chain
+      const chainStarterBlessing = s.activeModifier?.blessing?.effect?.type === 'chain_starter'
+      if (chainStarterBlessing && s.fightCorrectStreak === 0 && !s.chainActive) {
+        s.activateChain(card.type)
+      }
 
       // Card effect
       let mult = chainResult.bonusMultiplier
@@ -237,6 +267,8 @@ export function useCombat() {
       s.removeFromHand(card.id)
       s.addToDiscard(card.id)
       s.clearRetainGrowth(card.id)
+      // Track for type_lock curse
+      s.setLastCardTypePlayed(card.type)
 
       setAnimState('correct')
       setTimeout(() => setAnimState(null), 600)
@@ -263,11 +295,15 @@ export function useCombat() {
       if (buffTemplate) {
         if (s.relics.includes('newcomers_phrasebook') && firstMistake) {
           // Negated by relic
-        } else if (s.relics.includes('cracked_hourglass')) {
-          s.addEnemyBuff({ ...buffTemplate })
-          s.addEnemyBuff({ ...buffTemplate })
         } else {
+          // Apply buff normally
           s.addEnemyBuff({ ...buffTemplate })
+          
+          // Apply extra times for relic / mastery rule
+          const extraBuffs = (s.relics.includes('cracked_hourglass') ? 1 : 0) + (s.masteryLevel >= 5 ? 1 : 0)
+          for (let i = 0; i < extraBuffs; i++) {
+            s.addEnemyBuff({ ...buffTemplate })
+          }
         }
       }
 
@@ -289,7 +325,7 @@ export function useCombat() {
     if (!effect) return
 
     if (effect.damage) {
-      const dmg = calculateDamage({
+      let baseDmg = calculateDamage({
         base: effect.damage,
         bonusCorrectFirstTry: effect.bonus_correct_first_try || effect.bonus_correct_no_hint || 0,
         chainMultiplier,
@@ -300,23 +336,33 @@ export function useCombat() {
         hits: effect.hits || 1,
       })
 
+      // Apply bonus_damage from active modifier blessing (e.g. Critical Knowledge)
+      const modBlessing = s.activeModifier?.blessing?.effect
+      if (modBlessing?.type === 'bonus_damage') {
+        baseDmg += modBlessing.value
+      }
+
       // Chain armor: only breaks if chain combo (chainMultiplier > 1)
       const bypassesChainArmor = chainMultiplier > 1
 
       const finalDmg = bypassesChainArmor
-        ? dmg  // chain combos bypass armor
-        : (effect.bonus_if_block_active && s.block > 0 ? dmg + effect.bonus_if_block_active : dmg)
+        ? baseDmg  // chain combos bypass armor
+        : (effect.bonus_if_block_active && s.block > 0 ? baseDmg + effect.bonus_if_block_active : baseDmg)
 
       s.damageEnemy(finalDmg)
       showDamageNumber(finalDmg, 'damage')
     }
 
     if (effect.block) {
-      // v3: retain growth — each retained turn adds +4 bonus block
-      const stacks = s.retainGrowthStacks?.[card.id] || 0
-      const growthBonus = stacks * 4
-      const blockGained = calculateBlock({ base: effect.block + growthBonus, chainMultiplier })
-      s.addBlock(blockGained)
+      // Curse: no_block — block cards deal 0 block
+      const noBlockCurse = s.activeModifier?.curse?.effect?.type === 'no_block'
+      if (!noBlockCurse) {
+        // v3: retain growth — each retained turn adds +4 bonus block
+        const stacks = s.retainGrowthStacks?.[card.id] || 0
+        const growthBonus = stacks * 4
+        const blockGained = calculateBlock({ base: effect.block + growthBonus, chainMultiplier })
+        s.addBlock(blockGained)
+      }
     }
 
     if (effect.heal) {
@@ -334,6 +380,16 @@ export function useCombat() {
 
     if (effect.chain_bonus && chainMultiplier > 1) {
       s.damageEnemy(effect.chain_bonus)
+    }
+
+    // Blessing: mono_mastery — if 3+ cards of same type played this turn, queue +1 energy
+    const monoMasteryBlessing = s.activeModifier?.blessing?.effect?.type === 'mono_mastery'
+    if (monoMasteryBlessing) {
+      const typeCounts = s.cardTypesPlayedThisFight || {}
+      const thisTypeCount = (typeCounts[card.type] || 0) + 1 // +1 because trackCardTypePlayed runs after
+      if (thisTypeCount === 3) {
+        s.queueBonusEnergyNextTurn(1)
+      }
     }
 
     // v3: Discard/Draw — discard N cards from hand, draw N+1

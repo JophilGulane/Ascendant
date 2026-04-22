@@ -1,6 +1,8 @@
 // utils/questions.js
 // Question sampling and filtering utilities
 
+import { isRuleActive } from '../constants/masteryRules.js'
+
 function weightedRandomChoice(pool, weights) {
   const totalWeight = weights.reduce((sum, w) => sum + w, 0)
   let random = Math.random() * totalWeight
@@ -92,7 +94,8 @@ export function sampleQuestionsForCard(card, allQuestions, graveyardEntries, set
   }
 
   // Spaced repetition: algorithm like Anki
-  if (settings?.spacedRepetition !== false) {
+  const isHaunted = isRuleActive('haunting_forced', store?.masteryLevel || 0)
+  if (settings?.spacedRepetition !== false || isHaunted) {
     const weights = pool.map(q => {
       const entry = graveyardEntries?.[q.id]
       if (!entry) return 100 // Unseen card, high base weight

@@ -3,6 +3,8 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { CARD_TYPE_META, CARD_RARITY_META } from '../../constants/cardTypes.js'
 import { HoverTranslate } from '../shared/HoverTranslate.jsx'
+import { useAudio } from '../../hooks/useAudio.js'
+import useRunStore from '../../stores/runStore.js'
 
 /**
  * @param {Object[]} cards - sampled draft card data objects
@@ -13,12 +15,19 @@ import { HoverTranslate } from '../shared/HoverTranslate.jsx'
  */
 export default function DraftScreen({ cards = [], cardMap = {}, onPick, onSkip, accuracy = 1 }) {
   const [selected, setSelected] = useState(null)
+  const { playSFX } = useAudio()
+  const activeModifier = useRunStore(s => s.activeModifier)
+  // Curse: blind_drafts — card names/effects are hidden during draft
+  const isBlindDraft = activeModifier?.curse?.effect?.type === 'blind_drafts'
 
   const accuracyLabel = accuracy >= 0.8 ? 'Excellent!' : accuracy >= 0.6 ? 'Good' : 'Keep practicing'
   const accuracyColor = accuracy >= 0.8 ? 'text-green-400' : accuracy >= 0.6 ? 'text-yellow-400' : 'text-red-400'
 
   const handlePick = () => {
-    if (selected) onPick(selected)
+    if (selected) {
+      playSFX('correct')
+      onPick(selected)
+    }
   }
 
   return (
@@ -66,7 +75,7 @@ export default function DraftScreen({ cards = [], cardMap = {}, onPick, onSkip, 
                   animate={{ opacity: 1, y: 0, rotateY: 0 }}
                   transition={{ delay: i * 0.15, type: 'spring', stiffness: 280, damping: 24 }}
                   whileHover={{ y: -8, scale: 1.03 }}
-                  onClick={() => setSelected(isSelected ? null : card)}
+                  onClick={() => { playSFX('button_click'); setSelected(isSelected ? null : card); }}
                   className={`
                     w-40 p-4 rounded-2xl border-2 cursor-pointer transition-all
                     ${typeMeta.bgClass}
@@ -84,19 +93,27 @@ export default function DraftScreen({ cards = [], cardMap = {}, onPick, onSkip, 
 
                   {/* Name */}
                   <div className={`font-bold text-base mb-1 ${typeMeta.colorClass}`}>
-                    <HoverTranslate translation={card.name_native}>{card.name_target}</HoverTranslate>
+                    {isBlindDraft ? (
+                      <span className="text-gray-600 italic">???</span>
+                    ) : (
+                      <HoverTranslate translation={card.name_native}>{card.name_target}</HoverTranslate>
+                    )}
                   </div>
-                  <div className="text-xs text-gray-500 mb-2">{card.name_native}</div>
+                  <div className="text-xs text-gray-500 mb-2">
+                    {isBlindDraft ? '???' : card.name_native}
+                  </div>
 
                   {/* Cost */}
                   <div className="text-xs text-gray-400 mb-2">⚡ {card.energy_cost} Energy</div>
 
                   {/* Effect */}
-                  <div className="text-xs text-gray-300 leading-tight">{getEffectDesc(card)}</div>
+                  <div className="text-xs text-gray-300 leading-tight">
+                    {isBlindDraft ? <span className="text-gray-700 italic">Effect hidden</span> : getEffectDesc(card)}
+                  </div>
 
                   {/* Flavor */}
                   <div className="mt-3 text-[10px] text-gray-600 italic border-t border-gray-700/50 pt-2">
-                    <HoverTranslate translation={card.flavor_native}>{card.flavor_target}</HoverTranslate>
+                    {isBlindDraft ? '...' : <HoverTranslate translation={card.flavor_native}>{card.flavor_target}</HoverTranslate>}
                   </div>
 
                   {isSelected && (
@@ -133,7 +150,7 @@ export default function DraftScreen({ cards = [], cardMap = {}, onPick, onSkip, 
           <motion.button
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            onClick={onSkip}
+            onClick={() => { playSFX('button_click'); onSkip(); }}
             className="px-6 py-3 rounded-xl font-medium text-sm border border-gray-700 bg-gray-800/40 text-gray-400 hover:bg-gray-700/40 hover:text-gray-200 transition-all cursor-pointer"
           >
             Skip

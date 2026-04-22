@@ -14,6 +14,9 @@ const useRunStore = create(
       campaign: null,
       character: null,
       masteryLevel: 0,
+      activeModifier: null,
+      lastCardTypePlayed: null,  // for type_lock curse
+      lastStandUsed: false,       // for last_stand blessing (once per run)
 
       // Player state
       hp: 80,
@@ -68,6 +71,7 @@ const useRunStore = create(
 
       // v2: Per-fight question pool — reset on fight start, prevents repeats
       fightQuestionPoolUsed: [],
+      blindCardId: null,
 
       // Card type tracking for self_buff_focus
       cardTypesPlayedThisFight: {},
@@ -223,6 +227,10 @@ const useRunStore = create(
         relics: s.relics.includes(relicId) ? s.relics : [...s.relics, relicId]
       })),
 
+      // Modifier tracking
+      setLastCardTypePlayed: (type) => set({ lastCardTypePlayed: type }),
+      useLastStand: () => set({ lastStandUsed: true }),
+
       // Mistakes & journal
       logMistake: (questionId, label, reading) => set(s => ({
         sessionMistakes: [...s.sessionMistakes, {
@@ -272,32 +280,39 @@ const useRunStore = create(
       setInCombat: (val) => set({ inCombat: val }),
 
       // v2: startFight — single action that resets all fight state atomically
-      startFight: (enemy) => set(s => ({
-        inCombat: true,
-        currentEnemy: enemy,
-        enemyHp: enemy.hp,
-        enemyMaxHp: enemy.hp,
-        enemyArmor: 0,
-        enemyFuryStacks: 0,
-        enemyFocusType: null,
-        intentIndex: 0,
-        lockedCards: [],           // RULE: unlock all cards at fight start
-        retainedCards: [],         // v3: clear retained cards at fight start
-        retainGrowthStacks: {},    // v3: clear growth stacks at fight start
-        activeEnemyBuffs: [],
-        chainActive: false,
-        chainType: null,
-        fightQuestionPoolUsed: [], // RULE: reset question pool at fight start
-        cardTypesPlayedThisFight: {},
-        hintUsedThisFight: false,
-        wornDictionaryUsedThisFight: false,
-        fightCorrect: 0,
-        fightTotal: 0,
-        fightCorrectStreak: 0,
-        block: s.relics.includes('fox_mask') ? 10 : 0,
-        energy: s.maxEnergy,
-        bonusEnergyNextTurn: 0,
-      })),
+      startFight: (enemy) => set(s => {
+        let newBlindCardId = null
+        if (s.masteryLevel >= 3 && s.deck.length > 0) {
+          newBlindCardId = s.deck[Math.floor(Math.random() * s.deck.length)]
+        }
+        return {
+          inCombat: true,
+          currentEnemy: enemy,
+          enemyHp: enemy.hp,
+          enemyMaxHp: enemy.hp,
+          enemyArmor: 0,
+          enemyFuryStacks: 0,
+          enemyFocusType: null,
+          intentIndex: 0,
+          lockedCards: [],           // RULE: unlock all cards at fight start
+          retainedCards: [],         // v3: clear retained cards at fight start
+          retainGrowthStacks: {},    // v3: clear growth stacks at fight start
+          activeEnemyBuffs: [],
+          chainActive: false,
+          chainType: null,
+          fightQuestionPoolUsed: [], // RULE: reset question pool at fight start
+          cardTypesPlayedThisFight: {},
+          hintUsedThisFight: false,
+          wornDictionaryUsedThisFight: false,
+          fightCorrect: 0,
+          fightTotal: 0,
+          fightCorrectStreak: 0,
+          block: s.relics.includes('fox_mask') ? 10 : 0,
+          energy: s.maxEnergy,
+          bonusEnergyNextTurn: 0,
+          blindCardId: newBlindCardId,
+        }
+      }),
 
       // v2: endFight — moves remaining hand to discard to prevent deck shrinkage
       endFight: () => set(s => ({
@@ -312,59 +327,87 @@ const useRunStore = create(
         chainType: null,
         fightQuestionPoolUsed: [],
         cardTypesPlayedThisFight: {},
-        // CRITICAL: move remaining hand cards to discard — never lose cards
-        discardPile: [...s.discardPile, ...s.hand],
+        // CRITICAL: Merge all combat cards back into the master deck
+        deck: [...s.deck, ...s.discardPile, ...s.hand],
+        discardPile: [],
         hand: [],
         block: 0,
+        blindCardId: null,
       })),
 
 
       // Run lifecycle
-      startRun: (campaign, character, masteryLevel, startingDeck, starterRelicId) => set({
-        runId: crypto.randomUUID(),
-        campaign,
-        character,
-        masteryLevel,
-        hp: 80,
-        maxHp: 80,
-        block: 0,
-        gold: 0,
-        floor: 1,
-        energy: 3,
-        maxEnergy: 3,
-        deck: startingDeck || [],
-        hand: [],
-        discardPile: [],
-        exhaustPile: [],
-        relics: starterRelicId ? [starterRelicId] : [],
-        activeBuffs: [],
-        lockedCards: [],
-        activePlayerDebuffs: [],
-        activeEnemyBuffs: [],
-        chainActive: false,
-        chainType: null,
-        inCombat: false,
-        currentEnemy: null,
-        sessionMistakes: [],
-        sessionCorrect: 0,
-        sessionTotal: 0,
-        fightCorrect: 0,
-        fightTotal: 0,
-        fightQuestionPoolUsed: [],
-        cardTypesPlayedThisFight: {},
-        journalWords: [],
-        journalGrammar: [],
-        mapNodes: [],
-        mapPaths: [],
-        currentNodeId: null,
-        hintUsedThisFight: false,
-        wornDictionaryUsedThisFight: false,
-        turnNumber: 0,
-        intentIndex: 0,
-        enemyArmor: 0,
-        enemyFuryStacks: 0,
-        enemyFocusType: null,
-      }),
+      startRun: (campaign, character, masteryLevel, startingDeck, starterRelicId) => {
+        // Read chosen modifier from sessionStorage
+        let activeModifier = null
+        try {
+          const raw = sessionStorage.getItem('chosen_modifier')
+          if (raw) activeModifier = JSON.parse(raw)
+        } catch {}
+        sessionStorage.removeItem('chosen_modifier')
+
+        // Apply curse effects that affect starting state
+        let startHp = 80
+        let startMaxEnergy = 3
+        let startGold = 0
+        if (activeModifier?.curse?.effect) {
+          const e = activeModifier.curse.effect
+          if (e.type === 'start_hp') startHp = e.value
+        }
+        if (activeModifier?.blessing?.effect) {
+          const e = activeModifier.blessing.effect
+          if (e.type === 'bonus_max_energy') startMaxEnergy = 3 + e.value
+          if (e.type === 'bonus_gold') startGold = e.value
+        }
+
+        set({
+          runId: crypto.randomUUID(),
+          campaign,
+          character,
+          masteryLevel,
+          activeModifier,
+          hp: startHp,
+          maxHp: startHp,
+          block: 0,
+          gold: startGold,
+          floor: 1,
+          energy: startMaxEnergy,
+          maxEnergy: startMaxEnergy,
+          deck: startingDeck || [],
+          hand: [],
+          discardPile: [],
+          exhaustPile: [],
+          relics: starterRelicId ? [starterRelicId] : [],
+          activeBuffs: [],
+          lockedCards: [],
+          activePlayerDebuffs: [],
+          activeEnemyBuffs: [],
+          chainActive: false,
+          chainType: null,
+          inCombat: false,
+          currentEnemy: null,
+          sessionMistakes: [],
+          sessionCorrect: 0,
+          sessionTotal: 0,
+          fightCorrect: 0,
+          fightTotal: 0,
+          fightQuestionPoolUsed: [],
+          cardTypesPlayedThisFight: {},
+          journalWords: [],
+          journalGrammar: [],
+          mapNodes: [],
+          mapPaths: [],
+          currentNodeId: null,
+          hintUsedThisFight: false,
+          wornDictionaryUsedThisFight: false,
+          turnNumber: 0,
+          intentIndex: 0,
+          enemyArmor: 0,
+          enemyFuryStacks: 0,
+          enemyFocusType: null,
+          blindCardId: null,
+        })
+      },
 
       endRun: () => set({
         runId: null,

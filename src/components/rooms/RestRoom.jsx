@@ -1,24 +1,34 @@
 // components/rooms/RestRoom.jsx
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import useRunStore from '../../stores/runStore.js'
 import useSettingsStore from '../../stores/settingsStore.js'
 import { isRuleActive } from '../../constants/masteryRules.js'
 import { ScreenTransition } from '../shared/ScreenTransition.jsx'
+import { useAudio } from '../../hooks/useAudio.js'
+import { TopBar } from '../shared/TopBar.jsx'
 
 export function RestRoom() {
   const navigate = useNavigate()
   const store = useRunStore()
   const settings = useSettingsStore()
+  const { playSFX, playMusic } = useAudio()
   const [chosen, setChosen] = useState(null)
+
+  useEffect(() => {
+    playMusic(store.campaign || 'japanese', store.floor)
+  }, [playMusic, store.campaign, store.floor])
 
   const restReviewOnly = isRuleActive('rest_review_only', store.masteryLevel)
   const healAmount = Math.floor(store.maxHp * 0.25)
   const canHeal = store.hp < store.maxHp
+  // Curse: no_rest_heal—rest sites cannot heal
+  const noRestHeal = store.activeModifier?.curse?.effect?.type === 'no_rest_heal'
 
   const handleHeal = () => {
     setChosen('heal')
+    playSFX('correct') // good sound for healing
     store.healHp(healAmount)
     sessionStorage.removeItem('active_encounter')
     setTimeout(() => navigate('/map'), 1200)
@@ -26,6 +36,7 @@ export function RestRoom() {
 
   const handleReview = () => {
     setChosen('review')
+    playSFX('correct') // good sound for review
     // For Phase 1, just give a small restoration (full graveyard review in Phase 2)
     sessionStorage.removeItem('active_encounter')
     setTimeout(() => navigate('/map'), 1500)
@@ -33,10 +44,16 @@ export function RestRoom() {
 
   return (
     <ScreenTransition>
-      <div
-        className="w-full h-screen flex flex-col items-center justify-center"
-        style={{ background: 'linear-gradient(180deg, #0a0516 0%, #1a0a00 100%)' }}
-      >
+      <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden">
+        
+        <div className="absolute top-0 left-0 w-full z-50">
+          <TopBar />
+        </div>
+
+        <div
+          className="w-full h-full flex flex-col items-center justify-center px-6 pt-16"
+          style={{ background: 'linear-gradient(180deg, #0a0516 0%, #1a0a00 100%)' }}
+        >
         {/* Ambient glow */}
         <div className="absolute inset-0 opacity-20"
           style={{ backgroundImage: 'radial-gradient(ellipse at 50% 50%, #FF8C00 0%, transparent 60%)' }}
@@ -59,13 +76,14 @@ export function RestRoom() {
             {/* Heal */}
             {!restReviewOnly && (
               <motion.button
-                whileHover={!chosen ? { scale: 1.02 } : {}}
-                whileTap={!chosen ? { scale: 0.98 } : {}}
-                onClick={!chosen ? handleHeal : undefined}
-                disabled={!!chosen || !canHeal}
+                whileHover={!chosen && !noRestHeal ? { scale: 1.02 } : {}}
+                whileTap={!chosen && !noRestHeal ? { scale: 0.98 } : {}}
+                onClick={!chosen && !noRestHeal ? handleHeal : undefined}
+                disabled={!!chosen || !canHeal || noRestHeal}
                 className={`
                   p-5 rounded-2xl border-2 text-left transition-all
                   ${chosen === 'heal' ? 'border-emerald-500 bg-emerald-900/30' :
+                    noRestHeal ? 'border-red-900/50 bg-red-950/20 opacity-50' :
                     !canHeal ? 'border-gray-700 bg-gray-900/30 opacity-50' :
                     'border-amber-700/60 bg-amber-950/20 hover:border-amber-500 hover:bg-amber-950/40 cursor-pointer'}
                 `}
@@ -81,6 +99,7 @@ export function RestRoom() {
                 <div className="text-xs text-gray-500">
                   Current HP: {store.hp} / {store.maxHp}
                   {!canHeal && ' (already at max)'}
+                  {noRestHeal && <span className="text-red-400"> (Cursed — healing forbidden)</span>}
                 </div>
               </motion.button>
             )}
@@ -116,6 +135,7 @@ export function RestRoom() {
             「少し休め。山はまだ続く。」— Rest a while. The mountain goes on.
           </p>
         </motion.div>
+        </div>
       </div>
     </ScreenTransition>
   )

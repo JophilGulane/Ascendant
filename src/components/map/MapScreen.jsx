@@ -7,8 +7,9 @@ import useRunStore from '../../stores/runStore.js'
 import { generateFloorMap, unlockNextNodes, visitNode } from '../../utils/map.js'
 import { NODE_TYPES } from '../../constants/nodeTypes.js'
 import { ScreenTransition } from '../shared/ScreenTransition.jsx'
-import enemiesData from '../../data/japanese/enemies.json'
-import eventsData from '../../data/japanese/events.json'
+import { getEnemies, getEvents } from '../../utils/dataLoader.js'
+import { useAudio } from '../../hooks/useAudio.js'
+import { TopBar } from '../shared/TopBar.jsx'
 
 // STS-style node icons (dark grey line art style on parchment)
 const NODE_META = {
@@ -91,6 +92,7 @@ function MapNodeSTS({ node, x, y, isUnlocked, isVisited, isCurrent, onClick }) {
 export function MapScreen() {
   const navigate = useNavigate()
   const store = useRunStore()
+  const { playSFX, playMusic } = useAudio()
   const [showLegend, setShowLegend] = useState(true)
 
   useEffect(() => {
@@ -108,9 +110,12 @@ export function MapScreen() {
       const { nodes, paths } = generateFloorMap(store.floor, store.masteryLevel)
       store.setMap(nodes, paths)
     }
-  }, [store.floor, navigate])
+
+    playMusic(store.campaign || 'japanese', store.floor)
+  }, [store.floor, store.campaign, store.mapNodes, store.masteryLevel, navigate, playMusic])
 
   const handleNodeClick = (node) => {
+    playSFX('button_click')
     const updatedNodes = visitNode(store.mapNodes, node.id)
     const unlockedNodes = unlockNextNodes(updatedNodes, store.mapPaths, node.id)
     store.setMapNodes(unlockedNodes)
@@ -123,6 +128,7 @@ export function MapScreen() {
         break
       case NODE_TYPES.COMBAT:
       case NODE_TYPES.ELITE: {
+        const enemiesData = getEnemies(store.campaign)
         const floorEnemies = enemiesData.filter(e =>
           e.floor === store.floor &&
           (node.type === NODE_TYPES.ELITE ? e.tier === 'elite' : e.tier === 'regular') &&
@@ -136,6 +142,7 @@ export function MapScreen() {
         break
       }
       case NODE_TYPES.BOSS: {
+        const enemiesData = getEnemies(store.campaign)
         const boss = enemiesData.find(e => e.floor === store.floor && e.tier === 'boss')
           || enemiesData.find(e => e.tier === 'boss')
         if (boss) store.setEnemy(boss)
@@ -149,6 +156,7 @@ export function MapScreen() {
         nextPath = '/merchant'
         break
       case NODE_TYPES.EVENT: {
+        const eventsData = getEvents(store.campaign)
         const floorEvents = eventsData.filter(e => e.floor_tier <= store.floor)
         const event = floorEvents[Math.floor(Math.random() * floorEvents.length)]
         if (event) sessionStorage.setItem('lq_current_event', JSON.stringify(event))
@@ -233,30 +241,12 @@ export function MapScreen() {
         style={{ background: '#111318', fontFamily: "'Crimson Text', Georgia, serif" }} // Dark outer background
       >
         {/* ── Header Bar ── */}
-        <div
-          className="relative z-30 flex items-center justify-between px-6 py-1.5"
-          style={{
-            background: 'linear-gradient(180deg, #2b353f 0%, #1a2228 100%)',
-            borderBottom: '2px solid #111',
-            boxShadow: '0 4px 10px rgba(0,0,0,0.6)',
-            color: '#ddd',
-            fontSize: '0.85rem'
-          }}
-        >
-          <div className="flex items-center gap-4">
-            <div className="font-bold text-white text-base mr-2">{store.character?.name || 'Traveler'}</div>
-            <div className="flex items-center gap-1 text-red-400 font-bold">❤️ {store.hp}/{store.maxHp}</div>
-            <div className="flex items-center gap-1 text-yellow-400 font-bold">🪙 {store.gold}</div>
-          </div>
-          <div className="flex items-center gap-4">
-            <button onClick={() => setShowLegend(!showLegend)} className="text-gray-400 hover:text-white" title="Map Legend">📜 Legend</button>
-            <div className="bg-gray-800 px-3 py-0.5 rounded border border-gray-600 font-bold">Floor {store.floor}</div>
-            <button className="text-xl" title="Settings">⚙️</button>
-          </div>
+        <div className="absolute top-0 left-0 w-full z-50">
+          <TopBar hideMapButton={true} />
         </div>
 
         {/* ── Main Map Area ── */}
-        <div className="relative flex-1 flex items-center justify-center overflow-hidden">
+        <div className="relative flex-1 flex items-center justify-center overflow-hidden pt-12">
           {/* Scrollable Container */}
           <div 
             className="w-full max-w-[800px] h-full overflow-y-auto overflow-x-hidden relative"

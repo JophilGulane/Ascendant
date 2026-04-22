@@ -7,6 +7,9 @@ import { HoverTranslate } from '../shared/HoverTranslate.jsx'
 import { CARD_TYPE_META, CARD_RARITY_META } from '../../constants/cardTypes.js'
 import { shuffle } from '../../utils/deck.js'
 import { ScreenTransition } from '../shared/ScreenTransition.jsx'
+import { TopBar } from '../shared/TopBar.jsx'
+import { isRuleActive } from '../../constants/masteryRules.js'
+import { useAudio } from '../../hooks/useAudio.js'
 
 const MERCHANT_DIALOGUE = [
   { text: 'いらっしゃいませ！', translation: 'Welcome!' },
@@ -20,6 +23,7 @@ const REMOVE_PRICE = 75
 export function MerchantRoom() {
   const navigate = useNavigate()
   const store = useRunStore()
+  const { playSFX, playMusic } = useAudio()
   const [shopCards, setShopCards] = useState([])
   const [cardMap, setCardMap] = useState({})
   const [purchased, setPurchased] = useState(new Set())
@@ -28,7 +32,7 @@ export function MerchantRoom() {
   const [notification, setNotification] = useState(null)
 
   useEffect(() => {
-    import('../../data/japanese/cards.json').then(mod => {
+    import(`../../data/${store.campaign || 'japanese'}/cards.json`).then(mod => {
       const allCards = mod.default
       const map = {}
       allCards.forEach(c => { map[c.id] = c })
@@ -46,7 +50,11 @@ export function MerchantRoom() {
       ].filter(Boolean)
       setShopCards(picked)
     })
-  }, [])
+    
+    // Play merchant music if different, or just keep map music. Let's just play a little bell on enter.
+    playSFX('correct') // Wait, we can use button_click or just let it be silent.
+    playMusic(store.campaign || 'japanese', store.floor)
+  }, [playSFX, playMusic, store.campaign, store.floor])
 
   // Cycle merchant dialogue
   useEffect(() => {
@@ -57,8 +65,13 @@ export function MerchantRoom() {
   }, [])
 
   const buyCard = (card) => {
-    const price = CARD_PRICES[card.rarity] || 80
+    // Curse: merchant_tax increases all prices
+    const taxMult = store.activeModifier?.curse?.effect?.type === 'merchant_tax'
+      ? (store.activeModifier.curse.effect.value ?? 1.2)
+      : 1
+    const price = Math.ceil((CARD_PRICES[card.rarity] || 80) * taxMult)
     if (store.gold < price) {
+      playSFX('wrong')
       setNotification('Not enough gold!')
       setTimeout(() => setNotification(null), 1500)
       return
@@ -66,12 +79,14 @@ export function MerchantRoom() {
     store.spendGold(price)
     store.addCardToDeck(card.id)
     setPurchased(prev => new Set([...prev, card.id]))
+    playSFX('correct')
     setNotification(`${card.name_native} added to deck!`)
     setTimeout(() => setNotification(null), 1800)
   }
 
   const removeCard = (cardId) => {
     if (store.gold < REMOVE_PRICE) {
+      playSFX('wrong')
       setNotification('Not enough gold!')
       setTimeout(() => setNotification(null), 1500)
       return
@@ -79,19 +94,27 @@ export function MerchantRoom() {
     store.spendGold(REMOVE_PRICE)
     store.removeCardFromDeck(cardId)
     setRemoveMode(false)
+    playSFX('correct')
     setNotification('Card removed!')
     setTimeout(() => setNotification(null), 1800)
   }
 
   const dialogue = MERCHANT_DIALOGUE[dialogueIdx]
   const has_compass = store.relics.includes('merchants_scale')
+  const isTargetOnly = isRuleActive('merchant_target_only', store.masteryLevel)
 
   return (
     <ScreenTransition>
-      <div
-        className="w-full h-screen flex flex-col overflow-hidden"
-        style={{ background: 'linear-gradient(180deg, #0a0516 0%, #001a00 100%)' }}
-      >
+      <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden" style={{ fontFamily: "'Crimson Text', Georgia, serif" }}>
+        
+        <div className="absolute top-0 left-0 w-full z-50">
+          <TopBar />
+        </div>
+
+        <div
+          className="w-full h-full flex flex-col overflow-hidden pt-20"
+          style={{ background: 'linear-gradient(180deg, #0a0516 0%, #001a00 100%)' }}
+        >
         <div className="absolute inset-0 opacity-15"
           style={{ backgroundImage: 'radial-gradient(ellipse at 50% 30%, #00AA44 0%, transparent 60%)' }}
         />
@@ -103,7 +126,7 @@ export function MerchantRoom() {
             <div className="flex-1">
               <div className="text-xl font-bold text-green-200">Mountain Merchant</div>
               <div className="flex items-center gap-2 mt-1">
-                <HoverTranslate translation={dialogue.translation} className="text-sm text-green-400 italic">
+                <HoverTranslate translation={isTargetOnly ? null : dialogue.translation} className="text-sm text-green-400 italic">
                   「{dialogue.text}」
                 </HoverTranslate>
               </div>
@@ -177,7 +200,7 @@ export function MerchantRoom() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setRemoveMode(!removeMode)}
+                onClick={() => { playSFX('button_click'); setRemoveMode(!removeMode) }}
                 disabled={store.gold < REMOVE_PRICE}
                 className={`
                   px-4 py-2 rounded-lg text-sm border transition-all
@@ -220,7 +243,7 @@ export function MerchantRoom() {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => { sessionStorage.removeItem('active_encounter'); navigate('/map') }}
+            onClick={() => { playSFX('button_click'); sessionStorage.removeItem('active_encounter'); navigate('/map') }}
             className="w-full py-3 rounded-xl border border-gray-700 bg-gray-800/40 text-gray-300 hover:bg-gray-700/40 transition-all font-medium"
           >
             Leave Shop
@@ -238,6 +261,7 @@ export function MerchantRoom() {
             {notification}
           </motion.div>
         )}
+        </div>
       </div>
     </ScreenTransition>
   )

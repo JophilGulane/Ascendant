@@ -3,7 +3,8 @@
 
 import { motion } from 'framer-motion'
 import { DebuffBadges } from './DebuffBadges.jsx'
-import relicsData from '../../data/japanese/relics.json'
+import { getRelics } from '../../utils/dataLoader.js'
+import useRunStore from '../../stores/runStore.js'
 
 /**
  * @param {number} hp
@@ -16,6 +17,7 @@ import relicsData from '../../data/japanese/relics.json'
  * @param {string[]} relics  - active relic IDs
  */
 export function PlayerStatus({ hp, maxHp, block, energy, maxEnergy, debuffs = [], isHit = false, relics = [] }) {
+  const campaign = useRunStore(s => s.campaign)
   const hpPercent = Math.max(0, (hp / maxHp) * 100)
   const hpColor = hpPercent > 50 ? 'bg-emerald-500' : hpPercent > 25 ? 'bg-yellow-500' : 'bg-red-600'
   const criticalHp = hpPercent <= 20
@@ -84,7 +86,7 @@ export function PlayerStatus({ hp, maxHp, block, energy, maxEnergy, debuffs = []
               className="text-base cursor-help"
               title={relicId.replace(/_/g, ' ')}
             >
-              {getRelicIcon(relicId)}
+              {getRelicIcon(relicId, campaign)}
             </span>
           ))}
         </div>
@@ -93,7 +95,8 @@ export function PlayerStatus({ hp, maxHp, block, energy, maxEnergy, debuffs = []
   )
 }
 
-function getRelicIcon(relicId) {
+function getRelicIcon(relicId, campaign) {
+  const relicsData = getRelics(campaign)
   const relic = relicsData.find(r => r.id === relicId)
   return relic ? relic.icon : '💎'
 }
