@@ -26,6 +26,8 @@ const CardComponent = React.memo(function CardComponent({
   isPrimed = false,
   isSelected = false,
   isShaking = false,
+  isRetained = false,   // v3: this card is retained (stays in hand next turn)
+  growthStacks = 0,     // v3: how many turns this card has been retained
   onSelect,
   indexInHand = 0,
   totalInHand = 5,
@@ -83,6 +85,15 @@ const CardComponent = React.memo(function CardComponent({
         />
       )}
 
+      {/* v3: Glow for retained cards */}
+      {isRetained && (
+        <motion.div
+          className="absolute inset-0 rounded-lg pointer-events-none z-10"
+          animate={{ boxShadow: ['0 0 8px #2dd4bf', '0 0 20px #2dd4bf', '0 0 8px #2dd4bf'] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        />
+      )}
+
       {/* ── Main Card Body ── */}
       <div
         className="relative w-[140px] h-[190px] cursor-pointer"
@@ -124,7 +135,7 @@ const CardComponent = React.memo(function CardComponent({
         {/* ── Text Box ── */}
         <div className="absolute top-[96px] left-2 right-2 bottom-2 bg-[#f4ebd8]/90 border border-[#b8a066] rounded-sm p-1.5 flex flex-col justify-between">
           <div className="text-[10px] text-center text-gray-900 leading-tight font-bold" style={{ textShadow: 'none' }}>
-            {getEffectDescription(card)}
+            {getEffectDescription(card, growthStacks)}
           </div>
           <div className="text-center text-[8px] text-gray-600 italic leading-tight truncate">
              <HoverTranslate translation={card.flavor_native}>{card.flavor_target}</HoverTranslate>
@@ -145,6 +156,13 @@ const CardComponent = React.memo(function CardComponent({
 
         {/* ── Rarity Gem (Top Right) ── */}
         <div className={`absolute top-0.5 right-0.5 w-3 h-3 rounded-full border border-black shadow-sm ${rarityMeta.gemClass}`} title={rarityMeta.label} />
+
+        {/* v3: Retain badge */}
+        {isRetained && (
+          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-teal-700 border border-teal-400 text-teal-100 text-[8px] font-black px-1.5 py-0.5 rounded-full whitespace-nowrap z-30 shadow-lg">
+            ♾ RETAIN {growthStacks > 0 ? `+${growthStacks}` : ''}
+          </div>
+        )}
 
         {/* ── Lock/Silence Overlays ── */}
         {isLocked && (
@@ -169,16 +187,22 @@ const CardComponent = React.memo(function CardComponent({
   )
 })
 
-function getEffectDescription(card) {
+function getEffectDescription(card, growthStacks = 0) {
   const e = card.effect || {}
   const parts = []
   if (e.damage) parts.push(`Deal ${e.damage} damage.${e.hits && e.hits > 1 ? ` (${e.hits} times)` : ''}${e.bonus_correct_first_try ? ` If 1st try, deal ${e.damage + e.bonus_correct_first_try} instead.` : ''}`)
-  if (e.block) parts.push(`Gain ${e.block} Block.`)
+  if (e.block) {
+    const grownBlock = e.block + growthStacks * 4
+    parts.push(`Gain ${grownBlock} Block.${growthStacks > 0 ? ` (grown ×${growthStacks})` : ''}`)
+  }
   if (e.heal) parts.push(`Heal ${e.heal} HP.`)
   if (e.draw) parts.push(`Draw ${e.draw} card${e.draw > 1 ? 's' : ''}.`)
   if (e.stun) parts.push(`Stun enemy for ${e.stun} turn.`)
   if (e.chain_bonus) parts.push(`Adds +${e.chain_bonus} to Chain.`)
   if (e.bonus_if_block_active) parts.push(`If Block active, gain +${e.bonus_if_block_active}.`)
+  if (e.discard_draw) parts.push(`Discard ${e.discard_draw}. Draw ${e.discard_draw + 1}.`)
+  if (e.exhaust_self_gain_energy) parts.push(`Exhaust. Gain ${e.exhaust_self_gain_energy} Energy.`)
+  if (e.retain) parts.push(`Retain. Grows +4 Block each turn held.`)
   return parts.join(' ') || 'Special effect'
 }
 

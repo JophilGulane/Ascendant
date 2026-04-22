@@ -1,7 +1,7 @@
 [
   {
-    "id": "jp_vocab_001",
-    "campaign": "japanese",
+    "id": "es_vocab_001",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 食べる (taberu) mean?",
@@ -24,8 +24,8 @@
     ]
   },
   {
-    "id": "jp_vocab_002",
-    "campaign": "japanese",
+    "id": "es_vocab_002",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 飲む (nomu) mean?",
@@ -47,8 +47,8 @@
     ]
   },
   {
-    "id": "jp_vocab_003",
-    "campaign": "japanese",
+    "id": "es_vocab_003",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 行く (iku) mean?",
@@ -71,8 +71,8 @@
     ]
   },
   {
-    "id": "jp_vocab_004",
-    "campaign": "japanese",
+    "id": "es_vocab_004",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 見る (miru) mean?",
@@ -94,8 +94,8 @@
     ]
   },
   {
-    "id": "jp_vocab_005",
-    "campaign": "japanese",
+    "id": "es_vocab_005",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 水 (mizu) mean?",
@@ -117,8 +117,8 @@
     ]
   },
   {
-    "id": "jp_vocab_006",
-    "campaign": "japanese",
+    "id": "es_vocab_006",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 山 (yama) mean?",
@@ -140,8 +140,8 @@
     ]
   },
   {
-    "id": "jp_vocab_007",
-    "campaign": "japanese",
+    "id": "es_vocab_007",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 猫 (neko) mean?",
@@ -163,8 +163,8 @@
     ]
   },
   {
-    "id": "jp_vocab_008",
-    "campaign": "japanese",
+    "id": "es_vocab_008",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 学校 (gakkō) mean?",
@@ -186,8 +186,8 @@
     ]
   },
   {
-    "id": "jp_vocab_009",
-    "campaign": "japanese",
+    "id": "es_vocab_009",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 友達 (tomodachi) mean?",
@@ -209,8 +209,8 @@
     ]
   },
   {
-    "id": "jp_vocab_010",
-    "campaign": "japanese",
+    "id": "es_vocab_010",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 大きい (ōkii) mean?",
@@ -232,8 +232,8 @@
     ]
   },
   {
-    "id": "jp_vocab_011",
-    "campaign": "japanese",
+    "id": "es_vocab_011",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 今日 (kyō) mean?",
@@ -255,8 +255,8 @@
     ]
   },
   {
-    "id": "jp_vocab_012",
-    "campaign": "japanese",
+    "id": "es_vocab_012",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 家 (ie/uchi) mean?",
@@ -278,8 +278,8 @@
     ]
   },
   {
-    "id": "jp_vocab_013",
-    "campaign": "japanese",
+    "id": "es_vocab_013",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 本 (hon) mean?",
@@ -301,8 +301,8 @@
     ]
   },
   {
-    "id": "jp_vocab_014",
-    "campaign": "japanese",
+    "id": "es_vocab_014",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 来る (kuru) mean?",
@@ -325,8 +325,8 @@
     ]
   },
   {
-    "id": "jp_vocab_015",
-    "campaign": "japanese",
+    "id": "es_vocab_015",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 言う (iu) mean?",
@@ -349,8 +349,8 @@
     ]
   },
   {
-    "id": "jp_vocab_016",
-    "campaign": "japanese",
+    "id": "es_vocab_016",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 知る (shiru) mean?",
@@ -372,8 +372,8 @@
     ]
   },
   {
-    "id": "jp_vocab_017",
-    "campaign": "japanese",
+    "id": "es_vocab_017",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 書く (kaku) mean?",
@@ -395,8 +395,8 @@
     ]
   },
   {
-    "id": "jp_vocab_018",
-    "campaign": "japanese",
+    "id": "es_vocab_018",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 難しい (muzukashii) mean?",
@@ -417,8 +417,8 @@
     ]
   },
   {
-    "id": "jp_vocab_019",
-    "campaign": "japanese",
+    "id": "es_vocab_019",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 早い (hayai) mean?",
@@ -439,8 +439,8 @@
     ]
   },
   {
-    "id": "jp_vocab_020",
-    "campaign": "japanese",
+    "id": "es_vocab_020",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 電車 (densha) mean?",
@@ -462,8 +462,8 @@
     ]
   },
   {
-    "id": "jp_vocab_021",
-    "campaign": "japanese",
+    "id": "es_vocab_021",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 仕事 (shigoto) mean?",
@@ -485,8 +485,8 @@
     ]
   },
   {
-    "id": "jp_vocab_022",
-    "campaign": "japanese",
+    "id": "es_vocab_022",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 買う (kau) mean?",
@@ -509,8 +509,8 @@
     ]
   },
   {
-    "id": "jp_vocab_023",
-    "campaign": "japanese",
+    "id": "es_vocab_023",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 赤い (akai) mean?",
@@ -532,8 +532,8 @@
     ]
   },
   {
-    "id": "jp_vocab_024",
-    "campaign": "japanese",
+    "id": "es_vocab_024",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 新しい (atarashii) mean?",
@@ -554,8 +554,8 @@
     ]
   },
   {
-    "id": "jp_vocab_025",
-    "campaign": "japanese",
+    "id": "es_vocab_025",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 待つ (matsu) mean?",
@@ -578,8 +578,8 @@
     ]
   },
   {
-    "id": "jp_vocab_026",
-    "campaign": "japanese",
+    "id": "es_vocab_026",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 犬 (inu) mean?",
@@ -601,8 +601,8 @@
     ]
   },
   {
-    "id": "jp_vocab_027",
-    "campaign": "japanese",
+    "id": "es_vocab_027",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 手 (te) mean?",
@@ -624,8 +624,8 @@
     ]
   },
   {
-    "id": "jp_vocab_028",
-    "campaign": "japanese",
+    "id": "es_vocab_028",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 目 (me) mean?",
@@ -647,8 +647,8 @@
     ]
   },
   {
-    "id": "jp_vocab_029",
-    "campaign": "japanese",
+    "id": "es_vocab_029",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 声 (koe) mean?",
@@ -670,8 +670,8 @@
     ]
   },
   {
-    "id": "jp_vocab_030",
-    "campaign": "japanese",
+    "id": "es_vocab_030",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 走る (hashiru) mean?",
@@ -694,8 +694,8 @@
     ]
   },
   {
-    "id": "jp_gram_001",
-    "campaign": "japanese",
+    "id": "es_gram_001",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "私は学校___行きます。(I go to school.) Which particle fits the blank?",
@@ -718,8 +718,8 @@
     ]
   },
   {
-    "id": "jp_gram_002",
-    "campaign": "japanese",
+    "id": "es_gram_002",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "猫___かわいいです。(Cats are cute.) Which particle marks the subject?",
@@ -741,8 +741,8 @@
     ]
   },
   {
-    "id": "jp_gram_003",
-    "campaign": "japanese",
+    "id": "es_gram_003",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "私はりんご___食べます。(I eat an apple.) Which particle marks the object?",
@@ -764,8 +764,8 @@
     ]
   },
   {
-    "id": "jp_gram_004",
-    "campaign": "japanese",
+    "id": "es_gram_004",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "図書館___本を読みます。(I read books at the library.) Which particle marks location of action?",
@@ -787,8 +787,8 @@
     ]
   },
   {
-    "id": "jp_gram_005",
-    "campaign": "japanese",
+    "id": "es_gram_005",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "これは私___本です。(This is my book.) Which particle shows possession?",
@@ -810,8 +810,8 @@
     ]
   },
   {
-    "id": "jp_gram_006",
-    "campaign": "japanese",
+    "id": "es_gram_006",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "Which is the correct way to end a polite positive sentence in Japanese?",
@@ -833,8 +833,8 @@
     ]
   },
   {
-    "id": "jp_gram_007",
-    "campaign": "japanese",
+    "id": "es_gram_007",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "日本語___話せますか？(Can you speak Japanese?) Which particle goes in the blank?",
@@ -857,8 +857,8 @@
     ]
   },
   {
-    "id": "jp_gram_008",
-    "campaign": "japanese",
+    "id": "es_gram_008",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "友達___一緒に行きます。(I go together with my friend.) Which particle means 'with'?",
@@ -880,8 +880,8 @@
     ]
   },
   {
-    "id": "jp_gram_009",
-    "campaign": "japanese",
+    "id": "es_gram_009",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "食べる → What is the て-form (te-form) of this verb?",
@@ -904,8 +904,8 @@
     ]
   },
   {
-    "id": "jp_gram_010",
-    "campaign": "japanese",
+    "id": "es_gram_010",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "行く → What is the て-form of this verb?",
@@ -929,8 +929,8 @@
     ]
   },
   {
-    "id": "jp_gram_011",
-    "campaign": "japanese",
+    "id": "es_gram_011",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "「食べています」 means:",
@@ -953,8 +953,8 @@
     ]
   },
   {
-    "id": "jp_gram_012",
-    "campaign": "japanese",
+    "id": "es_gram_012",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "飲みます → What is the negative form?",
@@ -977,8 +977,8 @@
     ]
   },
   {
-    "id": "jp_gram_013",
-    "campaign": "japanese",
+    "id": "es_gram_013",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "Complete: 寒いから、コート___着てください。(Because it's cold, please wear a coat.)",
@@ -1001,8 +1001,8 @@
     ]
   },
   {
-    "id": "jp_gram_014",
-    "campaign": "japanese",
+    "id": "es_gram_014",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "Which sentence is grammatically correct?",
@@ -1024,8 +1024,8 @@
     ]
   },
   {
-    "id": "jp_gram_015",
-    "campaign": "japanese",
+    "id": "es_gram_015",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "あれ___何ですか。(What is that over there?) Which particle connects the noun to the question?",
@@ -1048,8 +1048,8 @@
     ]
   },
   {
-    "id": "jp_gram_016",
-    "campaign": "japanese",
+    "id": "es_gram_016",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "飲む → What is the polite past tense?",
@@ -1072,8 +1072,8 @@
     ]
   },
   {
-    "id": "jp_gram_017",
-    "campaign": "japanese",
+    "id": "es_gram_017",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "来る → What is the て-form?",
@@ -1096,8 +1096,8 @@
     ]
   },
   {
-    "id": "jp_gram_018",
-    "campaign": "japanese",
+    "id": "es_gram_018",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "これはペンです。→ Which word means 'is/am/are' (polite)?",
@@ -1119,8 +1119,8 @@
     ]
   },
   {
-    "id": "jp_gram_019",
-    "campaign": "japanese",
+    "id": "es_gram_019",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "「〜てから」 means:",
@@ -1143,8 +1143,8 @@
     ]
   },
   {
-    "id": "jp_gram_020",
-    "campaign": "japanese",
+    "id": "es_gram_020",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "「〜たい」 is used to express:",
@@ -1167,8 +1167,8 @@
     ]
   },
   {
-    "id": "jp_read_001",
-    "campaign": "japanese",
+    "id": "es_read_001",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read this passage: 「私は毎朝、お茶を飲みます。そして、学校へ行きます。学校で友達と話します。」\n(I drink tea every morning. Then I go to school. At school I talk with my friends.)\n\nWhere does the speaker go after having tea?",
@@ -1190,8 +1190,8 @@
     ]
   },
   {
-    "id": "jp_read_002",
-    "campaign": "japanese",
+    "id": "es_read_002",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read this passage: 「田中さんは猫が好きです。田中さんの家に猫が三匹います。毎日猫と遊びます。」\n(Tanaka-san likes cats. There are three cats in Tanaka-san's home. Every day they play with the cats.)\n\nHow many cats does Tanaka-san have?",
@@ -1213,8 +1213,8 @@
     ]
   },
   {
-    "id": "jp_read_003",
-    "campaign": "japanese",
+    "id": "es_read_003",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read this passage: 「今日は雨です。だから、家にいます。本を読んだり、音楽を聞いたりします。」\n(Today it is raining. So I am at home. I do things like read books and listen to music.)\n\nWhy is the speaker staying home today?",
@@ -1236,8 +1236,8 @@
     ]
   },
   {
-    "id": "jp_read_004",
-    "campaign": "japanese",
+    "id": "es_read_004",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read this passage: 「山田さんは先週、京都に行きました。お寺をたくさん見ました。でも、時間がなくて、金閣寺には行けませんでした。」\n(Yamada-san went to Kyoto last week. They saw many temples. But due to lack of time, they couldn't visit Kinkakuji.)\n\nWhat was Yamada-san unable to visit?",
@@ -1260,8 +1260,8 @@
     ]
   },
   {
-    "id": "jp_read_005",
-    "campaign": "japanese",
+    "id": "es_read_005",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read this passage: 「私の兄は料理が上手です。毎週末、家族のために夕食を作ります。昨日は鍋料理を作ってくれました。」\n(My older brother is good at cooking. Every weekend he cooks dinner for the family. Yesterday he made hotpot for us.)\n\nWhat did the brother cook yesterday?",
@@ -1284,8 +1284,8 @@
     ]
   },
   {
-    "id": "jp_read_006",
-    "campaign": "japanese",
+    "id": "es_read_006",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read this passage: 「霊山の道は険しい。しかし、頂上に着いた者だけが社の秘密を知ることができる。勇気ある者よ、前へ進め。」\n(The path up the spirit mountain is treacherous. However, only those who reach the summit can learn the shrine's secret. Brave one, press forward.)\n\nWhat reward awaits at the summit?",
@@ -1308,8 +1308,8 @@
     ]
   },
   {
-    "id": "jp_read_007",
-    "campaign": "japanese",
+    "id": "es_read_007",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read this passage: 「これは私のかばんです。中に本と財布があります。かばんは赤くて、大きいです。」\n(This is my bag. Inside there is a book and a wallet. The bag is red and large.)\n\nWhat color is the bag?",
@@ -1332,8 +1332,8 @@
     ]
   },
   {
-    "id": "jp_read_008",
-    "campaign": "japanese",
+    "id": "es_read_008",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read this passage: 「春になると、公園の桜がきれいに咲きます。たくさんの人が花見をしに来ます。子供も大人も楽しそうです。」\n(When spring comes, the cherry blossoms in the park bloom beautifully. Many people come to do hanami. Both children and adults seem happy.)\n\nWhat do people come to the park to do?",
@@ -1356,8 +1356,8 @@
     ]
   },
   {
-    "id": "jp_read_009",
-    "campaign": "japanese",
+    "id": "es_read_009",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read this passage: 「図書館では静かにしなければなりません。大きな声で話すことはできません。携帯電話もマナーモードにする必要があります。」\n(In the library you must be quiet. You cannot speak in a loud voice. You also need to put your phone on silent mode.)\n\nWhat must you do with your phone in the library?",
@@ -1380,8 +1380,8 @@
     ]
   },
   {
-    "id": "jp_read_010",
-    "campaign": "japanese",
+    "id": "es_read_010",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read this passage: 「昔、ある村に優しい老人が住んでいました。毎日、山で薬草を集め、病気の人を助けていました。村人たちは彼を「山の賢者」と呼んでいました。」\n(Long ago, a kind old man lived in a certain village. Every day he gathered medicinal herbs in the mountains and helped sick people. The villagers called him 'the sage of the mountain'.)\n\nWhat did the villagers call the old man?",
@@ -1404,8 +1404,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_100",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_100",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 空 (sora) mean?",
@@ -1426,8 +1426,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_101",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_101",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 海 (umi) mean?",
@@ -1448,8 +1448,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_102",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_102",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "vocabulary",
     "question": "What does 星 (hoshi) mean?",
@@ -1470,8 +1470,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_103",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_103",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "vocabulary",
     "question": "What does 花 (hana) mean?",
@@ -1492,8 +1492,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_104",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_104",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 歩く (aruku) mean?",
@@ -1514,8 +1514,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_105",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_105",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 寝る (neru) mean?",
@@ -1536,8 +1536,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_106",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_106",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "vocabulary",
     "question": "What does 起きる (okiru) mean?",
@@ -1558,8 +1558,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_107",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_107",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "vocabulary",
     "question": "What does 雪 (yuki) mean?",
@@ -1580,8 +1580,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_108",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_108",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 飲む (nomu) mean?",
@@ -1602,8 +1602,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_109",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_109",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 遊ぶ (asobu) mean?",
@@ -1624,8 +1624,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_110",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_110",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "vocabulary",
     "question": "What does 話す (hanasu) mean?",
@@ -1646,8 +1646,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_111",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_111",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "vocabulary",
     "question": "What does 影 (kage) mean?",
@@ -1668,8 +1668,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_112",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_112",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 泳ぐ (oyogu) mean?",
@@ -1690,8 +1690,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_113",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_113",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 世界 (sekai) mean?",
@@ -1712,8 +1712,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_114",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_114",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "vocabulary",
     "question": "What does 言葉 (kotoba) mean?",
@@ -1734,8 +1734,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_115",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_115",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "vocabulary",
     "question": "What does 空 (sora) mean?",
@@ -1756,8 +1756,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_116",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_116",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 海 (umi) mean?",
@@ -1778,8 +1778,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_117",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_117",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 星 (hoshi) mean?",
@@ -1800,8 +1800,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_118",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_118",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "vocabulary",
     "question": "What does 花 (hana) mean?",
@@ -1822,8 +1822,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_119",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_119",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "vocabulary",
     "question": "What does 鳥 (tori) mean?",
@@ -1844,8 +1844,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_120",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_120",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 川 (kawa) mean?",
@@ -1866,8 +1866,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_121",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_121",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 聞く (kiku) mean?",
@@ -1888,8 +1888,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_122",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_122",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "vocabulary",
     "question": "What does 泳ぐ (oyogu) mean?",
@@ -1910,8 +1910,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_123",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_123",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "vocabulary",
     "question": "What does 雨 (ame) mean?",
@@ -1932,8 +1932,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_124",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_124",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 風 (kaze) mean?",
@@ -1954,8 +1954,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_125",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_125",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 寝る (neru) mean?",
@@ -1976,8 +1976,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_126",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_126",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "vocabulary",
     "question": "What does 影 (kage) mean?",
@@ -1998,8 +1998,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_127",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_127",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "vocabulary",
     "question": "What does 食べる (taberu) mean?",
@@ -2020,8 +2020,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_128",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_128",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 飲む (nomu) mean?",
@@ -2042,8 +2042,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_129",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_129",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 遊ぶ (asobu) mean?",
@@ -2064,8 +2064,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_130",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_130",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "vocabulary",
     "question": "What does 話す (hanasu) mean?",
@@ -2086,8 +2086,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_131",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_131",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "vocabulary",
     "question": "What does 海 (umi) mean?",
@@ -2108,8 +2108,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_132",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_132",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 泳ぐ (oyogu) mean?",
@@ -2130,8 +2130,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_133",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_133",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 花 (hana) mean?",
@@ -2152,8 +2152,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_134",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_134",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "vocabulary",
     "question": "What does 鳥 (tori) mean?",
@@ -2174,8 +2174,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_135",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_135",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "vocabulary",
     "question": "What does 寝る (neru) mean?",
@@ -2196,8 +2196,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_136",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_136",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 道 (michi) mean?",
@@ -2218,8 +2218,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_137",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_137",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 雪 (yuki) mean?",
@@ -2240,8 +2240,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_138",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_138",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "vocabulary",
     "question": "What does 飲む (nomu) mean?",
@@ -2262,8 +2262,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_139",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_139",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "vocabulary",
     "question": "What does 風 (kaze) mean?",
@@ -2284,8 +2284,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_140",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_140",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 話す (hanasu) mean?",
@@ -2306,8 +2306,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_141",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_141",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 聞く (kiku) mean?",
@@ -2328,8 +2328,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_142",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_142",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "vocabulary",
     "question": "What does 泳ぐ (oyogu) mean?",
@@ -2350,8 +2350,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_143",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_143",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "vocabulary",
     "question": "What does 世界 (sekai) mean?",
@@ -2372,8 +2372,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_144",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_144",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 歩く (aruku) mean?",
@@ -2394,8 +2394,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_145",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_145",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 寝る (neru) mean?",
@@ -2416,8 +2416,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_146",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_146",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "vocabulary",
     "question": "What does 海 (umi) mean?",
@@ -2438,8 +2438,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_147",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_147",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "vocabulary",
     "question": "What does 食べる (taberu) mean?",
@@ -2460,8 +2460,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_148",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_148",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 飲む (nomu) mean?",
@@ -2482,8 +2482,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_149",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_149",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 鳥 (tori) mean?",
@@ -2504,8 +2504,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_150",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_150",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "vocabulary",
     "question": "What does 川 (kawa) mean?",
@@ -2526,8 +2526,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_151",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_151",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "vocabulary",
     "question": "What does 道 (michi) mean?",
@@ -2548,8 +2548,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_152",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_152",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 泳ぐ (oyogu) mean?",
@@ -2570,8 +2570,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_153",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_153",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 飛ぶ (tobu) mean?",
@@ -2592,8 +2592,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_154",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_154",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "vocabulary",
     "question": "What does 風 (kaze) mean?",
@@ -2614,8 +2614,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_155",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_155",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "vocabulary",
     "question": "What does 光 (hikari) mean?",
@@ -2636,8 +2636,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_156",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_156",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "vocabulary",
     "question": "What does 起きる (okiru) mean?",
@@ -2658,8 +2658,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_157",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_157",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "vocabulary",
     "question": "What does 食べる (taberu) mean?",
@@ -2680,8 +2680,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_158",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_158",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "vocabulary",
     "question": "What does 飲む (nomu) mean?",
@@ -2702,8 +2702,8 @@
     ]
   },
   {
-    "id": "jp_vocab_gen_159",
-    "campaign": "japanese",
+    "id": "es_vocab_gen_159",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "vocabulary",
     "question": "What does 言葉 (kotoba) mean?",
@@ -2724,8 +2724,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_160",
-    "campaign": "japanese",
+    "id": "es_gram_gen_160",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -2747,8 +2747,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_161",
-    "campaign": "japanese",
+    "id": "es_gram_gen_161",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -2770,8 +2770,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_162",
-    "campaign": "japanese",
+    "id": "es_gram_gen_162",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -2793,8 +2793,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_163",
-    "campaign": "japanese",
+    "id": "es_gram_gen_163",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -2816,8 +2816,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_164",
-    "campaign": "japanese",
+    "id": "es_gram_gen_164",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -2839,8 +2839,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_165",
-    "campaign": "japanese",
+    "id": "es_gram_gen_165",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -2862,8 +2862,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_166",
-    "campaign": "japanese",
+    "id": "es_gram_gen_166",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -2885,8 +2885,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_167",
-    "campaign": "japanese",
+    "id": "es_gram_gen_167",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -2908,8 +2908,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_168",
-    "campaign": "japanese",
+    "id": "es_gram_gen_168",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -2931,8 +2931,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_169",
-    "campaign": "japanese",
+    "id": "es_gram_gen_169",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -2954,8 +2954,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_170",
-    "campaign": "japanese",
+    "id": "es_gram_gen_170",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -2977,8 +2977,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_171",
-    "campaign": "japanese",
+    "id": "es_gram_gen_171",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -3000,8 +3000,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_172",
-    "campaign": "japanese",
+    "id": "es_gram_gen_172",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -3023,8 +3023,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_173",
-    "campaign": "japanese",
+    "id": "es_gram_gen_173",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -3046,8 +3046,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_174",
-    "campaign": "japanese",
+    "id": "es_gram_gen_174",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -3069,8 +3069,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_175",
-    "campaign": "japanese",
+    "id": "es_gram_gen_175",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -3092,8 +3092,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_176",
-    "campaign": "japanese",
+    "id": "es_gram_gen_176",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -3115,8 +3115,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_177",
-    "campaign": "japanese",
+    "id": "es_gram_gen_177",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -3138,8 +3138,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_178",
-    "campaign": "japanese",
+    "id": "es_gram_gen_178",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -3161,8 +3161,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_179",
-    "campaign": "japanese",
+    "id": "es_gram_gen_179",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -3184,8 +3184,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_180",
-    "campaign": "japanese",
+    "id": "es_gram_gen_180",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -3207,8 +3207,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_181",
-    "campaign": "japanese",
+    "id": "es_gram_gen_181",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -3230,8 +3230,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_182",
-    "campaign": "japanese",
+    "id": "es_gram_gen_182",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -3253,8 +3253,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_183",
-    "campaign": "japanese",
+    "id": "es_gram_gen_183",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -3276,8 +3276,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_184",
-    "campaign": "japanese",
+    "id": "es_gram_gen_184",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -3299,8 +3299,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_185",
-    "campaign": "japanese",
+    "id": "es_gram_gen_185",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -3322,8 +3322,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_186",
-    "campaign": "japanese",
+    "id": "es_gram_gen_186",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -3345,8 +3345,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_187",
-    "campaign": "japanese",
+    "id": "es_gram_gen_187",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -3368,8 +3368,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_188",
-    "campaign": "japanese",
+    "id": "es_gram_gen_188",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -3391,8 +3391,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_189",
-    "campaign": "japanese",
+    "id": "es_gram_gen_189",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -3414,8 +3414,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_190",
-    "campaign": "japanese",
+    "id": "es_gram_gen_190",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -3437,8 +3437,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_191",
-    "campaign": "japanese",
+    "id": "es_gram_gen_191",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -3460,8 +3460,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_192",
-    "campaign": "japanese",
+    "id": "es_gram_gen_192",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -3483,8 +3483,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_193",
-    "campaign": "japanese",
+    "id": "es_gram_gen_193",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -3506,8 +3506,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_194",
-    "campaign": "japanese",
+    "id": "es_gram_gen_194",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -3529,8 +3529,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_195",
-    "campaign": "japanese",
+    "id": "es_gram_gen_195",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -3552,8 +3552,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_196",
-    "campaign": "japanese",
+    "id": "es_gram_gen_196",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -3575,8 +3575,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_197",
-    "campaign": "japanese",
+    "id": "es_gram_gen_197",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -3598,8 +3598,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_198",
-    "campaign": "japanese",
+    "id": "es_gram_gen_198",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -3621,8 +3621,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_199",
-    "campaign": "japanese",
+    "id": "es_gram_gen_199",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -3644,8 +3644,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_200",
-    "campaign": "japanese",
+    "id": "es_gram_gen_200",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -3667,8 +3667,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_201",
-    "campaign": "japanese",
+    "id": "es_gram_gen_201",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -3690,8 +3690,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_202",
-    "campaign": "japanese",
+    "id": "es_gram_gen_202",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -3713,8 +3713,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_203",
-    "campaign": "japanese",
+    "id": "es_gram_gen_203",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -3736,8 +3736,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_204",
-    "campaign": "japanese",
+    "id": "es_gram_gen_204",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -3759,8 +3759,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_205",
-    "campaign": "japanese",
+    "id": "es_gram_gen_205",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -3782,8 +3782,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_206",
-    "campaign": "japanese",
+    "id": "es_gram_gen_206",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -3805,8 +3805,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_207",
-    "campaign": "japanese",
+    "id": "es_gram_gen_207",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -3828,8 +3828,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_208",
-    "campaign": "japanese",
+    "id": "es_gram_gen_208",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -3851,8 +3851,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_209",
-    "campaign": "japanese",
+    "id": "es_gram_gen_209",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -3874,8 +3874,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_210",
-    "campaign": "japanese",
+    "id": "es_gram_gen_210",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -3897,8 +3897,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_211",
-    "campaign": "japanese",
+    "id": "es_gram_gen_211",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -3920,8 +3920,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_212",
-    "campaign": "japanese",
+    "id": "es_gram_gen_212",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -3943,8 +3943,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_213",
-    "campaign": "japanese",
+    "id": "es_gram_gen_213",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -3966,8 +3966,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_214",
-    "campaign": "japanese",
+    "id": "es_gram_gen_214",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -3989,8 +3989,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_215",
-    "campaign": "japanese",
+    "id": "es_gram_gen_215",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -4012,8 +4012,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_216",
-    "campaign": "japanese",
+    "id": "es_gram_gen_216",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -4035,8 +4035,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_217",
-    "campaign": "japanese",
+    "id": "es_gram_gen_217",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "grammar",
     "question": "Which particle marks the subject of a sentence?",
@@ -4058,8 +4058,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_218",
-    "campaign": "japanese",
+    "id": "es_gram_gen_218",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "grammar",
     "question": "What is the past tense of 食べます?",
@@ -4081,8 +4081,8 @@
     ]
   },
   {
-    "id": "jp_gram_gen_219",
-    "campaign": "japanese",
+    "id": "es_gram_gen_219",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "grammar",
     "question": "Which word is an i-adjective?",
@@ -4104,8 +4104,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_220",
-    "campaign": "japanese",
+    "id": "es_read_gen_220",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4126,8 +4126,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_221",
-    "campaign": "japanese",
+    "id": "es_read_gen_221",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4148,8 +4148,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_222",
-    "campaign": "japanese",
+    "id": "es_read_gen_222",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4170,8 +4170,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_223",
-    "campaign": "japanese",
+    "id": "es_read_gen_223",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4192,8 +4192,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_224",
-    "campaign": "japanese",
+    "id": "es_read_gen_224",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4214,8 +4214,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_225",
-    "campaign": "japanese",
+    "id": "es_read_gen_225",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4236,8 +4236,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_226",
-    "campaign": "japanese",
+    "id": "es_read_gen_226",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4258,8 +4258,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_227",
-    "campaign": "japanese",
+    "id": "es_read_gen_227",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4280,8 +4280,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_228",
-    "campaign": "japanese",
+    "id": "es_read_gen_228",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4302,8 +4302,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_229",
-    "campaign": "japanese",
+    "id": "es_read_gen_229",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4324,8 +4324,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_230",
-    "campaign": "japanese",
+    "id": "es_read_gen_230",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4346,8 +4346,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_231",
-    "campaign": "japanese",
+    "id": "es_read_gen_231",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4368,8 +4368,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_232",
-    "campaign": "japanese",
+    "id": "es_read_gen_232",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4390,8 +4390,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_233",
-    "campaign": "japanese",
+    "id": "es_read_gen_233",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4412,8 +4412,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_234",
-    "campaign": "japanese",
+    "id": "es_read_gen_234",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4434,8 +4434,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_235",
-    "campaign": "japanese",
+    "id": "es_read_gen_235",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4456,8 +4456,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_236",
-    "campaign": "japanese",
+    "id": "es_read_gen_236",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4478,8 +4478,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_237",
-    "campaign": "japanese",
+    "id": "es_read_gen_237",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4500,8 +4500,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_238",
-    "campaign": "japanese",
+    "id": "es_read_gen_238",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4522,8 +4522,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_239",
-    "campaign": "japanese",
+    "id": "es_read_gen_239",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4544,8 +4544,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_240",
-    "campaign": "japanese",
+    "id": "es_read_gen_240",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4566,8 +4566,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_241",
-    "campaign": "japanese",
+    "id": "es_read_gen_241",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4588,8 +4588,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_242",
-    "campaign": "japanese",
+    "id": "es_read_gen_242",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4610,8 +4610,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_243",
-    "campaign": "japanese",
+    "id": "es_read_gen_243",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4632,8 +4632,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_244",
-    "campaign": "japanese",
+    "id": "es_read_gen_244",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4654,8 +4654,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_245",
-    "campaign": "japanese",
+    "id": "es_read_gen_245",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4676,8 +4676,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_246",
-    "campaign": "japanese",
+    "id": "es_read_gen_246",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4698,8 +4698,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_247",
-    "campaign": "japanese",
+    "id": "es_read_gen_247",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4720,8 +4720,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_248",
-    "campaign": "japanese",
+    "id": "es_read_gen_248",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4742,8 +4742,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_249",
-    "campaign": "japanese",
+    "id": "es_read_gen_249",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4764,8 +4764,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_250",
-    "campaign": "japanese",
+    "id": "es_read_gen_250",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4786,8 +4786,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_251",
-    "campaign": "japanese",
+    "id": "es_read_gen_251",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4808,8 +4808,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_252",
-    "campaign": "japanese",
+    "id": "es_read_gen_252",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4830,8 +4830,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_253",
-    "campaign": "japanese",
+    "id": "es_read_gen_253",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4852,8 +4852,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_254",
-    "campaign": "japanese",
+    "id": "es_read_gen_254",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4874,8 +4874,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_255",
-    "campaign": "japanese",
+    "id": "es_read_gen_255",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4896,8 +4896,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_256",
-    "campaign": "japanese",
+    "id": "es_read_gen_256",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4918,8 +4918,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_257",
-    "campaign": "japanese",
+    "id": "es_read_gen_257",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4940,8 +4940,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_258",
-    "campaign": "japanese",
+    "id": "es_read_gen_258",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4962,8 +4962,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_259",
-    "campaign": "japanese",
+    "id": "es_read_gen_259",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -4984,8 +4984,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_260",
-    "campaign": "japanese",
+    "id": "es_read_gen_260",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5006,8 +5006,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_261",
-    "campaign": "japanese",
+    "id": "es_read_gen_261",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5028,8 +5028,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_262",
-    "campaign": "japanese",
+    "id": "es_read_gen_262",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5050,8 +5050,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_263",
-    "campaign": "japanese",
+    "id": "es_read_gen_263",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5072,8 +5072,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_264",
-    "campaign": "japanese",
+    "id": "es_read_gen_264",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5094,8 +5094,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_265",
-    "campaign": "japanese",
+    "id": "es_read_gen_265",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5116,8 +5116,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_266",
-    "campaign": "japanese",
+    "id": "es_read_gen_266",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5138,8 +5138,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_267",
-    "campaign": "japanese",
+    "id": "es_read_gen_267",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5160,8 +5160,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_268",
-    "campaign": "japanese",
+    "id": "es_read_gen_268",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5182,8 +5182,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_269",
-    "campaign": "japanese",
+    "id": "es_read_gen_269",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5204,8 +5204,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_270",
-    "campaign": "japanese",
+    "id": "es_read_gen_270",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5226,8 +5226,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_271",
-    "campaign": "japanese",
+    "id": "es_read_gen_271",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5248,8 +5248,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_272",
-    "campaign": "japanese",
+    "id": "es_read_gen_272",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5270,8 +5270,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_273",
-    "campaign": "japanese",
+    "id": "es_read_gen_273",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5292,8 +5292,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_274",
-    "campaign": "japanese",
+    "id": "es_read_gen_274",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5314,8 +5314,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_275",
-    "campaign": "japanese",
+    "id": "es_read_gen_275",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5336,8 +5336,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_276",
-    "campaign": "japanese",
+    "id": "es_read_gen_276",
+    "campaign": "spanish",
     "floor_tier": 1,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5358,8 +5358,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_277",
-    "campaign": "japanese",
+    "id": "es_read_gen_277",
+    "campaign": "spanish",
     "floor_tier": 2,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5380,8 +5380,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_278",
-    "campaign": "japanese",
+    "id": "es_read_gen_278",
+    "campaign": "spanish",
     "floor_tier": 3,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",
@@ -5402,8 +5402,8 @@
     ]
   },
   {
-    "id": "jp_read_gen_279",
-    "campaign": "japanese",
+    "id": "es_read_gen_279",
+    "campaign": "spanish",
     "floor_tier": 4,
     "type": "reading",
     "question": "Read: 「私の名前はケンジです。剣士です。」 (My name is Kenji. I am a swordsman.) What is Kenji's job?",

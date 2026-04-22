@@ -14,9 +14,9 @@ export function useGraveyard() {
     recordWrong(question.id, question.graveyard_label, question.graveyard_reading)
   }, [recordWrong])
 
-  const logCorrect = useCallback((questionId) => {
-    if (!questionId) return
-    recordCorrect(questionId)
+  const logCorrect = useCallback((question) => {
+    if (!question || !question.id) return
+    recordCorrect(question.id, question.graveyard_label, question.graveyard_reading)
   }, [recordCorrect])
 
   // Merge session mistakes into persistent graveyard on run end

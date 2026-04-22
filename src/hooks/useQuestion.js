@@ -13,20 +13,21 @@ const TIMER_SECONDS = {
   off: null, // no timer
 }
 
-export function useQuestion({ question, masteryLevel = 0, onResult }) {
+export function useQuestion({ question, masteryLevel = 0, onResult, noTimer = false, autoHint = false }) {
   const timerSpeed = useSettingsStore(s => s.timerSpeed)
-  const maxSeconds = TIMER_SECONDS[timerSpeed] ?? 20
+  const maxSeconds = noTimer ? null : (TIMER_SECONDS[timerSpeed] ?? 20)
 
   // Mastery 4+: reduce timer by 5 seconds
-  const effectiveMax = masteryLevel >= 4
-    ? Math.max(5, (maxSeconds || 20) - 5)
+  const effectiveMax = (masteryLevel >= 4 && maxSeconds !== null)
+    ? Math.max(5, maxSeconds - 5)
     : maxSeconds
 
   const [timeLeft, setTimeLeft] = useState(effectiveMax)
-  const [hintShown, setHintShown] = useState(false)
+  const [hintShown, setHintShown] = useState(autoHint)
   const [answered, setAnswered] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(null)
   const [isFirstTry, setIsFirstTry] = useState(true)
+  const [halfDamage, setHalfDamage] = useState(false)
   const timerRef = useRef(null)
   const startRef = useRef(Date.now())
 
@@ -34,10 +35,11 @@ export function useQuestion({ question, masteryLevel = 0, onResult }) {
   useEffect(() => {
     if (!question) return
     setTimeLeft(effectiveMax)
-    setHintShown(false)
+    setHintShown(autoHint)
     setAnswered(false)
     setSelectedIndex(null)
     setIsFirstTry(true)
+    setHalfDamage(false)
     startRef.current = Date.now()
 
     if (effectiveMax === null) return // no timer mode
@@ -64,10 +66,10 @@ export function useQuestion({ question, masteryLevel = 0, onResult }) {
       const timeUsed = (Date.now() - startRef.current) / 1000
       // Small delay on timeout too so the red timer is visible briefly
       setTimeout(() => {
-        onResult({ result: 'timeout', selectedIndex: null, timeUsed, isFirstTry })
+        onResult({ result: 'timeout', selectedIndex: null, timeUsed, isFirstTry, halfDamage })
       }, 400)
     }
-  }, [timeLeft, answered])
+  }, [timeLeft, answered, halfDamage])
 
   const selectAnswer = useCallback((index) => {
     if (answered) return
@@ -84,9 +86,10 @@ export function useQuestion({ question, masteryLevel = 0, onResult }) {
         selectedIndex: index,
         timeUsed,
         isFirstTry,
+        halfDamage
       })
     }, 650)
-  }, [answered, question, isFirstTry, onResult])
+  }, [answered, question, isFirstTry, halfDamage, onResult])
 
   const revealHint = useCallback(() => {
     if (hintShown) return false // already shown
@@ -106,7 +109,9 @@ export function useQuestion({ question, masteryLevel = 0, onResult }) {
     answered,
     selectedIndex,
     isFirstTry,
+    halfDamage,
     selectAnswer,
     revealHint,
+    setHalfDamage,
   }
 }

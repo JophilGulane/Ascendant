@@ -9,6 +9,7 @@ import { RestRoom } from './components/rooms/RestRoom.jsx'
 import { MerchantRoom } from './components/rooms/MerchantRoom.jsx'
 import { EventRoom } from './components/rooms/EventRoom.jsx'
 import { PostRunSummary } from './components/menus/PostRunSummary.jsx'
+import { GraveyardScreen } from './components/menus/GraveyardScreen.jsx'
 
 export default function App() {
   const location = useLocation()
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="/merchant" element={<MerchantRoom />} />
           <Route path="/event" element={<EventRoom />} />
           <Route path="/summary" element={<PostRunSummary />} />
+          <Route path="/graveyard" element={<GraveyardScreen />} />
           {/* Fallback */}
           <Route path="*" element={<MainMenu />} />
         </Routes>

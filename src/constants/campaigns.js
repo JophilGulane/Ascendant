@@ -20,7 +20,7 @@ export const CAMPAIGN_THEMES = {
     bgGradient: 'linear-gradient(180deg, #0a0516 0%, #1a0a00 50%, #0d0d0d 100%)',
     particleColor: '#E8B86D',
     particleEmoji: '🌸',
-    floors: 2, // Phase 1: 2 floors
+    floors: 4, // Phase 2: 4 floors
     campaignWorld: 'Feudal Japan — shrine mountain, bamboo forests, spirit paths',
     locked: false,
   },
@@ -118,7 +118,7 @@ export const CARDS = {
         startingDeckBreakdown: { vocabulary: 4, grammar: 3, reading: 2, rare: 1 },
         starterRelic: 'newcomers_phrasebook',
         hp: 80,
-        locked: true,
+        locked: false,
       },
       {
         id: 'kenji',
@@ -142,7 +142,7 @@ export const CARDS = {
         startingDeckBreakdown: { vocabulary: 4, grammar: 3, reading: 2, rare: 1 },
         starterRelic: 'returnees_old_notes',
         hp: 80,
-        locked: true,
+        locked: false,
       },
     ],
     startingVocabCards: ['jp_vocab_strike', 'jp_vocab_strike', 'jp_vocab_wild_slash', 'jp_vocab_swift_strike'],

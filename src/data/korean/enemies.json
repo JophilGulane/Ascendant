@@ -1,7 +1,7 @@
 [
   {
-    "id": "jp_lost_spirit",
-    "campaign": "japanese",
+    "id": "ko_lost_spirit",
+    "campaign": "korean",
     "floor": 1,
     "tier": "regular",
     "name_target": "迷い霊",
@@ -57,8 +57,8 @@
     "defeat_dialogue_translation": "...Finally...I can rest..."
   },
   {
-    "id": "jp_shrine_guard_minor",
-    "campaign": "japanese",
+    "id": "ko_shrine_guard_minor",
+    "campaign": "korean",
     "floor": 1,
     "tier": "regular",
     "name_target": "下級守護",
@@ -116,8 +116,8 @@
     "defeat_dialogue_translation": "My power...is still lacking."
   },
   {
-    "id": "jp_guardian_spirit",
-    "campaign": "japanese",
+    "id": "ko_guardian_spirit",
+    "campaign": "korean",
     "floor": 1,
     "tier": "boss",
     "name_target": "守護霊神",
@@ -222,8 +222,8 @@
     ]
   },
   {
-    "id": "jp_kitsune_trickster",
-    "campaign": "japanese",
+    "id": "ko_kitsune_trickster",
+    "campaign": "korean",
     "floor": 2,
     "tier": "regular",
     "name_target": "狐の妖術師",
@@ -290,8 +290,8 @@
     "defeat_dialogue_translation": "Heh...You're pretty good, aren't you."
   },
   {
-    "id": "jp_temple_acolyte",
-    "campaign": "japanese",
+    "id": "ko_temple_acolyte",
+    "campaign": "korean",
     "floor": 2,
     "tier": "regular",
     "name_target": "寺の修行者",
@@ -355,8 +355,8 @@
     "defeat_dialogue_translation": "My training...was not enough."
   },
   {
-    "id": "jp_mountain_spirit",
-    "campaign": "japanese",
+    "id": "ko_mountain_spirit",
+    "campaign": "korean",
     "floor": 2,
     "tier": "boss",
     "name_target": "山の霊神",
@@ -480,8 +480,8 @@
     ]
   },
   {
-    "id": "jp_tengu_warrior",
-    "campaign": "japanese",
+    "id": "ko_tengu_warrior",
+    "campaign": "korean",
     "floor": 3,
     "tier": "regular",
     "name_target": "天狗の武者",
@@ -533,8 +533,8 @@
     "defeat_dialogue_translation": "Magnificent..."
   },
   {
-    "id": "jp_tengu_lord",
-    "campaign": "japanese",
+    "id": "ko_tengu_lord",
+    "campaign": "korean",
     "floor": 3,
     "tier": "boss",
     "name_target": "天狗の王",
@@ -619,8 +619,8 @@
     ]
   },
   {
-    "id": "jp_dragon_spirit",
-    "campaign": "japanese",
+    "id": "ko_dragon_spirit",
+    "campaign": "korean",
     "floor": 4,
     "tier": "boss",
     "name_target": "龍神",

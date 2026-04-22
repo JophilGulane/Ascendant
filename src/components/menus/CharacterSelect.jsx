@@ -132,7 +132,7 @@ function CharTile({ char, isSelected, onClick }) {
       ) : (
         // Character icon
         <div style={{ fontSize: 36, lineHeight: 1 }}>
-          {char.id === 'kenji' ? '⚔️' : '?'}
+          {char.id === 'kenji' ? '⚔️' : char.id === 'hana' ? '🌸' : char.id === 'yuki' ? '❄️' : '?'}
         </div>
       )}
     </motion.button>
@@ -154,11 +154,17 @@ export function CharacterSelect() {
   const handleEmbark = () => {
     if (!selectedChar) return
     const campaign = CAMPAIGN_CHARS.japanese
+    
+    // Choose rare card based on character
+    const rareCard = selectedChar.id === 'hana' ? 'jp_read_newcomers_luck'
+                   : selectedChar.id === 'yuki' ? 'jp_read_returnees_insight'
+                   : 'jp_read_travelers_wisdom'
+
     const deck = buildStartingDeck(
       campaign.startingVocabCards,
       campaign.startingGrammarCards,
       campaign.startingReadingCards,
-      'jp_read_travelers_wisdom'
+      rareCard
     )
     store.startRun('japanese', selectedChar, 0, deck, selectedChar.starterRelic)
     sessionStorage.removeItem('active_encounter')
@@ -288,13 +294,18 @@ export function CharacterSelect() {
               className="absolute right-0 top-0 bottom-0 z-10"
               style={{ width: '55%', paddingBottom: '6rem' }}
             >
-              {selectedChar.id === 'kenji' ? (
-                <img
-                  src="/images/characters/japanese/kenji.png"
-                  alt={selectedChar.name}
-                  className="w-full h-full object-contain object-bottom"
-                  onError={e => { e.target.style.display = 'none' }}
-                />
+              {['kenji', 'hana', 'yuki'].includes(selectedChar.id) ? (
+                <div className="relative w-full h-full">
+                  <img
+                    src={`/images/characters/japanese/${selectedChar.id}.png`}
+                    alt={selectedChar.name}
+                    className="absolute inset-0 w-full h-full object-contain object-bottom z-10"
+                    onError={e => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex' }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center text-8xl opacity-40" style={{ display: 'none' }}>
+                    {selectedChar.id === 'hana' ? '🌸' : selectedChar.id === 'yuki' ? '❄️' : '👤'}
+                  </div>
+                </div>
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-8xl opacity-40">
                   👤

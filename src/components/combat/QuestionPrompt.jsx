@@ -5,8 +5,8 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { useQuestion } from '../../hooks/useQuestion.js'
-import { shuffleOptions } from '../../utils/questions.js'
 import { useState, useEffect } from 'react'
+import useRunStore from '../../stores/runStore.js'
 
 const OPTION_LABELS = ['A', 'B', 'C', 'D']
 
@@ -20,6 +20,11 @@ const OPTION_LABELS = ['A', 'B', 'C', 'D']
 export function QuestionPrompt({ questionData, masteryLevel = 0, canHint = true, onAnswer, onHint }) {
   const { question, shuffledOptions, newCorrectIndex, card } = questionData
 
+  const s = useRunStore.getState()
+  const hasHourglass = s.relics.includes('cracked_hourglass')
+  const hasOldNotes = s.relics.includes('returnees_old_notes') && card.type === 'grammar'
+  const canUseWornDict = s.relics.includes('worn_dictionary') && !s.wornDictionaryUsedThisFight && card.type === 'vocabulary'
+
   const {
     timeLeft,
     timerProgress,
@@ -28,13 +33,18 @@ export function QuestionPrompt({ questionData, masteryLevel = 0, canHint = true,
     selectedIndex,
     selectAnswer,
     revealHint,
+    halfDamage,
+    setHalfDamage,
   } = useQuestion({
     question: { ...question, correct_index: newCorrectIndex },
     masteryLevel,
     onResult: onAnswer,
+    noTimer: hasHourglass,
+    autoHint: hasOldNotes,
   })
 
   const [flashIndex, setFlashIndex] = useState(null) // for answer feedback flash
+  const [wornDictActive, setWornDictActive] = useState(false)
 
   // Flash correct/wrong answer on selection
   useEffect(() => {
@@ -50,6 +60,7 @@ export function QuestionPrompt({ questionData, masteryLevel = 0, canHint = true,
   }
 
   const getOptionClass = (idx) => {
+    if (wornDictActive && idx === newCorrectIndex) return 'bg-emerald-900/80 border-emerald-500 text-emerald-100 shadow-[0_0_15px_#10b98188]'
     if (!answered || flashIndex === null) {
       return 'bg-gray-800/80 border-gray-600 hover:bg-gray-700/80 hover:border-gray-400 text-gray-100'
     }
@@ -151,18 +162,34 @@ export function QuestionPrompt({ questionData, masteryLevel = 0, canHint = true,
 
           {/* Hint button */}
           <div className="border-t border-gray-800 px-4 py-2 flex items-center justify-between">
-            <button
-              className={`
-                text-xs px-3 py-1 rounded-lg border transition-all flex items-center gap-1.5
-                ${hintShown || !canHint || answered
-                  ? 'text-gray-600 border-gray-700 cursor-default opacity-50'
-                  : 'text-amber-400 border-amber-700 hover:bg-amber-950/50 cursor-pointer'}
-              `}
-              onClick={handleHint}
-              disabled={hintShown || !canHint || answered}
-            >
-              💡 Hint <span className="text-gray-500">(costs 1 energy)</span>
-            </button>
+            <div className="flex gap-2">
+              {canUseWornDict && !wornDictActive && (
+                <button
+                  className="text-xs px-3 py-1 rounded-lg border border-red-800 text-red-400 hover:bg-red-950/50 transition-all flex items-center gap-1.5"
+                  onClick={() => {
+                    useRunStore.getState().setWornDictionaryUsed()
+                    setWornDictActive(true)
+                    setHalfDamage(true)
+                  }}
+                  disabled={answered}
+                  title="Worn Dictionary: Reveal answer but deal half damage"
+                >
+                  📖 Reveal (Half Dmg)
+                </button>
+              )}
+              <button
+                className={`
+                  text-xs px-3 py-1 rounded-lg border transition-all flex items-center gap-1.5
+                  ${hintShown || !canHint || answered || wornDictActive
+                    ? 'text-gray-600 border-gray-700 cursor-default opacity-50'
+                    : 'text-amber-400 border-amber-700 hover:bg-amber-950/50 cursor-pointer'}
+                `}
+                onClick={handleHint}
+                disabled={hintShown || !canHint || answered || wornDictActive}
+              >
+                💡 Hint <span className="text-gray-500">(costs 1 energy)</span>
+              </button>
+            </div>
             {answered && (
               <motion.p
                 initial={{ opacity: 0 }}

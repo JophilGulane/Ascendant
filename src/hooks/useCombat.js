@@ -93,22 +93,37 @@ export function useCombat() {
   const drawHand = useCallback(() => {
     const s = useRunStore.getState()
 
-    // v2: unlock all locked cards first (greyscale → color flash handled by CardComponent)
+    // v2: unlock all locked cards first
     s.unlockAllCards()
+
+    // v3: Passively retain cards that have the retain effect
+    const currentHand = s.hand
+    const retained = currentHand.filter(id => {
+      const card = cardMap[id]
+      return card?.effect?.retain
+    })
+    s.setRetainedCards(retained)
+
+    // Tick growth for retained cards (they grow each turn they stay in hand)
+    retained.forEach(cardId => s.tickRetainGrowth(cardId))
 
     const drawCount = getEffectiveDrawCount(s, 5)
     const effectiveEnergy = getEffectiveMaxEnergy(s)
 
+    // v3: Retained cards stay in the hand — only draw enough to fill up to drawCount
+    const slotsToFill = Math.max(0, drawCount - retained.length)
+    // Cards currently in hand that are NOT retained go to discard
+    const nonRetainedInHand = currentHand.filter(id => !retained.includes(id))
     const currentDeck = [...s.deck]
-    const currentDiscard = [...s.discardPile, ...s.hand]
-    const { drawn, deck: newDeck, discard: newDiscard } = drawCards(currentDeck, currentDiscard, drawCount)
+    const currentDiscard = [...s.discardPile, ...nonRetainedInHand]
+    const { drawn, deck: newDeck, discard: newDiscard } = drawCards(currentDeck, currentDiscard, slotsToFill)
 
-    s.setHand(drawn)
+    // New hand = retained cards (still in hand) + newly drawn cards
+    s.setHand([...retained, ...drawn])
     s.setDeck(newDeck)
     s.setDiscard(newDiscard)
 
-    // Reset energy respecting Drain debuff (Drain reduces max energy by 1)
-    // We manually set energy to effectiveEnergy rather than just calling resetEnergy()
+    // Reset energy respecting Drain debuff
     useRunStore.setState({ energy: effectiveEnergy })
 
     s.incrementTurn()
@@ -173,15 +188,20 @@ export function useCombat() {
   // RESOLVE ANSWER — called by QuestionPrompt after delay
   // v2: wrong = lockCard + addEnemyBuff + breakChain
   // ============================================================
-  const resolveAnswer = useCallback(({ result, isFirstTry }) => {
+  const resolveAnswer = useCallback(({ result, isFirstTry, halfDamage }) => {
     if (!activeQuestion) return
     const { question, card } = activeQuestion
     const isCorrect = result === 'correct'
     const s = useRunStore.getState()
 
     if (isCorrect) {
-      graveyard.logCorrect(question.id)
+      graveyard.logCorrect(question)
       s.logCorrect()
+
+      const freshS = useRunStore.getState()
+      if (freshS.relics.includes('travelers_compass') && freshS.fightCorrectStreak > 0 && freshS.fightCorrectStreak % 3 === 0) {
+        freshS.queueBonusEnergyNextTurn(1)
+      }
 
       // Track card type for enemy focus move
       s.trackCardTypePlayed(card.type)
@@ -205,15 +225,18 @@ export function useCombat() {
       }
 
       // Chain resolution
-      const chainResult = resolveChain(card.type, { chainActive: s.chainActive, chainType: s.chainType }, s)
+      const chainResult = resolveChain(card.type, { chainActive: s.chainActive, chainType: s.chainType }, s, s.relics.includes('chain_bracelet'))
 
       // Card effect
-      applyCardEffect(card, chainResult.bonusMultiplier, isFirstTry, s)
+      let mult = chainResult.bonusMultiplier
+      if (halfDamage) mult *= 0.5
+      applyCardEffect(card, mult, isFirstTry, s)
 
       // Spend energy + move to discard
       s.spendEnergy(card.energy_cost)
       s.removeFromHand(card.id)
       s.addToDiscard(card.id)
+      s.clearRetainGrowth(card.id)
 
       setAnimState('correct')
       setTimeout(() => setAnimState(null), 600)
@@ -230,11 +253,22 @@ export function useCombat() {
       // RULE: break chain on any wrong answer
       s.breakChain()
 
-      // Enemy buff from wrong answer — read from enemy data, not hardcoded
+      // Enemy buff from wrong answer
       const enemy = s.currentEnemy
       const buffTemplate = enemy?.wrong_answer_buffs?.[card.type]
+      
+      const freshS = useRunStore.getState()
+      const firstMistake = (freshS.fightTotal - freshS.fightCorrect === 1)
+
       if (buffTemplate) {
-        s.addEnemyBuff({ ...buffTemplate })
+        if (s.relics.includes('newcomers_phrasebook') && firstMistake) {
+          // Negated by relic
+        } else if (s.relics.includes('cracked_hourglass')) {
+          s.addEnemyBuff({ ...buffTemplate })
+          s.addEnemyBuff({ ...buffTemplate })
+        } else {
+          s.addEnemyBuff({ ...buffTemplate })
+        }
       }
 
       setAnimState('wrong')
@@ -278,7 +312,10 @@ export function useCombat() {
     }
 
     if (effect.block) {
-      const blockGained = calculateBlock({ base: effect.block, chainMultiplier })
+      // v3: retain growth — each retained turn adds +4 bonus block
+      const stacks = s.retainGrowthStacks?.[card.id] || 0
+      const growthBonus = stacks * 4
+      const blockGained = calculateBlock({ base: effect.block + growthBonus, chainMultiplier })
       s.addBlock(blockGained)
     }
 
@@ -298,6 +335,32 @@ export function useCombat() {
     if (effect.chain_bonus && chainMultiplier > 1) {
       s.damageEnemy(effect.chain_bonus)
     }
+
+    // v3: Discard/Draw — discard N cards from hand, draw N+1
+    if (effect.discard_draw) {
+      const count = effect.discard_draw
+      const freshS = useRunStore.getState()
+      // Discard random non-retained cards from hand (excluding the card just played, already removed)
+      const eligibleToDiscard = freshS.hand.filter(id => !freshS.retainedCards.includes(id))
+      const toDiscard = eligibleToDiscard.slice(0, count)
+      const newHand = freshS.hand.filter(id => !toDiscard.includes(id))
+      const newDiscard = [...freshS.discardPile, ...toDiscard]
+      const { drawn, deck: newDeck, discard: finalDiscard } = drawCards(freshS.deck, newDiscard, count + 1)
+      s.setHand([...newHand, ...drawn])
+      s.setDeck(newDeck)
+      s.setDiscard(finalDiscard)
+    }
+
+    // v3: Exhaust for energy — card is played, then immediately exhausted (removed from discard)
+    if (effect.exhaust_self_gain_energy) {
+      const freshS = useRunStore.getState()
+      // Remove from discard (it was just added there by resolveAnswer), put in exhaustPile
+      const newDiscard = freshS.discardPile.filter(id => id !== card.id)
+      s.setDiscard(newDiscard)
+      useRunStore.setState(st => ({ exhaustPile: [...st.exhaustPile, card.id] }))
+      s.gainBonusEnergy(effect.exhaust_self_gain_energy)
+    }
+
   }, [])
 
   // ============================================================

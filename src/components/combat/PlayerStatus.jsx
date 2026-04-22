@@ -3,6 +3,7 @@
 
 import { motion } from 'framer-motion'
 import { DebuffBadges } from './DebuffBadges.jsx'
+import relicsData from '../../data/japanese/relics.json'
 
 /**
  * @param {number} hp
@@ -93,18 +94,6 @@ export function PlayerStatus({ hp, maxHp, block, energy, maxEnergy, debuffs = []
 }
 
 function getRelicIcon(relicId) {
-  const icons = {
-    travelers_compass: '🧭',
-    newcomers_phrasebook: '📓',
-    returnees_old_notes: '📝',
-    worn_dictionary: '📖',
-    cracked_hourglass: '⌛',
-    scholars_lens: '🔍',
-    chain_bracelet: '⛓️',
-    ghost_ink: '🖊️',
-    merchants_scale: '⚖️',
-    iron_will: '💪',
-    the_red_thread: '🧵',
-  }
-  return icons[relicId] || '💎'
+  const relic = relicsData.find(r => r.id === relicId)
+  return relic ? relic.icon : '💎'
 }

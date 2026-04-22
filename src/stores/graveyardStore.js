@@ -24,9 +24,15 @@ const useGraveyardStore = create(
         }
       })),
 
-      recordCorrect: (questionId) => set(s => {
-        const entry = s.entries[questionId]
-        if (!entry) return {} // not in graveyard = never wrong, skip
+      recordCorrect: (questionId, label, reading) => set(s => {
+        const entry = s.entries[questionId] || {
+          label: label || questionId,
+          reading: reading || '',
+          wrongCount: 0,
+          correctStreak: 0,
+          mastered: false,
+          lastSeen: 0,
+        }
         const newStreak = (entry.correctStreak || 0) + 1
         return {
           entries: {

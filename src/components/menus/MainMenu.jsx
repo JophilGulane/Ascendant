@@ -36,6 +36,7 @@ function Ember({ delay }) {
 
 const MENU_ITEMS = [
   { id: 'play',     label: 'Play' },
+  { id: 'graveyard',label: 'Mistake Graveyard' },
   { id: 'settings', label: 'Settings' },
   { id: 'about',    label: 'About' },
 ]
@@ -50,6 +51,7 @@ export function MainMenu() {
 
   const handleMenuClick = (id) => {
     if (id === 'play') navigate('/character-select')
+    if (id === 'graveyard') navigate('/graveyard')
     if (id === 'settings') setSettingsOpen(true)
     if (id === 'about') {} // placeholder
   }

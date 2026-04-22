@@ -1,6 +1,16 @@
 // utils/questions.js
 // Question sampling and filtering utilities
 
+function weightedRandomChoice(pool, weights) {
+  const totalWeight = weights.reduce((sum, w) => sum + w, 0)
+  let random = Math.random() * totalWeight
+  for (let i = 0; i < pool.length; i++) {
+    random -= weights[i]
+    if (random <= 0) return pool[i]
+  }
+  return pool[pool.length - 1]
+}
+
 /**
  * Filter questions by floor tier
  * Floor 1: tier 1 only
@@ -81,17 +91,29 @@ export function sampleQuestionsForCard(card, allQuestions, graveyardEntries, set
     return null
   }
 
-  // Spaced repetition: weight toward graveyard mistakes
-  if (settings?.spacedRepetition && graveyardEntries) {
-    const graveyardIds = Object.keys(graveyardEntries).filter(id =>
-      graveyardEntries[id] && !graveyardEntries[id].mastered
-    )
-    const weakPool = pool.filter(q => graveyardIds.includes(q.id))
-    if (weakPool.length > 0 && Math.random() < 0.4) {
-      const chosen = weakPool[Math.floor(Math.random() * weakPool.length)]
-      store?.markQuestionUsed?.(chosen.id)
-      return chosen
-    }
+  // Spaced repetition: algorithm like Anki
+  if (settings?.spacedRepetition !== false) {
+    const weights = pool.map(q => {
+      const entry = graveyardEntries?.[q.id]
+      if (!entry) return 100 // Unseen card, high base weight
+
+      let w = 100
+      // Increase weight if user has gotten it wrong before
+      if (entry.wrongCount > 0) {
+        w += Math.min(entry.wrongCount * 40, 200) // Cap penalty
+      }
+      
+      // Drastically decrease weight for consecutive correct answers
+      if (entry.correctStreak > 0) {
+        w = w / Math.pow(2.5, entry.correctStreak)
+      }
+      
+      return Math.max(2, w) // Floor the weight so cards are never completely eliminated
+    })
+    
+    const chosen = weightedRandomChoice(pool, weights)
+    store?.markQuestionUsed?.(chosen.id)
+    return chosen
   }
 
   const chosen = pool[Math.floor(Math.random() * pool.length)]

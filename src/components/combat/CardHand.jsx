@@ -14,6 +14,8 @@ import { CARD_TYPES } from '../../constants/cardTypes.js'
  * @param {number} currentEnergy    - player's current energy
  * @param {string[]} lockedCards    - v2: card IDs locked this turn
  * @param {string[]} silencedTypes  - v2: card types currently silenced (from debuffs)
+ * @param {string[]} retainedCards  - v3: card IDs retained across turns
+ * @param {Object} retainGrowthStacks - v3: map of cardId → number of growth stacks
  * @param {string|null} selectedCardId
  * @param {boolean} chainActive
  * @param {string|null} chainType   - type of chain active
@@ -26,6 +28,8 @@ const CardHand = React.memo(function CardHand({
   currentEnergy = 3,
   lockedCards = [],
   silencedTypes = [],
+  retainedCards = [],
+  retainGrowthStacks = {},
   selectedCardId = null,
   chainActive = false,
   chainType = null,
@@ -66,6 +70,8 @@ const CardHand = React.memo(function CardHand({
           const canAfford = currentEnergy >= card.energy_cost
           const isLocked = lockedCards.includes(card.id)
           const isSilenced = silencedTypes.includes(card.type)
+          const isRetained = retainedCards.includes(card.id)
+          const growthStacks = retainGrowthStacks[card.id] || 0
 
           const isPrimed =
             !isLocked &&
@@ -81,6 +87,8 @@ const CardHand = React.memo(function CardHand({
               isLocked={isLocked}
               isSilenced={isSilenced}
               isPrimed={isPrimed}
+              isRetained={isRetained}
+              growthStacks={growthStacks}
               isSelected={selectedCardId === card.id}
               isShaking={shakingCardId === card.id}
               onSelect={handleCardClick}

@@ -38,6 +38,11 @@ const useRunStore = create(
       // v2: Locked cards (wrong answer → locked for this turn)
       lockedCards: [],
 
+      // v3: Retained cards (stay in hand next turn)
+      retainedCards: [],
+      // v3: Growth stacks per retained card ID (how many turns it has been retained)
+      retainGrowthStacks: {},
+
       // Relics
       relics: [],
 
@@ -75,6 +80,7 @@ const useRunStore = create(
       sessionTotal: 0,
       fightCorrect: 0,
       fightTotal: 0,
+      fightCorrectStreak: 0,
 
       // Journal
       journalWords: [],
@@ -93,8 +99,15 @@ const useRunStore = create(
 
       // Energy
       spendEnergy: (amount) => set(s => ({ energy: Math.max(0, s.energy - amount) })),
-      resetEnergy: () => set(s => ({ energy: s.maxEnergy })),
+      resetEnergy: () => set(s => {
+        const bonus = s.bonusEnergyNextTurn || 0
+        return { 
+          energy: s.maxEnergy + bonus,
+          bonusEnergyNextTurn: 0
+        }
+      }),
       gainBonusEnergy: (amount) => set(s => ({ energy: s.energy + amount })),
+      queueBonusEnergyNextTurn: (amount) => set(s => ({ bonusEnergyNextTurn: (s.bonusEnergyNextTurn || 0) + amount })),
 
       // Gold
       addGold: (amount) => set(s => ({ gold: s.gold + amount })),
@@ -105,6 +118,21 @@ const useRunStore = create(
         lockedCards: s.lockedCards.includes(cardId) ? s.lockedCards : [...s.lockedCards, cardId]
       })),
       unlockAllCards: () => set({ lockedCards: [] }),
+
+      // v3: Retained cards
+      setRetainedCards: (cardIds) => set({ retainedCards: cardIds }),
+      clearRetainedCards: () => set({ retainedCards: [], retainGrowthStacks: {} }),
+      tickRetainGrowth: (cardId) => set(s => ({
+        retainGrowthStacks: {
+          ...s.retainGrowthStacks,
+          [cardId]: (s.retainGrowthStacks[cardId] || 0) + 1,
+        },
+      })),
+      clearRetainGrowth: (cardId) => set(s => {
+        const newStacks = { ...s.retainGrowthStacks }
+        delete newStacks[cardId]
+        return { retainGrowthStacks: newStacks }
+      }),
 
       // v2: Player debuffs
       addPlayerDebuff: (debuff) => set(s => ({
@@ -202,13 +230,16 @@ const useRunStore = create(
         }],
         sessionTotal: s.sessionTotal + 1,
         fightTotal: s.fightTotal + 1,
+        fightCorrectStreak: 0,
       })),
       logCorrect: () => set(s => ({
         sessionCorrect: s.sessionCorrect + 1,
         fightCorrect: s.fightCorrect + 1,
+        fightCorrectStreak: s.fightCorrectStreak + 1,
       })),
-      resetFightAccuracy: () => set({ fightCorrect: 0, fightTotal: 0 }),
+      resetFightAccuracy: () => set({ fightCorrect: 0, fightTotal: 0, fightCorrectStreak: 0 }),
       setHintUsed: () => set({ hintUsedThisFight: true }),
+      setWornDictionaryUsed: () => set({ wornDictionaryUsedThisFight: true }),
       incrementTurn: () => set(s => ({ turnNumber: s.turnNumber + 1 })),
 
       // Map navigation
@@ -241,7 +272,7 @@ const useRunStore = create(
       setInCombat: (val) => set({ inCombat: val }),
 
       // v2: startFight — single action that resets all fight state atomically
-      startFight: (enemy) => set({
+      startFight: (enemy) => set(s => ({
         inCombat: true,
         currentEnemy: enemy,
         enemyHp: enemy.hp,
@@ -251,21 +282,30 @@ const useRunStore = create(
         enemyFocusType: null,
         intentIndex: 0,
         lockedCards: [],           // RULE: unlock all cards at fight start
+        retainedCards: [],         // v3: clear retained cards at fight start
+        retainGrowthStacks: {},    // v3: clear growth stacks at fight start
         activeEnemyBuffs: [],
         chainActive: false,
         chainType: null,
         fightQuestionPoolUsed: [], // RULE: reset question pool at fight start
         cardTypesPlayedThisFight: {},
         hintUsedThisFight: false,
+        wornDictionaryUsedThisFight: false,
         fightCorrect: 0,
         fightTotal: 0,
-      }),
+        fightCorrectStreak: 0,
+        block: s.relics.includes('fox_mask') ? 10 : 0,
+        energy: s.maxEnergy,
+        bonusEnergyNextTurn: 0,
+      })),
 
       // v2: endFight — moves remaining hand to discard to prevent deck shrinkage
       endFight: () => set(s => ({
         inCombat: false,
         currentEnemy: null,
         lockedCards: [],
+        retainedCards: [],         // v3: clear on fight end
+        retainGrowthStacks: {},    // v3: clear on fight end
         activeEnemyBuffs: [],
         activePlayerDebuffs: [],
         chainActive: false,
@@ -275,6 +315,7 @@ const useRunStore = create(
         // CRITICAL: move remaining hand cards to discard — never lose cards
         discardPile: [...s.discardPile, ...s.hand],
         hand: [],
+        block: 0,
       })),
 
 
@@ -317,6 +358,7 @@ const useRunStore = create(
         mapPaths: [],
         currentNodeId: null,
         hintUsedThisFight: false,
+        wornDictionaryUsedThisFight: false,
         turnNumber: 0,
         intentIndex: 0,
         enemyArmor: 0,

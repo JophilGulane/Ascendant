@@ -1,7 +1,7 @@
 [
   {
-    "id": "jp_vocab_strike",
-    "campaign": "japanese",
+    "id": "es_vocab_strike",
+    "campaign": "spanish",
     "name_target": "斬撃",
     "name_native": "Strike",
     "type": "vocabulary",
@@ -19,12 +19,12 @@
     "flavor_target": "切る。",
     "flavor_native": "Cut.",
     "upgradeable": true,
-    "upgraded_id": "jp_vocab_strike_plus",
+    "upgraded_id": "es_vocab_strike_plus",
     "illustration": null
   },
   {
-    "id": "jp_vocab_strike_plus",
-    "campaign": "japanese",
+    "id": "es_vocab_strike_plus",
+    "campaign": "spanish",
     "name_target": "斬撃＋",
     "name_native": "Strike+",
     "type": "vocabulary",
@@ -46,8 +46,8 @@
     "illustration": null
   },
   {
-    "id": "jp_vocab_wild_slash",
-    "campaign": "japanese",
+    "id": "es_vocab_wild_slash",
+    "campaign": "spanish",
     "name_target": "乱撃",
     "name_native": "Wild Slash",
     "type": "vocabulary",
@@ -69,8 +69,8 @@
     "illustration": null
   },
   {
-    "id": "jp_vocab_spirit_surge",
-    "campaign": "japanese",
+    "id": "es_vocab_spirit_surge",
+    "campaign": "spanish",
     "name_target": "霊撃",
     "name_native": "Spirit Surge",
     "type": "vocabulary",
@@ -93,8 +93,8 @@
     "illustration": null
   },
   {
-    "id": "jp_vocab_swift_strike",
-    "campaign": "japanese",
+    "id": "es_vocab_swift_strike",
+    "campaign": "spanish",
     "name_target": "迅撃",
     "name_native": "Swift Strike",
     "type": "vocabulary",
@@ -117,8 +117,8 @@
     "illustration": null
   },
   {
-    "id": "jp_vocab_twin_fang",
-    "campaign": "japanese",
+    "id": "es_vocab_twin_fang",
+    "campaign": "spanish",
     "name_target": "双牙",
     "name_native": "Twin Fang",
     "type": "vocabulary",
@@ -141,8 +141,8 @@
     "illustration": null
   },
   {
-    "id": "jp_vocab_kanji_blade",
-    "campaign": "japanese",
+    "id": "es_vocab_kanji_blade",
+    "campaign": "spanish",
     "name_target": "漢字刃",
     "name_native": "Kanji Blade",
     "type": "vocabulary",
@@ -165,8 +165,8 @@
     "illustration": null
   },
   {
-    "id": "jp_vocab_mountain_echo",
-    "campaign": "japanese",
+    "id": "es_vocab_mountain_echo",
+    "campaign": "spanish",
     "name_target": "山彦",
     "name_native": "Mountain Echo",
     "type": "vocabulary",
@@ -188,8 +188,8 @@
     "illustration": null
   },
   {
-    "id": "jp_gram_ward",
-    "campaign": "japanese",
+    "id": "es_gram_ward",
+    "campaign": "spanish",
     "name_target": "護符",
     "name_native": "Ward",
     "type": "grammar",
@@ -206,12 +206,12 @@
     "flavor_target": "護る言葉。",
     "flavor_native": "Words that protect.",
     "upgradeable": true,
-    "upgraded_id": "jp_gram_ward_plus",
+    "upgraded_id": "es_gram_ward_plus",
     "illustration": null
   },
   {
-    "id": "jp_gram_ward_plus",
-    "campaign": "japanese",
+    "id": "es_gram_ward_plus",
+    "campaign": "spanish",
     "name_target": "護符＋",
     "name_native": "Ward+",
     "type": "grammar",
@@ -232,8 +232,8 @@
     "illustration": null
   },
   {
-    "id": "jp_gram_iron_vow",
-    "campaign": "japanese",
+    "id": "es_gram_iron_vow",
+    "campaign": "spanish",
     "name_target": "鉄誓",
     "name_native": "Iron Vow",
     "type": "grammar",
@@ -254,8 +254,8 @@
     "illustration": null
   },
   {
-    "id": "jp_gram_particle_shield",
-    "campaign": "japanese",
+    "id": "es_gram_particle_shield",
+    "campaign": "spanish",
     "name_target": "助詞盾",
     "name_native": "Particle Shield",
     "type": "grammar",
@@ -277,8 +277,8 @@
     "illustration": null
   },
   {
-    "id": "jp_gram_stone_skin",
-    "campaign": "japanese",
+    "id": "es_gram_stone_skin",
+    "campaign": "spanish",
     "name_target": "石皮",
     "name_native": "Stone Skin",
     "type": "grammar",
@@ -300,8 +300,8 @@
     "illustration": null
   },
   {
-    "id": "jp_read_spirit_scroll",
-    "campaign": "japanese",
+    "id": "es_read_spirit_scroll",
+    "campaign": "spanish",
     "name_target": "霊視",
     "name_native": "Spirit Sight",
     "type": "reading",
@@ -324,8 +324,8 @@
     "illustration": null
   },
   {
-    "id": "jp_read_travelers_wisdom",
-    "campaign": "japanese",
+    "id": "es_read_travelers_wisdom",
+    "campaign": "spanish",
     "name_target": "旅の知恵",
     "name_native": "Traveler's Wisdom",
     "type": "reading",
@@ -349,8 +349,8 @@
     "is_kenji_starter_rare": true
   },
   {
-    "id": "jp_vocab_tactical_retreat",
-    "campaign": "japanese",
+    "id": "es_vocab_tactical_retreat",
+    "campaign": "spanish",
     "name_target": "捨て身",
     "name_native": "Tactical Retreat",
     "type": "vocabulary",
@@ -370,8 +370,8 @@
     "illustration": null
   },
   {
-    "id": "jp_gram_meditate",
-    "campaign": "japanese",
+    "id": "es_gram_meditate",
+    "campaign": "spanish",
     "name_target": "瞑想",
     "name_native": "Meditate",
     "type": "grammar",
@@ -392,8 +392,8 @@
     "illustration": null
   },
   {
-    "id": "jp_read_void_surge",
-    "campaign": "japanese",
+    "id": "es_read_void_surge",
+    "campaign": "spanish",
     "name_target": "虚空の奔流",
     "name_native": "Void Surge",
     "type": "reading",
@@ -414,8 +414,8 @@
     "illustration": null
   },
   {
-    "id": "jp_gram_steady_stance",
-    "campaign": "japanese",
+    "id": "es_gram_steady_stance",
+    "campaign": "spanish",
     "name_target": "不動の構え",
     "name_native": "Steady Stance",
     "type": "grammar",
@@ -436,8 +436,8 @@
     "illustration": null
   },
   {
-    "id": "jp_read_newcomers_luck",
-    "campaign": "japanese",
+    "id": "es_read_newcomers_luck",
+    "campaign": "spanish",
     "name_target": "初心者の運",
     "name_native": "Newcomer's Luck",
     "type": "reading",
@@ -455,12 +455,12 @@
     "flavor_target": "運も実力のうち。",
     "flavor_native": "Luck is also a skill.",
     "upgradeable": true,
-    "upgraded_id": "jp_read_newcomers_luck_plus",
+    "upgraded_id": "es_read_newcomers_luck_plus",
     "illustration": "cards/japanese/newcomers_luck.png"
   },
   {
-    "id": "jp_read_returnees_insight",
-    "campaign": "japanese",
+    "id": "es_read_returnees_insight",
+    "campaign": "spanish",
     "name_target": "帰国者の洞察",
     "name_native": "Returnee's Insight",
     "type": "reading",
@@ -477,12 +477,12 @@
     "flavor_target": "思い出した。",
     "flavor_native": "I remember now.",
     "upgradeable": true,
-    "upgraded_id": "jp_read_returnees_insight_plus",
+    "upgraded_id": "es_read_returnees_insight_plus",
     "illustration": "cards/japanese/returnees_insight.png"
   },
   {
-    "id": "jp_vocabulary_gen_100",
-    "campaign": "japanese",
+    "id": "es_vocabulary_gen_100",
+    "campaign": "spanish",
     "name_target": "幻の技 101",
     "name_native": "Phantom Tech 101",
     "type": "vocabulary",
@@ -501,8 +501,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_vocabulary_gen_101",
-    "campaign": "japanese",
+    "id": "es_vocabulary_gen_101",
+    "campaign": "spanish",
     "name_target": "幻の技 102",
     "name_native": "Phantom Tech 102",
     "type": "vocabulary",
@@ -521,8 +521,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_vocabulary_gen_102",
-    "campaign": "japanese",
+    "id": "es_vocabulary_gen_102",
+    "campaign": "spanish",
     "name_target": "幻の技 103",
     "name_native": "Phantom Tech 103",
     "type": "vocabulary",
@@ -541,8 +541,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_reading_gen_103",
-    "campaign": "japanese",
+    "id": "es_reading_gen_103",
+    "campaign": "spanish",
     "name_target": "幻の技 104",
     "name_native": "Phantom Tech 104",
     "type": "reading",
@@ -561,8 +561,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_vocabulary_gen_104",
-    "campaign": "japanese",
+    "id": "es_vocabulary_gen_104",
+    "campaign": "spanish",
     "name_target": "幻の技 105",
     "name_native": "Phantom Tech 105",
     "type": "vocabulary",
@@ -581,8 +581,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_grammar_gen_105",
-    "campaign": "japanese",
+    "id": "es_grammar_gen_105",
+    "campaign": "spanish",
     "name_target": "幻の技 106",
     "name_native": "Phantom Tech 106",
     "type": "grammar",
@@ -601,8 +601,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_vocabulary_gen_106",
-    "campaign": "japanese",
+    "id": "es_vocabulary_gen_106",
+    "campaign": "spanish",
     "name_target": "幻の技 107",
     "name_native": "Phantom Tech 107",
     "type": "vocabulary",
@@ -621,8 +621,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_grammar_gen_107",
-    "campaign": "japanese",
+    "id": "es_grammar_gen_107",
+    "campaign": "spanish",
     "name_target": "幻の技 108",
     "name_native": "Phantom Tech 108",
     "type": "grammar",
@@ -641,8 +641,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_grammar_gen_108",
-    "campaign": "japanese",
+    "id": "es_grammar_gen_108",
+    "campaign": "spanish",
     "name_target": "幻の技 109",
     "name_native": "Phantom Tech 109",
     "type": "grammar",
@@ -661,8 +661,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_reading_gen_109",
-    "campaign": "japanese",
+    "id": "es_reading_gen_109",
+    "campaign": "spanish",
     "name_target": "幻の技 110",
     "name_native": "Phantom Tech 110",
     "type": "reading",
@@ -681,8 +681,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_reading_gen_110",
-    "campaign": "japanese",
+    "id": "es_reading_gen_110",
+    "campaign": "spanish",
     "name_target": "幻の技 111",
     "name_native": "Phantom Tech 111",
     "type": "reading",
@@ -701,8 +701,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_reading_gen_111",
-    "campaign": "japanese",
+    "id": "es_reading_gen_111",
+    "campaign": "spanish",
     "name_target": "幻の技 112",
     "name_native": "Phantom Tech 112",
     "type": "reading",
@@ -721,8 +721,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_grammar_gen_112",
-    "campaign": "japanese",
+    "id": "es_grammar_gen_112",
+    "campaign": "spanish",
     "name_target": "幻の技 113",
     "name_native": "Phantom Tech 113",
     "type": "grammar",
@@ -741,8 +741,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_reading_gen_113",
-    "campaign": "japanese",
+    "id": "es_reading_gen_113",
+    "campaign": "spanish",
     "name_target": "幻の技 114",
     "name_native": "Phantom Tech 114",
     "type": "reading",
@@ -761,8 +761,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_vocabulary_gen_114",
-    "campaign": "japanese",
+    "id": "es_vocabulary_gen_114",
+    "campaign": "spanish",
     "name_target": "幻の技 115",
     "name_native": "Phantom Tech 115",
     "type": "vocabulary",
@@ -781,8 +781,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_vocabulary_gen_115",
-    "campaign": "japanese",
+    "id": "es_vocabulary_gen_115",
+    "campaign": "spanish",
     "name_target": "幻の技 116",
     "name_native": "Phantom Tech 116",
     "type": "vocabulary",
@@ -801,8 +801,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_vocabulary_gen_116",
-    "campaign": "japanese",
+    "id": "es_vocabulary_gen_116",
+    "campaign": "spanish",
     "name_target": "幻の技 117",
     "name_native": "Phantom Tech 117",
     "type": "vocabulary",
@@ -821,8 +821,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_vocabulary_gen_117",
-    "campaign": "japanese",
+    "id": "es_vocabulary_gen_117",
+    "campaign": "spanish",
     "name_target": "幻の技 118",
     "name_native": "Phantom Tech 118",
     "type": "vocabulary",
@@ -841,8 +841,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_grammar_gen_118",
-    "campaign": "japanese",
+    "id": "es_grammar_gen_118",
+    "campaign": "spanish",
     "name_target": "幻の技 119",
     "name_native": "Phantom Tech 119",
     "type": "grammar",
@@ -861,8 +861,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_reading_gen_119",
-    "campaign": "japanese",
+    "id": "es_reading_gen_119",
+    "campaign": "spanish",
     "name_target": "幻の技 120",
     "name_native": "Phantom Tech 120",
     "type": "reading",
@@ -881,8 +881,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_vocabulary_gen_120",
-    "campaign": "japanese",
+    "id": "es_vocabulary_gen_120",
+    "campaign": "spanish",
     "name_target": "幻の技 121",
     "name_native": "Phantom Tech 121",
     "type": "vocabulary",
@@ -901,8 +901,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_vocabulary_gen_121",
-    "campaign": "japanese",
+    "id": "es_vocabulary_gen_121",
+    "campaign": "spanish",
     "name_target": "幻の技 122",
     "name_native": "Phantom Tech 122",
     "type": "vocabulary",
@@ -921,8 +921,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_vocabulary_gen_122",
-    "campaign": "japanese",
+    "id": "es_vocabulary_gen_122",
+    "campaign": "spanish",
     "name_target": "幻の技 123",
     "name_native": "Phantom Tech 123",
     "type": "vocabulary",
@@ -941,8 +941,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_vocabulary_gen_123",
-    "campaign": "japanese",
+    "id": "es_vocabulary_gen_123",
+    "campaign": "spanish",
     "name_target": "幻の技 124",
     "name_native": "Phantom Tech 124",
     "type": "vocabulary",
@@ -961,8 +961,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_reading_gen_124",
-    "campaign": "japanese",
+    "id": "es_reading_gen_124",
+    "campaign": "spanish",
     "name_target": "幻の技 125",
     "name_native": "Phantom Tech 125",
     "type": "reading",
@@ -981,8 +981,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_reading_gen_125",
-    "campaign": "japanese",
+    "id": "es_reading_gen_125",
+    "campaign": "spanish",
     "name_target": "幻の技 126",
     "name_native": "Phantom Tech 126",
     "type": "reading",
@@ -1001,8 +1001,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_grammar_gen_126",
-    "campaign": "japanese",
+    "id": "es_grammar_gen_126",
+    "campaign": "spanish",
     "name_target": "幻の技 127",
     "name_native": "Phantom Tech 127",
     "type": "grammar",
@@ -1021,8 +1021,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_reading_gen_127",
-    "campaign": "japanese",
+    "id": "es_reading_gen_127",
+    "campaign": "spanish",
     "name_target": "幻の技 128",
     "name_native": "Phantom Tech 128",
     "type": "reading",
@@ -1041,8 +1041,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_reading_gen_128",
-    "campaign": "japanese",
+    "id": "es_reading_gen_128",
+    "campaign": "spanish",
     "name_target": "幻の技 129",
     "name_native": "Phantom Tech 129",
     "type": "reading",
@@ -1061,8 +1061,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_grammar_gen_129",
-    "campaign": "japanese",
+    "id": "es_grammar_gen_129",
+    "campaign": "spanish",
     "name_target": "幻の技 130",
     "name_native": "Phantom Tech 130",
     "type": "grammar",
@@ -1081,8 +1081,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_grammar_gen_130",
-    "campaign": "japanese",
+    "id": "es_grammar_gen_130",
+    "campaign": "spanish",
     "name_target": "幻の技 131",
     "name_native": "Phantom Tech 131",
     "type": "grammar",
@@ -1101,8 +1101,8 @@
     "illustration": "cards/japanese/placeholder.png"
   },
   {
-    "id": "jp_reading_gen_131",
-    "campaign": "japanese",
+    "id": "es_reading_gen_131",
+    "campaign": "spanish",
     "name_target": "幻の技 132",
     "name_native": "Phantom Tech 132",
     "type": "reading",

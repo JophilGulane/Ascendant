@@ -169,9 +169,30 @@ export function CombatScreen() {
   useEffect(() => {
     const enemy = store.currentEnemy
     if (!enemy?.phases) return
-    const phase2trigger = enemy.phases[1]?.hp_threshold
-    if (phase2trigger && store.enemyHp <= phase2trigger && bossPhase === 1 && store.enemyHp > 0) {
-      setBossPhase(2)
+    
+    let newPhase = 1
+    for (const phase of enemy.phases) {
+      if (store.enemyHp <= phase.hp_threshold && store.enemyHp > 0) {
+        newPhase = Math.max(newPhase, phase.phase)
+      }
+    }
+
+    if (newPhase > bossPhase) {
+      for (let p = bossPhase + 1; p <= newPhase; p++) {
+        const phaseData = enemy.phases.find(x => x.phase === p)
+        if (phaseData?.on_enter) {
+          const s = useRunStore.getState()
+          if (phaseData.on_enter === 'add_chain_armor_15') s.addEnemyArmor(15)
+          if (phaseData.on_enter === 'add_chain_armor_20') s.addEnemyArmor(20)
+          if (phaseData.on_enter === 'add_fury_3') {
+            for(let i=0; i<3; i++) s.addEnemyFury()
+          }
+          if (phaseData.on_enter === 'add_fury_5') {
+            for(let i=0; i<5; i++) s.addEnemyFury()
+          }
+        }
+      }
+      setBossPhase(newPhase)
     }
   }, [store.enemyHp, bossPhase])
 
@@ -206,7 +227,10 @@ export function CombatScreen() {
     const accuracy = s.fightTotal > 0 ? s.fightCorrect / s.fightTotal : 1
 
     s.endFight()
-    s.addGold(Math.floor(10 + accuracy * 20))
+    
+    const baseGold = Math.floor(10 + accuracy * 20)
+    const relicGold = s.relics.includes('lucky_coin') ? 15 : 0
+    s.addGold(baseGold + relicGold)
 
     if (isBoss) {
       const newFloor = s.floor + 1
@@ -446,6 +470,8 @@ export function CombatScreen() {
                 currentEnergy={store.energy}
                 lockedCards={store.lockedCards}
                 silencedTypes={silencedTypes}
+                retainedCards={store.retainedCards}
+                retainGrowthStacks={store.retainGrowthStacks}
                 selectedCardId={activeCardId}
                 chainActive={store.chainActive}
                 chainType={store.chainType}
