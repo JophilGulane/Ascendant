@@ -9,6 +9,7 @@ import { PotionSlots } from '../combat/PotionSlots.jsx'
 import { usePotions } from '../../hooks/usePotions.js'
 import { RelicSlots } from './RelicSlots.jsx'
 import { VaultScreen } from '../menus/VaultScreen.jsx'
+import { MapOverlay } from '../map/MapOverlay.jsx'
 import { RELICS } from '../../data/relics.js'
 export function TopBar({ hideMapButton = false, potionsLocked = false }) {
   const store = useRunStore()
@@ -90,7 +91,9 @@ export function TopBar({ hideMapButton = false, potionsLocked = false }) {
             🃏
           </button>
           
-          {!hideMapButton && location.pathname !== '/map' && (
+          {/* Always show the Map button, but when on /map screen, make it open the map overlay so they can view the full read-only map, or hide it if you prefer. 
+              Actually, on /map we can hide it or just keep it since MapOverlay works. */}
+          {(!hideMapButton || location.pathname !== '/map') && (
             <button onClick={() => handleOpen('map')} className="text-xl hover:scale-110 transition-transform cursor-pointer" title="View Map">
               🗺️
             </button>
@@ -111,14 +114,20 @@ export function TopBar({ hideMapButton = false, potionsLocked = false }) {
         {openModal === 'settings' && (
           <SettingsOverlay onClose={closeModal} />
         )}
-        {openModal === 'deck' && (
-          <DeckOverlay onClose={closeModal} deck={store.deck} />
-        )}
+        {openModal === 'deck' && (() => {
+          const masterDeck = store.inCombat
+            ? [...store.deck, ...store.hand, ...store.discardPile, ...(store.exhaustPile || [])]
+            : store.deck
+          return <DeckOverlay onClose={closeModal} deck={masterDeck} />
+        })()}
         {openModal === 'relics' && (
           <RelicsOverlay onClose={closeModal} relics={store.relics} vaultRelics={store.vaultRelics} />
         )}
         {openModal === 'vault' && (
           <VaultScreen onClose={closeModal} />
+        )}
+        {openModal === 'map' && (
+          <MapOverlay onClose={closeModal} />
         )}
         {openModal === 'journal' && (
           <JournalOverlay onClose={closeModal} words={store.journalWords} grammar={store.journalGrammar} />
