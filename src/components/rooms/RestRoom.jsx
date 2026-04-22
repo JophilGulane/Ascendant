@@ -1,13 +1,14 @@
 // components/rooms/RestRoom.jsx
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import useRunStore from '../../stores/runStore.js'
 import useSettingsStore from '../../stores/settingsStore.js'
 import { isRuleActive } from '../../constants/masteryRules.js'
 import { ScreenTransition } from '../shared/ScreenTransition.jsx'
 import { useAudio } from '../../hooks/useAudio.js'
 import { TopBar } from '../shared/TopBar.jsx'
+import { VaultScreen } from '../menus/VaultScreen.jsx'
 
 export function RestRoom() {
   const navigate = useNavigate()
@@ -28,7 +29,7 @@ export function RestRoom() {
 
   const handleHeal = () => {
     setChosen('heal')
-    playSFX('correct') // good sound for healing
+    playSFX('correct')
     store.healHp(healAmount)
     sessionStorage.removeItem('active_encounter')
     setTimeout(() => navigate('/map'), 1200)
@@ -36,10 +37,17 @@ export function RestRoom() {
 
   const handleReview = () => {
     setChosen('review')
-    playSFX('correct') // good sound for review
-    // For Phase 1, just give a small restoration (full graveyard review in Phase 2)
+    playSFX('correct')
     sessionStorage.removeItem('active_encounter')
     setTimeout(() => navigate('/map'), 1500)
+  }
+
+  const [vaultOpen, setVaultOpen] = useState(false)
+  const hasVaultRelics = (store.vaultRelics?.length ?? 0) > 0
+
+  const handleVault = () => {
+    playSFX('button_click')
+    setVaultOpen(true)
   }
 
   return (
@@ -128,6 +136,32 @@ export function RestRoom() {
                 Graveyard entries help target your weak points
               </div>
             </motion.button>
+            {/* Vault */}
+            <motion.button
+              whileHover={!chosen ? { scale: 1.02 } : {}}
+              whileTap={!chosen ? { scale: 0.98 } : {}}
+              onClick={!chosen ? handleVault : undefined}
+              disabled={!!chosen}
+              className={`
+                p-5 rounded-2xl border-2 text-left transition-all
+                ${!hasVaultRelics
+                  ? 'border-gray-800 bg-gray-900/10 opacity-40 cursor-default'
+                  : 'border-amber-700/60 bg-amber-950/20 hover:border-amber-500 hover:bg-amber-950/40 cursor-pointer'}
+              `}
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-2xl">🗄️</span>
+                <div>
+                  <div className="font-bold text-white">Visit The Vault</div>
+                  <div className="text-xs text-gray-400">Freely swap your relic loadout</div>
+                </div>
+              </div>
+              <div className="text-xs text-gray-500">
+                {hasVaultRelics
+                  ? `${store.vaultRelics.length} relic${store.vaultRelics.length !== 1 ? 's' : ''} stored in your Vault`
+                  : 'Your Vault is empty — find and swap relics to fill it'}
+              </div>
+            </motion.button>
           </div>
 
           {/* Flavor */}
@@ -137,6 +171,11 @@ export function RestRoom() {
         </motion.div>
         </div>
       </div>
+
+      {/* Vault overlay */}
+      <AnimatePresence>
+        {vaultOpen && <VaultScreen onClose={() => setVaultOpen(false)} />}
+      </AnimatePresence>
     </ScreenTransition>
   )
 }

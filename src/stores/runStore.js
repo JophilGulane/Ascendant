@@ -57,8 +57,10 @@ const useRunStore = create(
       // v3: Growth stacks per retained card ID (how many turns it has been retained)
       retainGrowthStacks: {},
 
-      // Relics
-      relics: [],
+      // Relics — max 5 equipped, unlimited vault storage
+      relics: [],        // equipped (active, max 5)
+      vaultRelics: [],   // stored but inactive
+      pendingRelicSwap: null, // { relicId } — set when a new relic is found with full slots
 
       // v2: Player debuffs applied by enemy (silence/drain/fog/bind/confusion)
       activePlayerDebuffs: [],
@@ -234,8 +236,48 @@ const useRunStore = create(
       }),
 
       // Relics
-      addRelic: (relicId) => set(s => ({
-        relics: s.relics.includes(relicId) ? s.relics : [...s.relics, relicId]
+      addRelic: (relicId) => set(s => {
+        if (s.relics.includes(relicId) || s.vaultRelics.includes(relicId)) return {} // already have it
+        if (s.relics.length < 5) {
+          // Slot available — equip directly
+          return { relics: [...s.relics, relicId] }
+        }
+        // All 5 slots full — trigger swap screen
+        return { pendingRelicSwap: relicId }
+      }),
+      clearPendingRelicSwap: () => set({ pendingRelicSwap: null }),
+
+      // Swap equipped[slotIndex] out to vault, put newRelicId in its place
+      swapRelic: (slotIndex, newRelicId) => set(s => {
+        const outgoing = s.relics[slotIndex]
+        if (!outgoing) return {}
+        const newEquipped = [...s.relics]
+        newEquipped[slotIndex] = newRelicId
+        const newVault = s.vaultRelics.filter(id => id !== newRelicId)
+        if (outgoing) newVault.push(outgoing)
+        return { relics: newEquipped, vaultRelics: newVault, pendingRelicSwap: null }
+      }),
+
+      // Decline the new relic — put it in vault (or discard)
+      skipRelicSwap: () => set(s => ({
+        pendingRelicSwap: null,
+        // Optionally discard: don't add to vault. Spec says "Skip = decline entirely".
+      })),
+
+      // Vault swapping at rest site — swap equipped[i] with vault[j]
+      vaultSwap: (equippedIndex, vaultRelicId) => set(s => {
+        const outgoing = s.relics[equippedIndex]
+        if (!outgoing || !s.vaultRelics.includes(vaultRelicId)) return {}
+        const newEquipped = [...s.relics]
+        newEquipped[equippedIndex] = vaultRelicId
+        const newVault = s.vaultRelics.filter(id => id !== vaultRelicId)
+        if (outgoing) newVault.push(outgoing)
+        return { relics: newEquipped, vaultRelics: newVault }
+      }),
+
+      // Add relic directly to vault (e.g. from events)
+      addRelicToVault: (relicId) => set(s => ({
+        vaultRelics: s.vaultRelics.includes(relicId) ? s.vaultRelics : [...s.vaultRelics, relicId]
       })),
 
       // Modifier tracking

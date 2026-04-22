@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+// components/shared/TopBar.jsx
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate, useLocation } from 'react-router-dom'
 import useRunStore from '../../stores/runStore.js'
@@ -6,8 +7,9 @@ import { useAudio } from '../../hooks/useAudio.js'
 import { JournalOverlay } from '../journal/JournalOverlay.jsx'
 import { PotionSlots } from '../combat/PotionSlots.jsx'
 import { usePotions } from '../../hooks/usePotions.js'
-
-// components/shared/TopBar.jsx
+import { RelicSlots } from './RelicSlots.jsx'
+import { VaultScreen } from '../menus/VaultScreen.jsx'
+import { RELICS } from '../../data/relics.js'
 export function TopBar({ hideMapButton = false, potionsLocked = false }) {
   const store = useRunStore()
   const navigate = useNavigate()
@@ -59,21 +61,23 @@ export function TopBar({ hideMapButton = false, potionsLocked = false }) {
             />
           </div>
           
-          {/* Relics Button */}
-          <button 
-            onClick={() => handleOpen('relics')}
-            className="ml-4 flex gap-1 items-center hover:bg-gray-700/50 p-1 rounded transition-colors cursor-pointer"
-            title="View Relics"
-          >
-            {store.relics.length === 0 ? (
-              <span className="text-xs text-gray-500 italic">No relics</span>
-            ) : (
-              store.relics.slice(0, 3).map((r, i) => (
-                <div key={i} className="w-5 h-5 bg-gray-700 border border-gray-500 rounded-sm" />
-              ))
+          {/* Relic Slots — 5-frame row */}
+          <div className="flex items-center gap-1.5 ml-3 border-l border-gray-600 pl-3">
+            <RelicSlots
+              equippedRelics={store.relics}
+              campaign={store.campaign}
+            />
+            {/* Vault indicator */}
+            {store.vaultRelics?.length > 0 && (
+              <button
+                onClick={() => handleOpen('vault')}
+                className="ml-1 flex items-center gap-0.5 text-[10px] text-gray-500 hover:text-gray-300 transition-colors cursor-pointer bg-gray-800/60 px-1.5 py-0.5 rounded border border-gray-700 hover:border-gray-500"
+                title="View Vault"
+              >
+                🗄 {store.vaultRelics.length}
+              </button>
             )}
-            {store.relics.length > 3 && <span className="text-xs text-gray-400">+{store.relics.length - 3}</span>}
-          </button>
+          </div>
         </div>
 
         {/* Right: Actions */}
@@ -111,7 +115,10 @@ export function TopBar({ hideMapButton = false, potionsLocked = false }) {
           <DeckOverlay onClose={closeModal} deck={store.deck} />
         )}
         {openModal === 'relics' && (
-          <RelicsOverlay onClose={closeModal} relics={store.relics} />
+          <RelicsOverlay onClose={closeModal} relics={store.relics} vaultRelics={store.vaultRelics} />
+        )}
+        {openModal === 'vault' && (
+          <VaultScreen onClose={closeModal} />
         )}
         {openModal === 'journal' && (
           <JournalOverlay onClose={closeModal} words={store.journalWords} grammar={store.journalGrammar} />
@@ -207,7 +214,7 @@ export function DeckOverlay({ onClose, deck, title = "Master Deck" }) {
   )
 }
 
-function RelicsOverlay({ onClose, relics }) {
+function RelicsOverlay({ onClose, relics, vaultRelics = [] }) {
   return (
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -217,26 +224,53 @@ function RelicsOverlay({ onClose, relics }) {
       <motion.div
         initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
         onClick={e => e.stopPropagation()}
-        className="rounded-2xl border border-gray-600 p-8 max-w-2xl w-full"
+        className="rounded-2xl border border-gray-600 p-8 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
         style={{ background: '#111', boxShadow: '0 0 60px rgba(0,0,0,0.8)' }}
       >
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-amber-300" style={{ fontFamily: "'Cinzel', serif" }}>Your Relics</h2>
+          <h2 className="text-2xl font-bold text-amber-300" style={{ fontFamily: "'Cinzel', serif" }}>Relics</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-white text-3xl cursor-pointer">×</button>
         </div>
-        
-        {relics.length === 0 ? (
-          <p className="text-gray-500 italic text-center py-8">You have no relics.</p>
-        ) : (
-          <div className="flex flex-wrap gap-4">
-            {relics.map((r, i) => (
-              <div key={i} className="flex flex-col items-center gap-2 p-3 bg-gray-800 rounded-lg border border-gray-700 w-24">
-                <div className="w-12 h-12 bg-gray-900 border border-gray-600 flex items-center justify-center text-xl">
-                  🏺
-                </div>
-                <div className="text-[10px] text-gray-300 text-center font-bold break-words w-full">{r}</div>
-              </div>
-            ))}
+
+        {/* Equipped */}
+        <div className="mb-6">
+          <div className="text-xs uppercase tracking-widest text-gray-500 mb-3">Equipped ({relics.length}/5)</div>
+          {relics.length === 0 ? (
+            <p className="text-gray-600 italic text-center py-4">No relics equipped.</p>
+          ) : (
+            <div className="flex flex-wrap gap-3">
+              {relics.map((relicId) => {
+                const r = RELICS[relicId]
+                return r ? (
+                  <div key={relicId} className="flex flex-col items-center gap-1 p-3 bg-gray-900 rounded-lg border border-gray-700 w-24" title={r.description}>
+                    <span className="text-2xl">{r.icon}</span>
+                    <div className="text-[10px] text-center font-bold break-words w-full" style={{ color: r.color }}>{r.name}</div>
+                    <div className="text-[9px] text-gray-600 uppercase">{r.tier}</div>
+                  </div>
+                ) : (
+                  <div key={relicId} className="w-24 h-16 bg-gray-900 rounded border border-gray-700 flex items-center justify-center text-xs text-gray-600">{relicId}</div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Vault */}
+        {vaultRelics.length > 0 && (
+          <div>
+            <div className="text-xs uppercase tracking-widest text-gray-500 mb-3">Vault ({vaultRelics.length} stored)</div>
+            <div className="flex flex-wrap gap-3">
+              {vaultRelics.map((relicId) => {
+                const r = RELICS[relicId]
+                return r ? (
+                  <div key={relicId} className="flex flex-col items-center gap-1 p-3 bg-gray-800/50 rounded-lg border border-gray-800 w-24 opacity-60" title={r.description}>
+                    <span className="text-2xl">{r.icon}</span>
+                    <div className="text-[10px] text-center font-bold break-words w-full" style={{ color: r.color }}>{r.name}</div>
+                    <div className="text-[9px] text-gray-600 uppercase">{r.tier}</div>
+                  </div>
+                ) : null
+              })}
+            </div>
           </div>
         )}
       </motion.div>

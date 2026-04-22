@@ -10,6 +10,7 @@ import { ScreenTransition } from '../shared/ScreenTransition.jsx'
 import { getEnemies, getEvents } from '../../utils/dataLoader.js'
 import { useAudio } from '../../hooks/useAudio.js'
 import { TopBar } from '../shared/TopBar.jsx'
+import { RelicSwapScreen } from '../menus/RelicSwapScreen.jsx'
 
 // STS-style node icons (dark grey line art style on parchment)
 const NODE_META = {
@@ -357,6 +358,16 @@ export function MapScreen() {
           Select a Starting Room
         </div>
       </div>
+
+      {/* Relic Swap Screen — shown immediately when a new relic is found with full slots */}
+      <AnimatePresence>
+        {store.pendingRelicSwap && (
+          <RelicSwapScreen
+            newRelicId={store.pendingRelicSwap}
+            onDone={() => {}} // store already cleared pendingRelicSwap inside swapRelic/skipRelicSwap
+          />
+        )}
+      </AnimatePresence>
     </ScreenTransition>
   )
 }
