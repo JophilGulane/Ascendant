@@ -1,0 +1,80 @@
+[
+  {
+    "id": "jp_event_shrine_maiden",
+    "campaign": "japanese",
+    "floor_tier": 1,
+    "title": "The Shrine Maiden's Riddle",
+    "title_target": "巫女の謎",
+    "setup_text": "A shrine maiden blocks your path. She speaks:",
+    "npc_dialogue": "「あなたは何を求めているのですか？」",
+    "npc_dialogue_translation": "What are you seeking?",
+    "options": [
+      {
+        "text": "「知識を求めています。」",
+        "translation": "I seek knowledge.",
+        "outcome": "reward",
+        "outcome_text": "The maiden smiles and steps aside, placing a glowing scroll in your hands.",
+        "reward": { "type": "card_upgrade", "amount": 1, "description": "A random card in your deck is upgraded." }
+      },
+      {
+        "text": "「力を求めています。」",
+        "translation": "I seek power.",
+        "outcome": "neutral",
+        "outcome_text": "The maiden nods solemnly. 'Power alone will not carry you to the summit.'",
+        "reward": { "type": "gold", "amount": 10, "description": "You receive 10 gold." }
+      }
+    ]
+  },
+  {
+    "id": "jp_event_wandering_monk",
+    "campaign": "japanese",
+    "floor_tier": 1,
+    "title": "The Wandering Monk",
+    "title_target": "旅の僧侶",
+    "setup_text": "An old monk sits by the road, studying a worn scroll. He looks up and asks:",
+    "npc_dialogue": "「この言葉の意味がわかりますか？」",
+    "npc_dialogue_translation": "Do you understand the meaning of these words?",
+    "options": [
+      {
+        "text": "「はい、わかります。」",
+        "translation": "Yes, I understand.",
+        "outcome": "reward",
+        "outcome_text": "The monk beams. 'A rare traveler!' He shares his provisions.",
+        "reward": { "type": "heal", "amount": 15, "description": "Restore 15 HP." }
+      },
+      {
+        "text": "「いいえ、わかりません。」",
+        "translation": "No, I don't understand.",
+        "outcome": "penalty",
+        "outcome_text": "The monk chuckles. 'Honesty is its own wisdom. But the mountain does not forgive ignorance.' A cold wind saps your strength.",
+        "reward": { "type": "hp_loss", "amount": 8, "description": "Lose 8 HP." }
+      }
+    ]
+  },
+  {
+    "id": "jp_event_spirit_fork",
+    "campaign": "japanese",
+    "floor_tier": 2,
+    "title": "The Spirit Fork",
+    "title_target": "霊の辻",
+    "setup_text": "The path splits. A small fox spirit sits at the crossroads, cleaning its paws. It looks up:",
+    "npc_dialogue": "「右か左か、どちらに行きますか？右は「危険」、左は「安全」と書いてあります。」",
+    "npc_dialogue_translation": "Right or left — which will you go? The right sign reads 'Danger', the left reads 'Safety'.",
+    "options": [
+      {
+        "text": "「右に行きます。（危険）」",
+        "translation": "I'll go right. (Danger)",
+        "outcome": "reward",
+        "outcome_text": "The dangerous path is littered with abandoned relics. You pocket a glowing item.",
+        "reward": { "type": "relic_random", "amount": 1, "description": "Gain a random relic." }
+      },
+      {
+        "text": "「左に行きます。（安全）」",
+        "translation": "I'll go left. (Safety)",
+        "outcome": "minor_reward",
+        "outcome_text": "The safe path is peaceful. You arrive rested.",
+        "reward": { "type": "heal", "amount": 10, "description": "Restore 10 HP." }
+      }
+    ]
+  }
+]

@@ -1,0 +1,176 @@
+[
+  {
+    "id": "jp_lost_spirit",
+    "campaign": "japanese",
+    "floor": 1,
+    "tier": "regular",
+    "name_target": "迷い霊",
+    "name_native": "Lost Spirit",
+    "hp": 40,
+    "attack": 6,
+    "concept_tags": ["noun", "basic", "basic_nouns"],
+    "intent_pattern": ["vocabulary", "attack", "vocabulary", "vocabulary", "attack"],
+    "wrong_answer_buff": {
+      "type": "confusion",
+      "effect": "enemy_attack_plus_2",
+      "effect_value": 2,
+      "duration_turns": 1,
+      "icon": "💢",
+      "description": "Confusion: +2 ATK this turn"
+    },
+    "special_ability": null,
+    "portrait": "/images/enemies/japanese/lost_spirit.png",
+    "portrait_placeholder_color": "#1a2a4a",
+    "defeat_sfx": "spirit_dispel",
+    "defeat_dialogue": "…やっと…休める…",
+    "defeat_dialogue_translation": "...Finally...I can rest..."
+  },
+  {
+    "id": "jp_shrine_guard_minor",
+    "campaign": "japanese",
+    "floor": 1,
+    "tier": "regular",
+    "name_target": "下級守護",
+    "name_native": "Minor Shrine Guard",
+    "hp": 45,
+    "attack": 7,
+    "concept_tags": ["particle", "basic"],
+    "intent_pattern": ["grammar", "attack", "grammar", "attack"],
+    "wrong_answer_buff": {
+      "type": "conjugation_armor",
+      "effect": "block_grammar_cards_1_turn",
+      "effect_value": 1,
+      "duration_turns": 1,
+      "icon": "🛡️",
+      "description": "Conjugation Armor: Grammar cards blocked next turn"
+    },
+    "special_ability": null,
+    "portrait": null,
+    "portrait_placeholder_color": "#2a1a00",
+    "defeat_sfx": "guard_dismiss",
+    "defeat_dialogue": "まだ…力が足りぬ。",
+    "defeat_dialogue_translation": "My power...is still lacking."
+  },
+  {
+    "id": "jp_kitsune_trickster",
+    "campaign": "japanese",
+    "floor": 2,
+    "tier": "regular",
+    "name_target": "狐の妖術師",
+    "name_native": "Kitsune Trickster",
+    "hp": 65,
+    "attack": 10,
+    "concept_tags": ["particle", "ni", "de", "wo", "wa", "ga"],
+    "intent_pattern": ["vocabulary", "grammar", "attack", "vocabulary", "grammar", "attack"],
+    "wrong_answer_buff": {
+      "type": "curse_draw",
+      "effect": "add_curse_to_deck",
+      "effect_value": 1,
+      "duration_turns": -1,
+      "icon": "🌀",
+      "description": "Trick: A Doubt card is shuffled into your deck"
+    },
+    "special_ability": {
+      "id": "particle_trap",
+      "name": "Particle Trap",
+      "description": "If player fails a particle question twice in a row, draws a Curse into player deck",
+      "trigger": "on_wrong_answer_consecutive",
+      "threshold": 2,
+      "effect": "add_curse_to_deck"
+    },
+    "portrait": "/images/enemies/japanese/kitsune_trickster.png",
+    "portrait_placeholder_color": "#2a1a3a",
+    "defeat_sfx": "fox_vanish",
+    "defeat_dialogue": "ふふ…なかなかやるじゃないか。",
+    "defeat_dialogue_translation": "Heh...You're pretty good, aren't you."
+  },
+  {
+    "id": "jp_temple_acolyte",
+    "campaign": "japanese",
+    "floor": 2,
+    "tier": "regular",
+    "name_target": "寺の修行者",
+    "name_native": "Temple Acolyte",
+    "hp": 60,
+    "attack": 9,
+    "concept_tags": ["verb-form", "te-form", "elementary"],
+    "intent_pattern": ["grammar", "grammar", "attack", "attack", "grammar"],
+    "wrong_answer_buff": {
+      "type": "fortify",
+      "effect": "enemy_max_hp_plus_5",
+      "effect_value": 5,
+      "duration_turns": 2,
+      "icon": "💪",
+      "description": "Fortify: Enemy gains temporary HP"
+    },
+    "special_ability": {
+      "id": "meditate",
+      "name": "Meditate",
+      "description": "After taking damage, the acolyte meditates — blocking next turn automatically gains +4 block.",
+      "trigger": "on_take_damage",
+      "threshold": 10,
+      "effect": "next_block_plus_4"
+    },
+    "portrait": null,
+    "portrait_placeholder_color": "#1a3a1a",
+    "defeat_sfx": "acolyte_bow",
+    "defeat_dialogue": "修行が…足りませんでした。",
+    "defeat_dialogue_translation": "My training...was not enough."
+  },
+  {
+    "id": "jp_mountain_spirit_phase1",
+    "campaign": "japanese",
+    "floor": 2,
+    "tier": "boss",
+    "name_target": "山の霊神",
+    "name_native": "Mountain Spirit",
+    "hp": 180,
+    "attack": 14,
+    "concept_tags": ["verb", "basic", "particle", "grammar"],
+    "phases": [
+      {
+        "phase": 1,
+        "hp_threshold": 180,
+        "intent_pattern": ["vocabulary", "attack", "grammar", "attack", "vocabulary", "attack"],
+        "special": "Standard patterns from floors 1-2"
+      },
+      {
+        "phase": 2,
+        "hp_threshold": 90,
+        "intent_pattern": ["grammar", "grammar", "attack", "vocabulary", "attack"],
+        "special": "Gains Armor that only breaks if player uses a Chain Combo"
+      }
+    ],
+    "wrong_answer_buff": {
+      "type": "mountain_wrath",
+      "effect": "enemy_attack_plus_3",
+      "effect_value": 3,
+      "duration_turns": 1,
+      "icon": "⛰️",
+      "description": "Mountain Wrath: +3 ATK this turn"
+    },
+    "special_ability": {
+      "id": "chain_armor",
+      "name": "Chain Armor",
+      "description": "In Phase 2, gains 15 armor that only breaks with a successful Chain Combo",
+      "trigger": "on_phase_2_start",
+      "effect": "add_chain_armor_15"
+    },
+    "portrait": null,
+    "portrait_placeholder_color": "#0a0a1a",
+    "defeat_sfx": "boss_dissolve",
+    "pre_fight_dialogue": [
+      { "line": "お前は何者だ？", "translation": "Who are you?" },
+      { "line": "この山に踏み込む資格があるか？", "translation": "Do you have the right to tread on this mountain?" },
+      { "line": "言葉で証明してみせよ。", "translation": "Prove it with words." }
+    ],
+    "defeat_dialogue": [
+      { "line": "…よく来た。", "translation": "...You have come far." },
+      { "line": "次の問いに答えよ。", "translation": "Answer my next question." }
+    ],
+    "defeat_choices": [
+      { "text": "「もっと学びたいです。」", "translation": "I want to learn more.", "outcome": "reward", "reward": { "type": "card", "rarity": "rare" } },
+      { "text": "「これで終わりです。」", "translation": "This is the end.", "outcome": "neutral", "reward": { "type": "gold", "amount": 30 } }
+    ]
+  }
+]

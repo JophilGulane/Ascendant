@@ -1,0 +1,102 @@
+[
+  {
+    "id": "travelers_compass",
+    "name": "Traveler's Compass",
+    "name_target": "旅人の羅針盤",
+    "description": "After 3 correct answers in a row, gain 1 bonus Energy next turn.",
+    "flavor": "The needle always points toward understanding.",
+    "trigger": "on_correct_streak_3",
+    "effect": {
+      "type": "bonus_energy",
+      "amount": 1,
+      "timing": "next_turn_start"
+    },
+    "source": "starter_traveler",
+    "campaign": "japanese",
+    "icon": "🧭",
+    "uses_per_fight": -1
+  },
+  {
+    "id": "newcomers_phrasebook",
+    "name": "Newcomer's Phrasebook",
+    "name_target": "初心者の会話帳",
+    "description": "Once per fight, the first wrong answer of the fight deals no enemy buff.",
+    "flavor": "You're just getting started.",
+    "trigger": "on_first_wrong_answer_fight",
+    "effect": {
+      "type": "negate_enemy_buff",
+      "timing": "on_trigger",
+      "uses_per_fight": 1
+    },
+    "source": "starter_newcomer",
+    "campaign": "japanese",
+    "icon": "📓",
+    "uses_per_fight": 1
+  },
+  {
+    "id": "returnees_old_notes",
+    "name": "Returnee's Old Notes",
+    "name_target": "帰還者の古いノート",
+    "description": "Grammar cards show a faint memory hint for 2 seconds before the question starts.",
+    "flavor": "The knowledge was always there.",
+    "trigger": "on_grammar_card_select",
+    "effect": {
+      "type": "show_memory_hint",
+      "duration_seconds": 2,
+      "timing": "before_question"
+    },
+    "source": "starter_returnee",
+    "campaign": "japanese",
+    "icon": "📝",
+    "uses_per_fight": -1
+  },
+  {
+    "id": "worn_dictionary",
+    "name": "Worn Dictionary",
+    "name_target": "古い辞書",
+    "description": "Once per fight, tap to reveal the answer on a Vocabulary card — but that card deals half damage.",
+    "flavor": "The pages are worn from use.",
+    "trigger": "on_vocabulary_activate_manual",
+    "effect": {
+      "type": "reveal_answer",
+      "cost": "half_damage",
+      "uses_per_fight": 1
+    },
+    "source": "merchant",
+    "campaign": "all",
+    "icon": "📖",
+    "uses_per_fight": 1
+  },
+  {
+    "id": "cracked_hourglass",
+    "name": "Cracked Hourglass",
+    "name_target": "壊れた砂時計",
+    "description": "No time limit on questions. Wrong answers give the enemy TWO buffs instead of one.",
+    "flavor": "Time is infinite. So are consequences.",
+    "trigger": "passive",
+    "effect": {
+      "type": "remove_timer",
+      "downside": "double_enemy_buffs_on_wrong"
+    },
+    "source": "merchant",
+    "campaign": "all",
+    "icon": "⌛",
+    "uses_per_fight": -1
+  },
+  {
+    "id": "chain_bracelet",
+    "name": "Chain Bracelet",
+    "name_target": "連鎖の腕輪",
+    "description": "Chain combos can now extend — Grammar can also prime Vocabulary cards (reverse chain).",
+    "flavor": "Links that bind and connect.",
+    "trigger": "passive_chain_modifier",
+    "effect": {
+      "type": "reverse_chain_direction",
+      "additional_chain": "grammar_primes_vocabulary"
+    },
+    "source": "elite_reward",
+    "campaign": "all",
+    "icon": "⛓️",
+    "uses_per_fight": -1
+  }
+]

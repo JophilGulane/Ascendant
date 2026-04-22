@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+  /* ===== CAMPAIGN COLORS ===== */
+
+  /* Japanese Campaign */
+  --color-jp-primary: #1A0A00;
+  --color-jp-accent: #C41E3A;
+  --color-jp-accent2: #E8B86D;
+  --color-jp-vocab: #8B1A1A;
+  --color-jp-grammar: #1A3A8B;
+  --color-jp-reading: #1A6B3A;
+
+  /* Korean Campaign */
+  --color-kr-primary: #000814;
+  --color-kr-accent: #00F5FF;
+  --color-kr-accent2: #FF006E;
+  --color-kr-vocab: #FF006E;
+  --color-kr-grammar: #00F5FF;
+  --color-kr-reading: #ADFF2F;
+
+  /* Spanish Campaign */
+  --color-es-primary: #1A0A00;
+  --color-es-accent: #FF6B35;
+  --color-es-accent2: #4ECDC4;
+  --color-es-vocab: #FF6B35;
+  --color-es-grammar: #4ECDC4;
+  --color-es-reading: #FFE66D;
+
+  /* ===== CARD RARITIES ===== */
+  --color-rarity-common: #9CA3AF;
+  --color-rarity-uncommon: #3B82F6;
+  --color-rarity-rare: #EAB308;
+  --color-rarity-story: #DC2626;
+
+  /* ===== UI GLOBALS ===== */
+  --color-surface: #0d0d0d;
+  --color-surface-2: #1a1a1a;
+  --color-surface-3: #242424;
+  --color-text-primary: #F5F0E8;
+  --color-text-muted: #9CA3AF;
+
+  /* ===== FONTS ===== */
+  --font-jp: 'Noto Serif JP', serif;
+  --font-kr: 'Noto Sans KR', sans-serif;
+  --font-es: 'Playfair Display', serif;
+  --font-ui: 'Inter', sans-serif;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body, #root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: #0d0d0d;
+    color: #F5F0E8;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #C41E3A;
+    border-radius: 2px;
+  }
+}
+
+@layer utilities {
+  .text-shadow-glow {
+    text-shadow: 0 0 20px currentColor;
+  }
+
+  .card-shadow {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  .panel-glass {
+    background: rgba(13, 13, 13, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+}
