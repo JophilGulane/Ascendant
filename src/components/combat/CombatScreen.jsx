@@ -393,7 +393,7 @@ export function CombatScreen() {
         <div className="flex-1 relative">
 
           {/* Player Character Sprite (Left) */}
-          <div className="absolute left-[18%] bottom-[5%] flex flex-col items-center">
+          <div className="absolute left-[18%] bottom-[0%] scale-110 flex flex-col items-center">
             <motion.div
               animate={
                 isHitPlayer ? {
@@ -423,10 +423,10 @@ export function CombatScreen() {
               className="relative flex items-end justify-center"
               style={{ height: '200px' }}
             >
-              {store.character?.id === 'kenji' ? (
+              {store.character?.id ? (
                 <img
-                  src="/images/characters/japanese/kenji.png"
-                  alt="Player"
+                  src={`/images/characters/japanese/${store.character.id}.png`}
+                  alt={store.character.name || "Player"}
                   className="max-h-full max-w-full object-contain object-bottom"
                   style={{ imageRendering: 'pixelated', filter: 'drop-shadow(0 8px 10px rgba(0,0,0,0.8))' }}
                 />
@@ -435,6 +435,7 @@ export function CombatScreen() {
                   👤
                 </div>
               )}
+
             </motion.div>
 
             {/* STS-style Player HP + Block */}
@@ -451,10 +452,9 @@ export function CombatScreen() {
               {/* HP bar with number on it */}
               <div className="relative h-6 bg-gray-900 rounded border border-gray-700 overflow-hidden shadow-inner">
                 <motion.div
-                  className={`absolute inset-y-0 left-0 rounded ${
-                    store.hp / store.maxHp > 0.5 ? 'bg-red-600' :
+                  className={`absolute inset-y-0 left-0 rounded ${store.hp / store.maxHp > 0.5 ? 'bg-red-600' :
                     store.hp / store.maxHp > 0.25 ? 'bg-orange-600' : 'bg-red-800'
-                  }`}
+                    }`}
                   animate={{ width: `${Math.max(0, (store.hp / store.maxHp) * 100)}%` }}
                   transition={{ duration: 0.4, ease: 'easeOut' }}
                 />
@@ -494,7 +494,7 @@ export function CombatScreen() {
           </div>
 
           {/* Enemy Display (Right) */}
-          <div className="absolute right-[18%] bottom-[5%] flex flex-col items-center">
+          <div className="absolute right-[18%] bottom-[0%] scale-110 flex flex-col items-center">
             <EnemyDisplay
               enemy={store.currentEnemy}
               hp={store.enemyHp}
@@ -608,7 +608,7 @@ export function CombatScreen() {
           </div>
 
           {/* Center: Cards (Absolute positioned so they fan out properly) */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-full max-w-3xl h-48 pointer-events-none" style={{ perspective: 1000 }}>
+          <div className="absolute top-10 bottom-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-48 pointer-events-none" style={{ perspective: 1000 }}>
             <div className="relative w-full h-full flex justify-center pointer-events-auto">
               <CardHand
                 handIds={store.hand}

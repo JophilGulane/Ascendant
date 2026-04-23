@@ -18,10 +18,12 @@ function Ember({ delay }) {
   return (
     <motion.div
       initial={{ opacity: 0, x: `${x}vw`, y: '95vh' }}
-      animate={{ opacity: [0, 0.8, 0], y: '-5vh', x: [`${x}vw`, `${x + (Math.random()-0.5)*10}vw`] }}
-      transition={{ duration: 5 + Math.random()*4, delay, repeat: Infinity, repeatDelay: Math.random()*3 }}
-      style={{ position:'absolute', width: size, height: size, borderRadius:'50%',
-        background:'radial-gradient(circle,#ffaa44,#ff6600)', boxShadow:`0 0 ${size*2}px #ff6600`, pointerEvents:'none' }}
+      animate={{ opacity: [0, 0.8, 0], y: '-5vh', x: [`${x}vw`, `${x + (Math.random() - 0.5) * 10}vw`] }}
+      transition={{ duration: 5 + Math.random() * 4, delay, repeat: Infinity, repeatDelay: Math.random() * 3 }}
+      style={{
+        position: 'absolute', width: size, height: size, borderRadius: '50%',
+        background: 'radial-gradient(circle,#ffaa44,#ff6600)', boxShadow: `0 0 ${size * 2}px #ff6600`, pointerEvents: 'none'
+      }}
     />
   )
 }
@@ -29,7 +31,7 @@ function Ember({ delay }) {
 // STS-style scroll-banner button
 function BannerButton({ children, color = 'red', onClick, side = 'left' }) {
   const colors = {
-    red:  { bg: '#8B1A1A', border: '#c0392b', text: '#f8d7b0', shadow: '#c0392b' },
+    red: { bg: '#8B1A1A', border: '#c0392b', text: '#f8d7b0', shadow: '#c0392b' },
     teal: { bg: '#1A5F7A', border: '#2980b9', text: '#b8e8f8', shadow: '#2980b9' },
   }
   const c = colors[color]
@@ -147,7 +149,7 @@ export function CharacterSelect() {
   const store = useRunStore()
   const { playSFX, stopMusic } = useAudio()
   const [selectedChar, setSelectedChar] = useState(null)
-  
+
   const campaignId = sessionStorage.getItem('selected_campaign') || 'japanese'
   const CHARS = CAMPAIGN_CHARS[campaignId]?.characters || []
 
@@ -161,11 +163,11 @@ export function CharacterSelect() {
     playSFX('button_click')
     stopMusic()
     const campaign = CAMPAIGN_CHARS[campaignId]
-    
+
     // Choose rare card based on character
     const rareCard = selectedChar.id === 'hana' ? 'jp_read_newcomers_luck'
-                   : selectedChar.id === 'yuki' ? 'jp_read_returnees_insight'
-                   : 'jp_read_travelers_wisdom'
+      : selectedChar.id === 'yuki' ? 'jp_read_returnees_insight'
+        : 'jp_read_travelers_wisdom'
 
     const deck = buildStartingDeck(
       campaign.startingVocabCards || [],
@@ -241,9 +243,6 @@ export function CharacterSelect() {
                 <span className="flex items-center gap-1.5 text-red-400">
                   ❤️ <span className="font-bold text-white">HP: {selectedChar.startingHp || 80}/{selectedChar.startingHp || 80}</span>
                 </span>
-                <span className="flex items-center gap-1.5 text-yellow-400">
-                  🪙 <span className="font-bold text-white">Gold: 99</span>
-                </span>
               </div>
 
               {/* Lore description */}
@@ -272,9 +271,9 @@ export function CharacterSelect() {
               <div className="flex gap-2 flex-wrap mb-6">
                 {[
                   { label: `⚔️ ×${selectedChar.startingDeckBreakdown?.vocabulary || 4}`, color: '#991b1b', border: '#b91c1c', text: '#fca5a5' },
-                  { label: `🛡️ ×${selectedChar.startingDeckBreakdown?.grammar || 3}`,    color: '#1e3a5f', border: '#2563eb', text: '#93c5fd' },
-                  { label: `📖 ×${selectedChar.startingDeckBreakdown?.reading || 2}`,    color: '#14532d', border: '#16a34a', text: '#86efac' },
-                  { label: `★ ×${selectedChar.startingDeckBreakdown?.rare || 1}`,       color: '#78350f', border: '#d97706', text: '#fcd34d' },
+                  { label: `🛡️ ×${selectedChar.startingDeckBreakdown?.grammar || 3}`, color: '#1e3a5f', border: '#2563eb', text: '#93c5fd' },
+                  { label: `📖 ×${selectedChar.startingDeckBreakdown?.reading || 2}`, color: '#14532d', border: '#16a34a', text: '#86efac' },
+                  { label: `★ ×${selectedChar.startingDeckBreakdown?.rare || 1}`, color: '#78350f', border: '#d97706', text: '#fcd34d' },
                 ].map(tag => (
                   <span
                     key={tag.label}
