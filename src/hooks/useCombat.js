@@ -352,8 +352,6 @@ export function useCombat() {
         base: effect.damage,
         bonusCorrectFirstTry: effect.bonus_correct_first_try || effect.bonus_correct_no_hint || 0,
         chainMultiplier,
-        enemyArmor: s.enemyArmor,
-        enemyFocusType: s.enemyFocusType,
         cardType: card.type,
         isFirstTry,
         hits: effect.hits || 1,

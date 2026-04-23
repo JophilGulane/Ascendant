@@ -55,14 +55,13 @@ export function calculateDamage({
   base,
   bonusCorrectFirstTry = 0,
   chainMultiplier = 1,
-  enemyArmor = 0,
   isFirstTry = false,
   hits = 1,
 }) {
   let dmg = base
   if (isFirstTry && bonusCorrectFirstTry) dmg += bonusCorrectFirstTry
   dmg = Math.floor(dmg * chainMultiplier)
-  dmg = Math.max(0, dmg - enemyArmor)
+  // NOTE: armor reduction is handled by damageEnemy in runStore — do NOT subtract here
   return dmg * hits
 }
 

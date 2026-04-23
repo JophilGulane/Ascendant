@@ -20,7 +20,7 @@
     "flavor_native": "Cut.",
     "upgradeable": true,
     "upgraded_id": "jp_vocab_strike_plus",
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocab_strike_plus",
@@ -43,7 +43,7 @@
     "flavor_native": "Cut deeper.",
     "upgradeable": false,
     "upgraded_id": null,
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocab_wild_slash",
@@ -66,7 +66,7 @@
     "flavor_native": "Untamed force.",
     "upgradeable": true,
     "upgraded_id": null,
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocab_spirit_surge",
@@ -90,7 +90,7 @@
     "flavor_native": "Strike with spirit force.",
     "upgradeable": true,
     "upgraded_id": null,
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocab_swift_strike",
@@ -114,7 +114,7 @@
     "flavor_native": "Speed is power.",
     "upgradeable": true,
     "upgraded_id": null,
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocab_twin_fang",
@@ -138,7 +138,7 @@
     "flavor_native": "Two bites of pain.",
     "upgradeable": true,
     "upgraded_id": null,
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocab_kanji_blade",
@@ -162,7 +162,7 @@
     "flavor_native": "Characters become blades.",
     "upgradeable": true,
     "upgraded_id": null,
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocab_mountain_echo",
@@ -185,7 +185,7 @@
     "flavor_native": "The mountain answers.",
     "upgradeable": true,
     "upgraded_id": null,
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_gram_ward",
@@ -207,7 +207,7 @@
     "flavor_native": "Words that protect.",
     "upgradeable": true,
     "upgraded_id": "jp_gram_ward_plus",
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_gram_ward_plus",
@@ -229,7 +229,7 @@
     "flavor_native": "Stronger protection.",
     "upgradeable": false,
     "upgraded_id": null,
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_gram_iron_vow",
@@ -251,7 +251,7 @@
     "flavor_native": "The vow does not waver.",
     "upgradeable": true,
     "upgraded_id": null,
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_gram_particle_shield",
@@ -274,7 +274,7 @@
     "flavor_native": "Word order is power.",
     "upgradeable": true,
     "upgraded_id": null,
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_gram_stone_skin",
@@ -297,7 +297,7 @@
     "flavor_native": "Words become stone.",
     "upgradeable": true,
     "upgraded_id": null,
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_read_spirit_scroll",
@@ -321,7 +321,7 @@
     "flavor_native": "See the unseen.",
     "upgradeable": true,
     "upgraded_id": null,
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_read_travelers_wisdom",
@@ -345,7 +345,7 @@
     "flavor_native": "The road continues.",
     "upgradeable": true,
     "upgraded_id": null,
-    "illustration": null,
+    "illustration": "/images/skill_placeholder.png",
     "is_kenji_starter_rare": true
   },
   {
@@ -367,7 +367,7 @@
     "flavor_native": "Retreat, then attack again.",
     "upgradeable": true,
     "upgraded_id": null,
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_gram_meditate",
@@ -389,7 +389,7 @@
     "flavor_native": "Calm the mind.",
     "upgradeable": true,
     "upgraded_id": null,
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_read_void_surge",
@@ -411,7 +411,7 @@
     "flavor_native": "Vanish, and become power.",
     "upgradeable": false,
     "upgraded_id": null,
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_gram_steady_stance",
@@ -433,7 +433,7 @@
     "flavor_native": "Unyielding defense.",
     "upgradeable": true,
     "upgraded_id": null,
-    "illustration": null
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_read_newcomers_luck",
@@ -456,7 +456,7 @@
     "flavor_native": "Luck is also a skill.",
     "upgradeable": true,
     "upgraded_id": "jp_read_newcomers_luck_plus",
-    "illustration": "cards/japanese/newcomers_luck.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_read_returnees_insight",
@@ -478,7 +478,7 @@
     "flavor_native": "I remember now.",
     "upgradeable": true,
     "upgraded_id": "jp_read_returnees_insight_plus",
-    "illustration": "cards/japanese/returnees_insight.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocabulary_gen_100",
@@ -498,7 +498,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocabulary_gen_101",
@@ -518,7 +518,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocabulary_gen_102",
@@ -538,7 +538,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_reading_gen_103",
@@ -558,7 +558,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocabulary_gen_104",
@@ -578,7 +578,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_grammar_gen_105",
@@ -598,7 +598,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocabulary_gen_106",
@@ -618,7 +618,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_grammar_gen_107",
@@ -638,7 +638,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_grammar_gen_108",
@@ -658,7 +658,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_reading_gen_109",
@@ -678,7 +678,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_reading_gen_110",
@@ -698,7 +698,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_reading_gen_111",
@@ -718,7 +718,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_grammar_gen_112",
@@ -738,7 +738,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_reading_gen_113",
@@ -758,7 +758,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocabulary_gen_114",
@@ -778,7 +778,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocabulary_gen_115",
@@ -798,7 +798,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocabulary_gen_116",
@@ -818,7 +818,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocabulary_gen_117",
@@ -838,7 +838,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_grammar_gen_118",
@@ -858,7 +858,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_reading_gen_119",
@@ -878,7 +878,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocabulary_gen_120",
@@ -898,7 +898,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocabulary_gen_121",
@@ -918,7 +918,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocabulary_gen_122",
@@ -938,7 +938,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_vocabulary_gen_123",
@@ -958,7 +958,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_reading_gen_124",
@@ -978,7 +978,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_reading_gen_125",
@@ -998,7 +998,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_grammar_gen_126",
@@ -1018,7 +1018,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_reading_gen_127",
@@ -1038,7 +1038,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_reading_gen_128",
@@ -1058,7 +1058,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_grammar_gen_129",
@@ -1078,7 +1078,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_grammar_gen_130",
@@ -1098,7 +1098,7 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   },
   {
     "id": "jp_reading_gen_131",
@@ -1118,6 +1118,6 @@
     "flavor_target": "未知の力。",
     "flavor_native": "Unknown power.",
     "upgradeable": false,
-    "illustration": "cards/japanese/placeholder.png"
+    "illustration": "/images/skill_placeholder.png"
   }
 ]

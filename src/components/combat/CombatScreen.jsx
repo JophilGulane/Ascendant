@@ -426,7 +426,7 @@ export function CombatScreen() {
             >
               {store.character?.id ? (
                 <img
-                  src={`/images/characters/${campaignId}/${store.character.id}.png`}
+                  src={`/images/characters/${store.campaign || campaignId || 'japanese'}/${store.character.id}.png`}
                   alt={store.character.name || "Player"}
                   className="max-h-full max-w-full object-contain object-bottom"
                   style={{ imageRendering: 'pixelated', filter: 'drop-shadow(0 8px 10px rgba(0,0,0,0.8))' }}
