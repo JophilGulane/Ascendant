@@ -10,18 +10,44 @@
     "base_attack": 6,
     "actions_per_turn": 1,
     "silence_type": "vocabulary",
-    "concept_tags": ["noun", "basic", "basic_nouns"],
+    "concept_tags": [
+      "noun",
+      "basic",
+      "basic_nouns"
+    ],
     "intent_pattern": [
-      ["strike"],
-      ["strike"],
-      ["debuff_silence"],
-      ["strike"],
-      ["self_buff_armor_up"]
+      [
+        "strike"
+      ],
+      [
+        "strike"
+      ],
+      [
+        "debuff_silence"
+      ],
+      [
+        "strike"
+      ],
+      [
+        "self_buff_armor_up"
+      ]
     ],
     "wrong_answer_buffs": {
-      "vocabulary": { "type": "confusion", "attack_bonus": 2, "duration_turns": 1 },
-      "grammar": { "type": "confusion", "attack_bonus": 1, "duration_turns": 1 },
-      "reading": { "type": "fortify", "hp_bonus": 3, "duration_turns": 2 }
+      "vocabulary": {
+        "type": "confusion",
+        "attack_bonus": 2,
+        "duration_turns": 1
+      },
+      "grammar": {
+        "type": "confusion",
+        "attack_bonus": 1,
+        "duration_turns": 1
+      },
+      "reading": {
+        "type": "fortify",
+        "hp_bonus": 3,
+        "duration_turns": 2
+      }
     },
     "variants": [
       {
@@ -32,10 +58,19 @@
         "hp_mod": 10,
         "attack_mod": 2,
         "intent_override": [
-          ["strike", "debuff_silence"],
-          ["strike"],
-          ["self_buff_enrage"],
-          ["strike_heavy"]
+          [
+            "strike",
+            "debuff_silence"
+          ],
+          [
+            "strike"
+          ],
+          [
+            "self_buff_enrage"
+          ],
+          [
+            "strike_heavy"
+          ]
         ]
       },
       {
@@ -46,11 +81,21 @@
         "hp_mod": 5,
         "attack_mod": -1,
         "intent_override": [
-          ["debuff_bind"],
-          ["strike"],
-          ["debuff_fog"],
-          ["self_buff_harden"],
-          ["strike"]
+          [
+            "debuff_bind"
+          ],
+          [
+            "strike"
+          ],
+          [
+            "debuff_fog"
+          ],
+          [
+            "self_buff_harden"
+          ],
+          [
+            "strike"
+          ]
         ]
       }
     ],
@@ -72,19 +117,46 @@
     "base_attack": 8,
     "actions_per_turn": 1,
     "silence_type": "grammar",
-    "concept_tags": ["particle", "basic"],
+    "concept_tags": [
+      "particle",
+      "basic"
+    ],
     "intent_pattern": [
-      ["strike"],
-      ["self_buff_power_up"],
-      ["strike"],
-      ["debuff_drain"],
-      ["strike"],
-      ["debuff_silence"]
+      [
+        "strike"
+      ],
+      [
+        "self_buff_power_up"
+      ],
+      [
+        "strike"
+      ],
+      [
+        "debuff_drain"
+      ],
+      [
+        "strike"
+      ],
+      [
+        "debuff_silence"
+      ]
     ],
     "wrong_answer_buffs": {
-      "vocabulary": { "type": "confusion", "attack_bonus": 2, "duration_turns": 1 },
-      "grammar": { "type": "conjugation_armor", "attack_bonus": 0, "duration_turns": 1 },
-      "reading": { "type": "fortify", "hp_bonus": 5, "duration_turns": 2 }
+      "vocabulary": {
+        "type": "confusion",
+        "attack_bonus": 2,
+        "duration_turns": 1
+      },
+      "grammar": {
+        "type": "conjugation_armor",
+        "attack_bonus": 0,
+        "duration_turns": 1
+      },
+      "reading": {
+        "type": "fortify",
+        "hp_bonus": 5,
+        "duration_turns": 2
+      }
     },
     "variants": [
       {
@@ -95,11 +167,21 @@
         "hp_mod": 20,
         "attack_mod": 3,
         "intent_override": [
-          ["self_buff_harden"],
-          ["strike"],
-          ["strike_heavy"],
-          ["debuff_drain"],
-          ["self_buff_focus"]
+          [
+            "self_buff_harden"
+          ],
+          [
+            "strike"
+          ],
+          [
+            "strike_heavy"
+          ],
+          [
+            "debuff_drain"
+          ],
+          [
+            "self_buff_focus"
+          ]
         ]
       }
     ],
@@ -121,21 +203,46 @@
     "base_attack": 9,
     "actions_per_turn": 1,
     "silence_type": "reading",
-    "concept_tags": ["noun", "basic"],
+    "concept_tags": [
+      "noun",
+      "basic"
+    ],
     "intent_pattern": [
-      ["strike_swift"],
-      ["debuff_confusion"],
-      ["strike_swift"],
-      ["self_buff_power_up"],
-      ["strike_heavy"]
+      [
+        "strike_swift"
+      ],
+      [
+        "debuff_confusion"
+      ],
+      [
+        "strike_swift"
+      ],
+      [
+        "self_buff_power_up"
+      ],
+      [
+        "strike_heavy"
+      ]
     ],
     "wrong_answer_buffs": {
-      "vocabulary": { "type": "confusion", "attack_bonus": 2, "duration_turns": 1 },
-      "grammar": { "type": "confusion", "attack_bonus": 2, "duration_turns": 1 },
-      "reading": { "type": "fortify", "hp_bonus": 4, "duration_turns": 2 }
+      "vocabulary": {
+        "type": "confusion",
+        "attack_bonus": 2,
+        "duration_turns": 1
+      },
+      "grammar": {
+        "type": "confusion",
+        "attack_bonus": 2,
+        "duration_turns": 1
+      },
+      "reading": {
+        "type": "fortify",
+        "hp_bonus": 4,
+        "duration_turns": 2
+      }
     },
     "special_ability": null,
-    "portrait": null,
+    "portrait": "/images/enemies/japanese/paper_ogre.png",
     "portrait_placeholder_color": "#3a2a10",
     "defeat_sfx": "spirit_dispel",
     "defeat_dialogue": "バラバラ…",
@@ -152,18 +259,49 @@
     "base_attack": 11,
     "actions_per_turn": 2,
     "silence_type": "grammar",
-    "concept_tags": ["basic", "noun", "particle"],
+    "concept_tags": [
+      "basic",
+      "noun",
+      "particle"
+    ],
     "intent_pattern": [
-      ["strike", "self_buff_power_up"],
-      ["debuff_drain", "strike"],
-      ["self_buff_armor_up", "strike"],
-      ["strike", "debuff_silence"],
-      ["debuff_fog", "strike"]
+      [
+        "strike",
+        "self_buff_power_up"
+      ],
+      [
+        "debuff_drain",
+        "strike"
+      ],
+      [
+        "self_buff_armor_up",
+        "strike"
+      ],
+      [
+        "strike",
+        "debuff_silence"
+      ],
+      [
+        "debuff_fog",
+        "strike"
+      ]
     ],
     "wrong_answer_buffs": {
-      "vocabulary": { "type": "confusion", "attack_bonus": 3, "duration_turns": 1 },
-      "grammar": { "type": "conjugation_armor", "attack_bonus": 2, "duration_turns": 1 },
-      "reading": { "type": "fortify", "hp_bonus": 6, "duration_turns": 2 }
+      "vocabulary": {
+        "type": "confusion",
+        "attack_bonus": 3,
+        "duration_turns": 1
+      },
+      "grammar": {
+        "type": "conjugation_armor",
+        "attack_bonus": 2,
+        "duration_turns": 1
+      },
+      "reading": {
+        "type": "fortify",
+        "hp_bonus": 6,
+        "duration_turns": 2
+      }
     },
     "special_ability": {
       "id": "spirit_shield",
@@ -176,25 +314,43 @@
     "portrait_placeholder_color": "#1a1a3a",
     "defeat_sfx": "boss_dissolve",
     "pre_fight_dialogue": [
-      { "line": "この土地を守る。", "translation": "I protect this land." },
-      { "line": "お前の言葉を試そう。", "translation": "Let me test your words." }
+      {
+        "line": "この土地を守る。",
+        "translation": "I protect this land."
+      },
+      {
+        "line": "お前の言葉を試そう。",
+        "translation": "Let me test your words."
+      }
     ],
     "defeat_dialogue": [
-      { "line": "…よく戦った。", "translation": "...You fought well." },
-      { "line": "先に進め。", "translation": "Move forward." }
+      {
+        "line": "…よく戦った。",
+        "translation": "...You fought well."
+      },
+      {
+        "line": "先に進め。",
+        "translation": "Move forward."
+      }
     ],
     "defeat_choices": [
       {
         "text": "「ありがとうございます。」",
         "translation": "Thank you very much.",
         "outcome": "reward",
-        "reward": { "type": "card", "rarity": "uncommon" }
+        "reward": {
+          "type": "card",
+          "rarity": "uncommon"
+        }
       },
       {
         "text": "「次の挑戦へ。」",
         "translation": "On to the next challenge.",
         "outcome": "neutral",
-        "reward": { "type": "gold", "amount": 25 }
+        "reward": {
+          "type": "gold",
+          "amount": 25
+        }
       }
     ]
   },
@@ -209,17 +365,48 @@
     "base_attack": 10,
     "actions_per_turn": 2,
     "silence_type": "vocabulary",
-    "concept_tags": ["particle", "ni", "de", "wo", "wa", "ga"],
+    "concept_tags": [
+      "particle",
+      "ni",
+      "de",
+      "wo",
+      "wa",
+      "ga"
+    ],
     "intent_pattern": [
-      ["strike", "debuff_fog"],
-      ["debuff_confusion", "strike"],
-      ["self_buff_power_up", "strike"],
-      ["strike", "debuff_bind"]
+      [
+        "strike",
+        "debuff_fog"
+      ],
+      [
+        "debuff_confusion",
+        "strike"
+      ],
+      [
+        "self_buff_power_up",
+        "strike"
+      ],
+      [
+        "strike",
+        "debuff_bind"
+      ]
     ],
     "wrong_answer_buffs": {
-      "vocabulary": { "type": "confusion", "attack_bonus": 2, "duration_turns": 1 },
-      "grammar": { "type": "confusion", "attack_bonus": 1, "duration_turns": 1 },
-      "reading": { "type": "fortify", "hp_bonus": 4, "duration_turns": 2 }
+      "vocabulary": {
+        "type": "confusion",
+        "attack_bonus": 2,
+        "duration_turns": 1
+      },
+      "grammar": {
+        "type": "confusion",
+        "attack_bonus": 1,
+        "duration_turns": 1
+      },
+      "reading": {
+        "type": "fortify",
+        "hp_bonus": 4,
+        "duration_turns": 2
+      }
     },
     "variants": [
       {
@@ -230,11 +417,23 @@
         "hp_mod": 25,
         "attack_mod": 4,
         "intent_override": [
-          ["debuff_curse"],
-          ["strike_swift", "debuff_fog"],
-          ["self_buff_enrage"],
-          ["strike_heavy"],
-          ["debuff_taunt", "strike"]
+          [
+            "debuff_curse"
+          ],
+          [
+            "strike_swift",
+            "debuff_fog"
+          ],
+          [
+            "self_buff_enrage"
+          ],
+          [
+            "strike_heavy"
+          ],
+          [
+            "debuff_taunt",
+            "strike"
+          ]
         ]
       }
     ],
@@ -263,17 +462,45 @@
     "base_attack": 9,
     "actions_per_turn": 2,
     "silence_type": "reading",
-    "concept_tags": ["verb-form", "te-form", "elementary"],
+    "concept_tags": [
+      "verb-form",
+      "te-form",
+      "elementary"
+    ],
     "intent_pattern": [
-      ["strike", "self_buff_armor_up"],
-      ["debuff_drain", "strike"],
-      ["self_buff_recover", "strike"],
-      ["debuff_bind", "debuff_silence"]
+      [
+        "strike",
+        "self_buff_armor_up"
+      ],
+      [
+        "debuff_drain",
+        "strike"
+      ],
+      [
+        "self_buff_recover",
+        "strike"
+      ],
+      [
+        "debuff_bind",
+        "debuff_silence"
+      ]
     ],
     "wrong_answer_buffs": {
-      "vocabulary": { "type": "confusion", "attack_bonus": 2, "duration_turns": 1 },
-      "grammar": { "type": "conjugation_armor", "attack_bonus": 0, "duration_turns": 1 },
-      "reading": { "type": "fortify", "hp_bonus": 5, "duration_turns": 2 }
+      "vocabulary": {
+        "type": "confusion",
+        "attack_bonus": 2,
+        "duration_turns": 1
+      },
+      "grammar": {
+        "type": "conjugation_armor",
+        "attack_bonus": 0,
+        "duration_turns": 1
+      },
+      "reading": {
+        "type": "fortify",
+        "hp_bonus": 5,
+        "duration_turns": 2
+      }
     },
     "variants": [
       {
@@ -284,10 +511,20 @@
         "hp_mod": 30,
         "attack_mod": 2,
         "intent_override": [
-          ["self_buff_harden", "self_buff_recover"],
-          ["debuff_curse"],
-          ["strike_heavy"],
-          ["self_buff_focus", "strike"]
+          [
+            "self_buff_harden",
+            "self_buff_recover"
+          ],
+          [
+            "debuff_curse"
+          ],
+          [
+            "strike_heavy"
+          ],
+          [
+            "self_buff_focus",
+            "strike"
+          ]
         ]
       }
     ],
@@ -316,18 +553,47 @@
     "base_attack": 13,
     "actions_per_turn": 2,
     "silence_type": "vocabulary",
-    "concept_tags": ["verb", "action", "movement"],
+    "concept_tags": [
+      "verb",
+      "action",
+      "movement"
+    ],
     "intent_pattern": [
-      ["strike_swift", "debuff_fog"],
-      ["strike_heavy"],
-      ["self_buff_enrage"],
-      ["strike_swift", "strike_swift"],
-      ["debuff_silence", "strike"]
+      [
+        "strike_swift",
+        "debuff_fog"
+      ],
+      [
+        "strike_heavy"
+      ],
+      [
+        "self_buff_enrage"
+      ],
+      [
+        "strike_swift",
+        "strike_swift"
+      ],
+      [
+        "debuff_silence",
+        "strike"
+      ]
     ],
     "wrong_answer_buffs": {
-      "vocabulary": { "type": "confusion", "attack_bonus": 3, "duration_turns": 1 },
-      "grammar": { "type": "confusion", "attack_bonus": 2, "duration_turns": 1 },
-      "reading": { "type": "fortify", "hp_bonus": 6, "duration_turns": 2 }
+      "vocabulary": {
+        "type": "confusion",
+        "attack_bonus": 3,
+        "duration_turns": 1
+      },
+      "grammar": {
+        "type": "confusion",
+        "attack_bonus": 2,
+        "duration_turns": 1
+      },
+      "reading": {
+        "type": "fortify",
+        "hp_bonus": 6,
+        "duration_turns": 2
+      }
     },
     "special_ability": null,
     "portrait": null,
@@ -347,22 +613,64 @@
     "base_attack": 14,
     "actions_per_turn": 3,
     "silence_type": "grammar",
-    "concept_tags": ["verb", "basic", "particle", "grammar"],
+    "concept_tags": [
+      "verb",
+      "basic",
+      "particle",
+      "grammar"
+    ],
     "intent_pattern": [
-      ["strike", "self_buff_power_up"],
-      ["strike", "debuff_drain"],
-      ["self_buff_armor_up", "strike", "debuff_silence"],
-      ["strike", "self_buff_power_up"],
-      ["debuff_fog", "debuff_confusion"]
+      [
+        "strike",
+        "self_buff_power_up"
+      ],
+      [
+        "strike",
+        "debuff_drain"
+      ],
+      [
+        "self_buff_armor_up",
+        "strike",
+        "debuff_silence"
+      ],
+      [
+        "strike",
+        "self_buff_power_up"
+      ],
+      [
+        "debuff_fog",
+        "debuff_confusion"
+      ]
     ],
     "wrong_answer_buffs": {
-      "vocabulary": { "type": "confusion", "attack_bonus": 3, "duration_turns": 1 },
-      "grammar": { "type": "conjugation_armor", "attack_bonus": 2, "duration_turns": 1 },
-      "reading": { "type": "fortify", "hp_bonus": 8, "duration_turns": 2 }
+      "vocabulary": {
+        "type": "confusion",
+        "attack_bonus": 3,
+        "duration_turns": 1
+      },
+      "grammar": {
+        "type": "conjugation_armor",
+        "attack_bonus": 2,
+        "duration_turns": 1
+      },
+      "reading": {
+        "type": "fortify",
+        "hp_bonus": 8,
+        "duration_turns": 2
+      }
     },
     "phases": [
-      { "phase": 1, "hp_threshold": 180, "description": "Standard attack patterns" },
-      { "phase": 2, "hp_threshold": 90, "description": "Gains Chain Armor — only breaks with a successful Chain Combo", "on_enter": "add_chain_armor_15" }
+      {
+        "phase": 1,
+        "hp_threshold": 180,
+        "description": "Standard attack patterns"
+      },
+      {
+        "phase": 2,
+        "hp_threshold": 90,
+        "description": "Gains Chain Armor — only breaks with a successful Chain Combo",
+        "on_enter": "add_chain_armor_15"
+      }
     ],
     "special_ability": {
       "id": "chain_armor",
@@ -375,26 +683,47 @@
     "portrait_placeholder_color": "#0a0a1a",
     "defeat_sfx": "boss_dissolve",
     "pre_fight_dialogue": [
-      { "line": "お前は何者だ？", "translation": "Who are you?" },
-      { "line": "この山に踏み込む資格があるか？", "translation": "Do you have the right to tread on this mountain?" },
-      { "line": "言葉で証明してみせよ。", "translation": "Prove it with words." }
+      {
+        "line": "お前は何者だ？",
+        "translation": "Who are you?"
+      },
+      {
+        "line": "この山に踏み込む資格があるか？",
+        "translation": "Do you have the right to tread on this mountain?"
+      },
+      {
+        "line": "言葉で証明してみせよ。",
+        "translation": "Prove it with words."
+      }
     ],
     "defeat_dialogue": [
-      { "line": "…よく来た。", "translation": "...You have come far." },
-      { "line": "次の問いに答えよ。", "translation": "Answer my next question." }
+      {
+        "line": "…よく来た。",
+        "translation": "...You have come far."
+      },
+      {
+        "line": "次の問いに答えよ。",
+        "translation": "Answer my next question."
+      }
     ],
     "defeat_choices": [
       {
         "text": "「もっと学びたいです。」",
         "translation": "I want to learn more.",
         "outcome": "reward",
-        "reward": { "type": "card", "rarity": "rare" }
+        "reward": {
+          "type": "card",
+          "rarity": "rare"
+        }
       },
       {
         "text": "「これで終わりです。」",
         "translation": "This is the end.",
         "outcome": "neutral",
-        "reward": { "type": "gold", "amount": 30 }
+        "reward": {
+          "type": "gold",
+          "amount": 30
+        }
       }
     ]
   },
@@ -409,16 +738,40 @@
     "base_attack": 12,
     "actions_per_turn": 2,
     "silence_type": "vocabulary",
-    "concept_tags": ["verb", "movement"],
+    "concept_tags": [
+      "verb",
+      "movement"
+    ],
     "intent_pattern": [
-      ["strike", "strike"],
-      ["self_buff_armor_up", "strike"],
-      ["debuff_silence", "strike"]
+      [
+        "strike",
+        "strike"
+      ],
+      [
+        "self_buff_armor_up",
+        "strike"
+      ],
+      [
+        "debuff_silence",
+        "strike"
+      ]
     ],
     "wrong_answer_buffs": {
-      "vocabulary": { "type": "confusion", "attack_bonus": 2, "duration_turns": 1 },
-      "grammar": { "type": "confusion", "attack_bonus": 2, "duration_turns": 1 },
-      "reading": { "type": "fortify", "hp_bonus": 5, "duration_turns": 2 }
+      "vocabulary": {
+        "type": "confusion",
+        "attack_bonus": 2,
+        "duration_turns": 1
+      },
+      "grammar": {
+        "type": "confusion",
+        "attack_bonus": 2,
+        "duration_turns": 1
+      },
+      "reading": {
+        "type": "fortify",
+        "hp_bonus": 5,
+        "duration_turns": 2
+      }
     },
     "variants": [
       {
@@ -429,10 +782,21 @@
         "hp_mod": -10,
         "attack_mod": 5,
         "intent_override": [
-          ["strike_swift", "self_buff_enrage"],
-          ["strike_heavy"],
-          ["debuff_taunt"],
-          ["strike", "strike", "strike_swift"]
+          [
+            "strike_swift",
+            "self_buff_enrage"
+          ],
+          [
+            "strike_heavy"
+          ],
+          [
+            "debuff_taunt"
+          ],
+          [
+            "strike",
+            "strike",
+            "strike_swift"
+          ]
         ]
       },
       {
@@ -443,10 +807,21 @@
         "hp_mod": 15,
         "attack_mod": -2,
         "intent_override": [
-          ["self_buff_focus", "debuff_curse"],
-          ["debuff_fog", "debuff_bind"],
-          ["self_buff_harden"],
-          ["strike", "debuff_silence"]
+          [
+            "self_buff_focus",
+            "debuff_curse"
+          ],
+          [
+            "debuff_fog",
+            "debuff_bind"
+          ],
+          [
+            "self_buff_harden"
+          ],
+          [
+            "strike",
+            "debuff_silence"
+          ]
         ]
       }
     ],
@@ -468,18 +843,48 @@
     "base_attack": 10,
     "actions_per_turn": 2,
     "silence_type": "grammar",
-    "concept_tags": ["grammar", "adjective", "elementary"],
+    "concept_tags": [
+      "grammar",
+      "adjective",
+      "elementary"
+    ],
     "intent_pattern": [
-      ["self_buff_harden", "debuff_bind"],
-      ["strike_heavy"],
-      ["self_buff_recover", "self_buff_armor_up"],
-      ["debuff_drain", "strike"],
-      ["strike_heavy", "debuff_silence"]
+      [
+        "self_buff_harden",
+        "debuff_bind"
+      ],
+      [
+        "strike_heavy"
+      ],
+      [
+        "self_buff_recover",
+        "self_buff_armor_up"
+      ],
+      [
+        "debuff_drain",
+        "strike"
+      ],
+      [
+        "strike_heavy",
+        "debuff_silence"
+      ]
     ],
     "wrong_answer_buffs": {
-      "vocabulary": { "type": "conjugation_armor", "attack_bonus": 0, "duration_turns": 2 },
-      "grammar": { "type": "conjugation_armor", "attack_bonus": 0, "duration_turns": 2 },
-      "reading": { "type": "fortify", "hp_bonus": 8, "duration_turns": 2 }
+      "vocabulary": {
+        "type": "conjugation_armor",
+        "attack_bonus": 0,
+        "duration_turns": 2
+      },
+      "grammar": {
+        "type": "conjugation_armor",
+        "attack_bonus": 0,
+        "duration_turns": 2
+      },
+      "reading": {
+        "type": "fortify",
+        "hp_bonus": 8,
+        "duration_turns": 2
+      }
     },
     "special_ability": {
       "id": "jade_shell",
@@ -505,18 +910,47 @@
     "base_attack": 11,
     "actions_per_turn": 2,
     "silence_type": "reading",
-    "concept_tags": ["reading", "kanji", "nature"],
+    "concept_tags": [
+      "reading",
+      "kanji",
+      "nature"
+    ],
     "intent_pattern": [
-      ["debuff_curse"],
-      ["strike_swift", "debuff_fog"],
-      ["self_buff_enrage"],
-      ["strike_swift", "strike_swift"],
-      ["debuff_taunt", "strike_heavy"]
+      [
+        "debuff_curse"
+      ],
+      [
+        "strike_swift",
+        "debuff_fog"
+      ],
+      [
+        "self_buff_enrage"
+      ],
+      [
+        "strike_swift",
+        "strike_swift"
+      ],
+      [
+        "debuff_taunt",
+        "strike_heavy"
+      ]
     ],
     "wrong_answer_buffs": {
-      "vocabulary": { "type": "confusion", "attack_bonus": 3, "duration_turns": 1 },
-      "grammar": { "type": "confusion", "attack_bonus": 2, "duration_turns": 1 },
-      "reading": { "type": "fortify", "hp_bonus": 7, "duration_turns": 2 }
+      "vocabulary": {
+        "type": "confusion",
+        "attack_bonus": 3,
+        "duration_turns": 1
+      },
+      "grammar": {
+        "type": "confusion",
+        "attack_bonus": 2,
+        "duration_turns": 1
+      },
+      "reading": {
+        "type": "fortify",
+        "hp_bonus": 7,
+        "duration_turns": 2
+      }
     },
     "special_ability": null,
     "portrait": null,
@@ -536,22 +970,66 @@
     "base_attack": 16,
     "actions_per_turn": 3,
     "silence_type": "grammar",
-    "concept_tags": ["verb", "grammar", "reading"],
+    "concept_tags": [
+      "verb",
+      "grammar",
+      "reading"
+    ],
     "intent_pattern": [
-      ["strike", "strike", "debuff_drain"],
-      ["self_buff_power_up", "strike", "strike"],
-      ["debuff_fog", "strike", "debuff_silence"],
-      ["self_buff_enrage", "strike_heavy"],
-      ["debuff_curse", "strike_swift", "strike_swift"]
+      [
+        "strike",
+        "strike",
+        "debuff_drain"
+      ],
+      [
+        "self_buff_power_up",
+        "strike",
+        "strike"
+      ],
+      [
+        "debuff_fog",
+        "strike",
+        "debuff_silence"
+      ],
+      [
+        "self_buff_enrage",
+        "strike_heavy"
+      ],
+      [
+        "debuff_curse",
+        "strike_swift",
+        "strike_swift"
+      ]
     ],
     "wrong_answer_buffs": {
-      "vocabulary": { "type": "confusion", "attack_bonus": 3, "duration_turns": 1 },
-      "grammar": { "type": "conjugation_armor", "attack_bonus": 2, "duration_turns": 1 },
-      "reading": { "type": "fortify", "hp_bonus": 10, "duration_turns": 2 }
+      "vocabulary": {
+        "type": "confusion",
+        "attack_bonus": 3,
+        "duration_turns": 1
+      },
+      "grammar": {
+        "type": "conjugation_armor",
+        "attack_bonus": 2,
+        "duration_turns": 1
+      },
+      "reading": {
+        "type": "fortify",
+        "hp_bonus": 10,
+        "duration_turns": 2
+      }
     },
     "phases": [
-      { "phase": 1, "hp_threshold": 220, "description": "Aggressive strikes" },
-      { "phase": 2, "hp_threshold": 110, "description": "Gains massive attack boost", "on_enter": "add_fury_3" }
+      {
+        "phase": 1,
+        "hp_threshold": 220,
+        "description": "Aggressive strikes"
+      },
+      {
+        "phase": 2,
+        "hp_threshold": 110,
+        "description": "Gains massive attack boost",
+        "on_enter": "add_fury_3"
+      }
     ],
     "special_ability": {
       "id": "wind_stance",
@@ -564,10 +1042,16 @@
     "portrait_placeholder_color": "#5a0a0a",
     "defeat_sfx": "boss_dissolve",
     "pre_fight_dialogue": [
-      { "line": "風に逆らうか。", "translation": "Will you defy the wind?" }
+      {
+        "line": "風に逆らうか。",
+        "translation": "Will you defy the wind?"
+      }
     ],
     "defeat_dialogue": [
-      { "line": "風が…止む…", "translation": "The wind...stops..." }
+      {
+        "line": "風が…止む…",
+        "translation": "The wind...stops..."
+      }
     ]
   },
   {
@@ -581,24 +1065,78 @@
     "base_attack": 20,
     "actions_per_turn": 3,
     "silence_type": "reading",
-    "concept_tags": ["reading", "advanced", "grammar"],
+    "concept_tags": [
+      "reading",
+      "advanced",
+      "grammar"
+    ],
     "intent_pattern": [
-      ["strike", "strike", "self_buff_power_up"],
-      ["debuff_fog", "debuff_silence", "debuff_drain"],
-      ["strike", "strike", "strike"],
-      ["self_buff_enrage", "debuff_curse"],
-      ["strike_heavy", "strike_swift", "debuff_taunt"]
+      [
+        "strike",
+        "strike",
+        "self_buff_power_up"
+      ],
+      [
+        "debuff_fog",
+        "debuff_silence",
+        "debuff_drain"
+      ],
+      [
+        "strike",
+        "strike",
+        "strike"
+      ],
+      [
+        "self_buff_enrage",
+        "debuff_curse"
+      ],
+      [
+        "strike_heavy",
+        "strike_swift",
+        "debuff_taunt"
+      ]
     ],
     "wrong_answer_buffs": {
-      "vocabulary": { "type": "confusion", "attack_bonus": 5, "duration_turns": 1 },
-      "grammar": { "type": "conjugation_armor", "attack_bonus": 5, "duration_turns": 1 },
-      "reading": { "type": "fortify", "hp_bonus": 15, "duration_turns": 2 }
+      "vocabulary": {
+        "type": "confusion",
+        "attack_bonus": 5,
+        "duration_turns": 1
+      },
+      "grammar": {
+        "type": "conjugation_armor",
+        "attack_bonus": 5,
+        "duration_turns": 1
+      },
+      "reading": {
+        "type": "fortify",
+        "hp_bonus": 15,
+        "duration_turns": 2
+      }
     },
     "phases": [
-      { "phase": 1, "hp_threshold": 350, "description": "Standard attacks" },
-      { "phase": 2, "hp_threshold": 200, "description": "Gains Chain Armor 20", "on_enter": "add_chain_armor_20" },
-      { "phase": 3, "hp_threshold": 100, "description": "Gains 5 Fury stacks instantly", "on_enter": "add_fury_5" },
-      { "phase": 4, "hp_threshold": 50, "description": "Mastery 10 Typed Phase", "on_enter": null }
+      {
+        "phase": 1,
+        "hp_threshold": 350,
+        "description": "Standard attacks"
+      },
+      {
+        "phase": 2,
+        "hp_threshold": 200,
+        "description": "Gains Chain Armor 20",
+        "on_enter": "add_chain_armor_20"
+      },
+      {
+        "phase": 3,
+        "hp_threshold": 100,
+        "description": "Gains 5 Fury stacks instantly",
+        "on_enter": "add_fury_5"
+      },
+      {
+        "phase": 4,
+        "hp_threshold": 50,
+        "description": "Mastery 10 Typed Phase",
+        "on_enter": null
+      }
     ],
     "special_ability": {
       "id": "divine_wrath",
@@ -611,10 +1149,16 @@
     "portrait_placeholder_color": "#0a5a3a",
     "defeat_sfx": "boss_dissolve",
     "pre_fight_dialogue": [
-      { "line": "我が試練を越えてみよ。", "translation": "Overcome my trial." }
+      {
+        "line": "我が試練を越えてみよ。",
+        "translation": "Overcome my trial."
+      }
     ],
     "defeat_dialogue": [
-      { "line": "見事なり…", "translation": "Magnificent..." }
+      {
+        "line": "見事なり…",
+        "translation": "Magnificent..."
+      }
     ]
   }
 ]
