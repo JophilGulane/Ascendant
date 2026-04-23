@@ -119,52 +119,60 @@ function IntentAction({ action, enemy }) {
 
 function getIntentLabel(action, enemy) {
   switch (action) {
-    case 'strike':             return `${enemy.base_attack} dmg`
-    case 'debuff_silence':     return `Silence ${enemy.silence_type || 'vocab'}`
-    case 'debuff_drain':       return '−1 Energy'
-    case 'debuff_fog':         return 'Fog'
-    case 'debuff_bind':        return '−1 Draw'
-    case 'debuff_confusion':   return 'Shuffle opts'
-    case 'self_buff_armor_up': return 'Armor +8'
-    case 'self_buff_recover':  return 'Recover +15'
-    case 'self_buff_power_up': return 'Fury +1'
-    case 'self_buff_focus':    return 'Focus'
-    default:                   return 'Special'
+    case 'strike':              return `${enemy.base_attack} dmg`
+    case 'strike_heavy':        return `${Math.floor(enemy.base_attack * 1.8)} dmg`
+    case 'strike_swift':        return `${Math.floor(enemy.base_attack * 0.6)}×2 dmg`
+    case 'debuff_silence':      return `Silence ${enemy.silence_type || 'vocab'}`
+    case 'debuff_drain':        return '−1 Energy'
+    case 'debuff_fog':          return 'Fog'
+    case 'debuff_bind':         return '−1 Draw'
+    case 'debuff_confusion':    return 'Shuffle opts'
+    case 'debuff_curse':        return 'Curse!'
+    case 'debuff_taunt':        return 'Taunt!'
+    case 'self_buff_armor_up':  return 'Armor +8'
+    case 'self_buff_harden':    return 'Armor +15'
+    case 'self_buff_recover':   return 'Recover +15'
+    case 'self_buff_power_up':  return 'Fury +1'
+    case 'self_buff_enrage':    return 'Fury +2'
+    case 'self_buff_focus':     return 'Focus'
+    default:                    return 'Special'
   }
 }
 
 function getIntentTooltip(action, enemy) {
   switch (action) {
     case 'strike':
-      return `Deals ${enemy.base_attack} damage to you. Your Block absorbs it first. If Fury is at 3 stacks, this attack doubles in power.`
-
+      return `Deals ${enemy.base_attack} damage. Your Block absorbs it first. At Fury 3, this doubles.`
+    case 'strike_heavy':
+      return `A heavy blow dealing ${Math.floor(enemy.base_attack * 1.8)} damage. Slower but hits much harder.`
+    case 'strike_swift':
+      return `Two rapid hits of ${Math.floor(enemy.base_attack * 0.6)} each. Split damage can pierce small blocks.`
     case 'debuff_silence':
-      return `Silences your ${enemy.silence_type || 'vocabulary'} cards for 2 turns. Silenced cards cannot be played — clicking them will trigger a shake.`
-
+      return `Silences your ${enemy.silence_type || 'vocabulary'} cards for 2 turns. Silenced cards cannot be played.`
     case 'debuff_drain':
       return `Drains your energy. Next turn you start with 1 fewer Energy (min 0). Lasts 2 turns.`
-
     case 'debuff_fog':
-      return `Casts Fog on your next question. Hover highlights on answer options are hidden, making it harder to guess. Consumes on use.`
-
+      return `Casts Fog. Hover highlights on answer options are hidden, making it harder to guess.`
     case 'debuff_bind':
       return `Binds your draw. Next turn you draw 1 fewer card than normal. Lasts 2 turns.`
-
     case 'debuff_confusion':
-      return `Confuses your options. At the 3-second mark on your next question, the answer choices will shuffle positions. Consumes on use.`
-
+      return `Confuses your options. At 3 seconds, answer choices will shuffle positions.`
+    case 'debuff_curse':
+      return `Applies both Silence AND Drain simultaneously. A brutal two-in-one debuff!`
+    case 'debuff_taunt':
+      return `Taunts you. Applies Bind (−1 Draw) and Confusion in a single action.`
     case 'self_buff_armor_up':
-      return `Gains 8 Armor. Armor reduces all incoming damage by a flat amount. Chain combos bypass Armor entirely.`
-
+      return `Gains 8 Armor. Armor reduces incoming damage. Chain combos bypass Armor entirely.`
+    case 'self_buff_harden':
+      return `Hardens its shell for +15 Armor. Much stronger than a normal Armor Up.`
     case 'self_buff_recover':
-      return `Attempts to recover 15 HP. Only activates if the enemy is below 50% HP. Has no effect if at higher health.`
-
+      return `Attempts to recover 15 HP. Only activates if below 50% HP.`
     case 'self_buff_power_up':
-      return `Gains 1 Fury stack (max 3). At 3 Fury stacks, the next Strike deals double damage and Fury resets to 0.`
-
+      return `Gains 1 Fury stack (max 3). At Fury 3, the next Strike deals double damage.`
+    case 'self_buff_enrage':
+      return `Gains 2 Fury stacks at once. A rapid escalation — watch out for a double-damage hit!`
     case 'self_buff_focus':
-      return `Focuses on your most-used card type this fight. Incoming damage from that card type is reduced by 50% until the focus changes.`
-
+      return `Focuses on your most-used card type. Incoming damage from that type is reduced by 50%.`
     default:
       return `A special ability unique to this enemy. Stay alert!`
   }

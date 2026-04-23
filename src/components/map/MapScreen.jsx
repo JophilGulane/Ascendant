@@ -12,6 +12,27 @@ import { useAudio } from '../../hooks/useAudio.js'
 import { TopBar } from '../shared/TopBar.jsx'
 import { RelicSwapScreen } from '../menus/RelicSwapScreen.jsx'
 
+/**
+ * Randomly apply a variant to an enemy for run variety.
+ * ~40% chance to pick a variant if available; otherwise returns base enemy.
+ */
+function applyRandomVariant(enemy) {
+  if (!enemy.variants || enemy.variants.length === 0) return enemy
+  if (Math.random() > 0.4) return enemy // 40% chance to get a variant
+  const variant = enemy.variants[Math.floor(Math.random() * enemy.variants.length)]
+  return {
+    ...enemy,
+    id: variant.id,
+    name_native: variant.name_native,
+    name_target: variant.name_target,
+    portrait_placeholder_color: variant.portrait_placeholder_color,
+    hp: enemy.hp + (variant.hp_mod || 0),
+    base_attack: enemy.base_attack + (variant.attack_mod || 0),
+    intent_pattern: variant.intent_override || enemy.intent_pattern,
+    // Keep all other base properties (buffs, special_ability, portrait, etc.)
+  }
+}
+
 // STS-style node icons (dark grey line art style on parchment)
 const NODE_META = {
   [NODE_TYPES.COMBAT]:   { icon: '💀', label: 'Enemy',    size: 32 },
@@ -139,7 +160,8 @@ export function MapScreen() {
         )
         const fallback = enemiesData.filter(e => e.floor === store.floor && e.tier !== 'boss')
         const pool = floorEnemies.length > 0 ? floorEnemies : fallback
-        const enemy = pool[Math.floor(Math.random() * pool.length)]
+        const baseEnemy = pool[Math.floor(Math.random() * pool.length)]
+        const enemy = baseEnemy ? applyRandomVariant(baseEnemy) : baseEnemy
         if (enemy) store.setEnemy(enemy)
         nextPath = '/combat'
         break

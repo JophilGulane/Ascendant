@@ -65,9 +65,9 @@ function EnergyOrb({ energy, maxEnergy }) {
 // Deck/Discard Pile (STS style bottom corners)
 function CardPile({ count, type, side, onClick }) {
   return (
-    <button 
+    <button
       onClick={onClick}
-      className="relative flex flex-col items-center justify-end h-20 w-16 cursor-pointer hover:scale-105 transition-transform" 
+      className="relative flex flex-col items-center justify-end h-20 w-16 cursor-pointer hover:scale-105 transition-transform"
       title={type === 'draw' ? 'Draw Pile' : 'Discard Pile'}
     >
       {/* Stack of cards visuals */}
@@ -188,7 +188,7 @@ export function CombatScreen() {
   useEffect(() => {
     const enemy = store.currentEnemy
     if (!enemy?.phases) return
-    
+
     let newPhase = 1
     for (const phase of enemy.phases) {
       if (store.enemyHp <= phase.hp_threshold && store.enemyHp > 0) {
@@ -204,10 +204,10 @@ export function CombatScreen() {
           if (phaseData.on_enter === 'add_chain_armor_15') s.addEnemyArmor(15)
           if (phaseData.on_enter === 'add_chain_armor_20') s.addEnemyArmor(20)
           if (phaseData.on_enter === 'add_fury_3') {
-            for(let i=0; i<3; i++) s.addEnemyFury()
+            for (let i = 0; i < 3; i++) s.addEnemyFury()
           }
           if (phaseData.on_enter === 'add_fury_5') {
-            for(let i=0; i<5; i++) s.addEnemyFury()
+            for (let i = 0; i < 5; i++) s.addEnemyFury()
           }
         }
       }
@@ -346,7 +346,7 @@ export function CombatScreen() {
 
   if (turnPhase === PHASE.BOSS_DEFEAT) {
     return (
-      <BossDefeatScreen 
+      <BossDefeatScreen
         enemy={store.currentEnemy}
         onChoice={(choice) => {
           setTurnPhase(PHASE.FIGHT_END)
@@ -371,9 +371,9 @@ export function CombatScreen() {
           style={{
             backgroundImage: 'url(/images/ui/dungeon_combat_bg.png)',
             backgroundRepeat: 'no-repeat',
-            backgroundSize: '110%',
+            backgroundSize: '100%',
             backgroundPosition: 'center bottom',
-            filter: 'brightness(0.7) contrast(1.1)',
+
           }}
         />
 
@@ -393,11 +393,11 @@ export function CombatScreen() {
         <div className="flex-1 relative">
 
           {/* Player Character Sprite (Left) */}
-          <div className="absolute left-[30%] bottom-[5%] flex flex-col items-center">
+          <div className="absolute left-[18%] bottom-[5%] flex flex-col items-center">
             <motion.div
               animate={
-                isHitPlayer ? { 
-                  x: [-10, 10, -10, 10, 0], 
+                isHitPlayer ? {
+                  x: [-10, 10, -10, 10, 0],
                   filter: 'brightness(2) sepia(1) hue-rotate(-50deg) saturate(5)',
                   transition: { duration: 0.3 }
                 } : animState === 'player_telegraph_damage' ? {
@@ -436,44 +436,65 @@ export function CombatScreen() {
                 </div>
               )}
             </motion.div>
-            {/* Player Name */}
-            <div className="text-center mt-2">
-              <div className="text-sm font-bold text-white">
-                {store.character?.name || 'Traveler'}
-              </div>
-            </div>
 
-            {/* Player HP Bar (Matching Enemy Design) */}
-            <div className="w-44 mt-1">
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-xs text-gray-400">HP</span>
-                <div className="flex items-center gap-2">
-                  {store.block > 0 && <span className="text-[10px] text-blue-300">🛡️{store.block}</span>}
-                  <span className="text-xs text-white font-mono">{store.hp} / {store.maxHp}</span>
+            {/* STS-style Player HP + Block */}
+            <div className="w-48 mt-2">
+              {/* Block badge */}
+              {store.block > 0 && (
+                <div className="flex justify-start mb-1">
+                  <div className="flex items-center gap-1 bg-gray-800/90 border border-cyan-700 rounded-full px-2 py-0.5">
+                    <span className="text-cyan-400 text-sm">🛡️</span>
+                    <span className="text-cyan-300 text-xs font-bold">{store.block}</span>
+                  </div>
                 </div>
-              </div>
-              <div className="h-3 bg-gray-800 rounded-full overflow-hidden border border-gray-700/50">
+              )}
+              {/* HP bar with number on it */}
+              <div className="relative h-6 bg-gray-900 rounded border border-gray-700 overflow-hidden shadow-inner">
                 <motion.div
-                  className="h-full rounded-full bg-emerald-500"
+                  className={`absolute inset-y-0 left-0 rounded ${
+                    store.hp / store.maxHp > 0.5 ? 'bg-red-600' :
+                    store.hp / store.maxHp > 0.25 ? 'bg-orange-600' : 'bg-red-800'
+                  }`}
                   animate={{ width: `${Math.max(0, (store.hp / store.maxHp) * 100)}%` }}
                   transition={{ duration: 0.4, ease: 'easeOut' }}
                 />
+                <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white"
+                  style={{ textShadow: '1px 1px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000' }}>
+                  {store.hp} / {store.maxHp}
+                </span>
               </div>
+
+              {/* Debuff icons below HP bar */}
+              {store.activePlayerDebuffs.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {store.activePlayerDebuffs.map((d, i) => {
+                    const icons = { silence: '🔇', drain: '⚡', fog: '🌫️', bind: '🔗', confusion: '🔀' }
+                    const colors = { silence: 'border-purple-600 bg-purple-950/80', drain: 'border-yellow-600 bg-yellow-950/80', fog: 'border-blue-500 bg-blue-950/80', bind: 'border-orange-500 bg-orange-950/80', confusion: 'border-pink-500 bg-pink-950/80' }
+                    const labels = { silence: 'Silenced', drain: 'Drained', fog: 'Fogged', bind: 'Bound', confusion: 'Confused' }
+                    const descs = { silence: `${d.target || ''} cards muted`, drain: '−1 Energy/turn', fog: 'Options hidden', bind: '−1 Draw/turn', confusion: 'Options shuffle' }
+                    return (
+                      <div key={i} className="relative group">
+                        <div className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-full border text-[10px] font-bold cursor-help ${colors[d.type] || 'border-gray-600 bg-gray-900'}`}>
+                          <span>{icons[d.type] || '❓'}</span>
+                          <span className="text-white">{d.duration}</span>
+                        </div>
+                        {/* Hover tooltip */}
+                        <div className="absolute bottom-full left-0 mb-1.5 hidden group-hover:block z-50 pointer-events-none w-40">
+                          <div className="bg-gray-950 border border-gray-600 rounded-lg px-3 py-2 shadow-2xl">
+                            <div className="text-amber-400 font-bold text-xs mb-0.5">{labels[d.type] || d.type}</div>
+                            <div className="text-gray-300 text-[10px]">{descs[d.type] || ''} ({d.duration} turns)</div>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
             </div>
-            {/* Debuffs */}
-            {store.activePlayerDebuffs.length > 0 && (
-              <div className="flex gap-1 mt-2">
-                {store.activePlayerDebuffs.map((d, i) => (
-                  <span key={i} className="text-xs bg-purple-900/80 text-purple-200 px-1 rounded border border-purple-500">
-                    {d.type} {d.duration}
-                  </span>
-                ))}
-              </div>
-            )}
           </div>
 
           {/* Enemy Display (Right) */}
-          <div className="absolute right-[30%] bottom-[5%] flex flex-col items-center">
+          <div className="absolute right-[18%] bottom-[5%] flex flex-col items-center">
             <EnemyDisplay
               enemy={store.currentEnemy}
               hp={store.enemyHp}
@@ -518,9 +539,9 @@ export function CombatScreen() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 1.2, ease: 'easeOut' }}
                   className={`absolute top-[35%] font-black pointer-events-none -translate-x-1/2
-                    ${enemyAction.type === 'debuff' ? 'text-purple-400 text-2xl left-[30%]' : 
+                    ${enemyAction.type === 'debuff' ? 'text-purple-400 text-2xl left-[30%]' :
                       enemyAction.type === 'damage' ? 'text-red-500 text-5xl left-[30%]' :
-                      enemyAction.type === 'selfbuff' ? 'text-blue-400 text-2xl left-[70%]' : 'text-gray-200 text-2xl left-[30%]'}`}
+                        enemyAction.type === 'selfbuff' ? 'text-blue-400 text-2xl left-[70%]' : 'text-gray-200 text-2xl left-[30%]'}`}
                   style={{ textShadow: '2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000' }}
                 >
                   {enemyAction.type === 'damage' ? (enemyAction.value > 0 ? `-${enemyAction.value}` : 'Blocked!') : enemyAction.message}
@@ -612,7 +633,7 @@ export function CombatScreen() {
               animate={(isPlayerTurn && !activeQuestion && !store.hand.some(id => cardMap[id] && !store.lockedCards.includes(id) && store.energy >= cardMap[id].energy_cost)) ? {
                 boxShadow: ['0px 4px 10px rgba(0,0,0,0.6)', '0px 0px 25px rgba(74, 158, 192, 1)', '0px 4px 10px rgba(0,0,0,0.6)'],
                 borderColor: ['#4a9ec0', '#8be9fd', '#4a9ec0']
-              } : { 
+              } : {
                 boxShadow: '0px 4px 10px rgba(0,0,0,0.6)',
                 borderColor: (!isPlayerTurn || activeQuestion) ? '#111' : '#4a9ec0'
               }}
@@ -671,11 +692,11 @@ export function CombatScreen() {
         {/* ── LOOT SCREEN ── */}
         <AnimatePresence>
           {loot && !isDrafting && (
-            <LootScreen 
-              loot={loot} 
-              onClaim={handleClaimLoot} 
-              onSkip={handleLootDone} 
-              onOpenDraft={handleOpenDraftLoot} 
+            <LootScreen
+              loot={loot}
+              onClaim={handleClaimLoot}
+              onSkip={handleLootDone}
+              onOpenDraft={handleOpenDraftLoot}
             />
           )}
         </AnimatePresence>

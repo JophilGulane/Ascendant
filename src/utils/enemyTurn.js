@@ -94,6 +94,12 @@ export async function resolveEnemyAction(action, enemy, store, playSFX) {
       return { icon: '🛡️', message: 'Armor Up! +8 armor', type: 'selfbuff' }
     }
 
+    case 'self_buff_harden': {
+      store.addEnemyArmor(15)
+      playSFX?.('enemy_buff')
+      return { icon: '💎', message: 'Harden! +15 armor', type: 'selfbuff' }
+    }
+
     case 'self_buff_recover': {
       if (store.enemyHp < store.enemyMaxHp * 0.5) {
         store.healEnemy(15)
@@ -114,6 +120,19 @@ export async function resolveEnemyAction(action, enemy, store, playSFX) {
       }
     }
 
+    case 'self_buff_enrage': {
+      // Gains 2 fury at once — aggressive escalation
+      store.addEnemyFury()
+      store.addEnemyFury()
+      playSFX?.('enemy_buff')
+      const furyAfter = store.enemyFuryStacks + 2
+      return {
+        icon: '😤',
+        message: `Enrage! Fury +2 (${furyAfter}/3)`,
+        type: 'selfbuff',
+      }
+    }
+
     case 'self_buff_focus': {
       const mostUsed = getMostUsedCardType(store)
       if (mostUsed) {
@@ -122,6 +141,62 @@ export async function resolveEnemyAction(action, enemy, store, playSFX) {
         return { icon: '👁️', message: `Focus! Resists ${mostUsed} cards (−50% dmg)`, type: 'selfbuff' }
       }
       return { icon: '👁️', message: 'Focus (observing...)', type: 'selfbuff' }
+    }
+
+    // ── NEW ACTION TYPES ──
+
+    case 'strike_heavy': {
+      // Slow but deals 1.8× base damage
+      let damage = Math.floor(enemy.base_attack * 1.8)
+      const confusionBuff = store.activeEnemyBuffs.find(b => b.type === 'confusion')
+      if (confusionBuff) damage += (confusionBuff.attack_bonus || 2)
+      if (store.enemyFuryStacks >= 3) { damage *= 2; store.clearEnemyFury() }
+      const blocked = Math.min(store.block, damage)
+      const remaining = damage - blocked
+      if (blocked > 0) store.spendBlock(blocked)
+      if (remaining > 0) {
+        const newHp = store.hp - remaining
+        const lastStandBlessing = store.activeModifier?.blessing?.effect?.type === 'last_stand'
+        if (lastStandBlessing && !store.lastStandUsed && newHp <= 0) { store.setHp(1); store.useLastStand() }
+        else store.setHp(newHp)
+      }
+      playSFX?.('enemy_strike')
+      return {
+        icon: '💥', message: blocked > 0 ? `Heavy Strike! ${remaining > 0 ? `-${remaining} HP` : 'Blocked!'}` : `-${damage} HP`,
+        type: 'damage', value: remaining,
+      }
+    }
+
+    case 'strike_swift': {
+      // Hits twice at 0.6× — split damage pierces small blocks
+      let dmg1 = Math.floor(enemy.base_attack * 0.6)
+      let dmg2 = Math.floor(enemy.base_attack * 0.6)
+      let totalRemaining = 0
+      for (const dmg of [dmg1, dmg2]) {
+        const b = Math.min(store.block, dmg)
+        const r = dmg - b
+        if (b > 0) store.spendBlock(b)
+        if (r > 0) { store.setHp(Math.max(0, store.hp - r)); totalRemaining += r }
+      }
+      playSFX?.('enemy_strike')
+      return { icon: '⚡', message: `Swift Strike ×2! −${totalRemaining} HP`, type: 'damage', value: totalRemaining }
+    }
+
+    case 'debuff_curse': {
+      // Applies both silence AND drain in one action — brutal combo
+      const silenceTarget = enemy.silence_type || 'vocabulary'
+      store.addPlayerDebuff({ type: 'silence', target: silenceTarget, duration: 2 })
+      store.addPlayerDebuff({ type: 'drain', energy_penalty: 1, duration: 1 })
+      playSFX?.('debuff_apply')
+      return { icon: '💀', message: `Curse! Silence + Drain applied`, type: 'debuff' }
+    }
+
+    case 'debuff_taunt': {
+      // Forces player to play an extra card or lose 5 HP (simulated: lose 5 HP if not in attack mode)
+      store.addPlayerDebuff({ type: 'bind', draw_penalty: 1, duration: 1 })
+      store.addPlayerDebuff({ type: 'confusion', duration: 1 })
+      playSFX?.('debuff_apply')
+      return { icon: '😡', message: 'Taunt! Bind + Confusion', type: 'debuff' }
     }
 
     default: {
