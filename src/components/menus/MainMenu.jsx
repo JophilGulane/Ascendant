@@ -38,11 +38,12 @@ function Ember({ delay }) {
 }
 
 const MENU_ITEMS = [
-  { id: 'play',     label: 'Play' },
-  { id: 'pantheon', label: 'The Pantheon' },
-  { id: 'graveyard',label: 'Mistake Graveyard' },
-  { id: 'settings', label: 'Settings' },
-  { id: 'about',    label: 'About' },
+  { id: 'play',        label: 'Play' },
+  { id: 'leaderboard',label: '🏆 Leaderboard' },
+  { id: 'pantheon',   label: 'The Pantheon' },
+  { id: 'graveyard',  label: 'Mistake Graveyard' },
+  { id: 'settings',   label: 'Settings' },
+  { id: 'about',      label: 'About' },
 ]
 
 export function MainMenu() {
@@ -79,10 +80,11 @@ export function MainMenu() {
 
   const handleMenuClick = (id) => {
     playSFX('button_click')
-    if (id === 'play') setView('campaign')
-    if (id === 'graveyard') navigate('/graveyard')
-    if (id === 'pantheon') navigate('/pantheon')
-    if (id === 'settings') setSettingsOpen(true)
+    if (id === 'play')        setView('campaign')
+    if (id === 'graveyard')   navigate('/graveyard')
+    if (id === 'pantheon')    navigate('/pantheon')
+    if (id === 'leaderboard') navigate('/leaderboard')
+    if (id === 'settings')    setSettingsOpen(true)
     if (id === 'about') {} // placeholder
   }
 

@@ -14,6 +14,7 @@ const PostRunSummary = lazy(() => import('./components/menus/PostRunSummary.jsx'
 const GraveyardScreen = lazy(() => import('./components/menus/GraveyardScreen.jsx').then(m => ({ default: m.GraveyardScreen })))
 const ModifierSelect = lazy(() => import('./components/menus/ModifierSelect.jsx').then(m => ({ default: m.ModifierSelect })))
 const PantheonScreen = lazy(() => import('./components/menus/PantheonScreen.jsx').then(m => ({ default: m.PantheonScreen })))
+const LeaderboardScreen = lazy(() => import('./components/leaderboard/LeaderboardScreen.jsx').then(m => ({ default: m.LeaderboardScreen })))
 
 function LoadingFallback() {
   return (
@@ -42,6 +43,7 @@ export default function App() {
             <Route path="/graveyard" element={<GraveyardScreen />} />
             <Route path="/modifier-select" element={<ModifierSelect />} />
             <Route path="/pantheon" element={<PantheonScreen />} />
+            <Route path="/leaderboard" element={<LeaderboardScreen />} />
             {/* Fallback */}
             <Route path="*" element={<MainMenu />} />
           </Routes>

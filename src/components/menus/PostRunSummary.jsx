@@ -7,6 +7,8 @@ import useProgressStore from '../../stores/progressStore.js'
 import usePantheonStore from '../../stores/pantheonStore.js'
 import { useGraveyard } from '../../hooks/useGraveyard.js'
 import { ScreenTransition } from '../shared/ScreenTransition.jsx'
+import useAccountStore from '../../stores/accountStore.js'
+import { submitRunStats, getStudentClassCodes } from '../../account/leaderboardService.js'
 
 function generatePattern(correct, total, journalWords, journalGrammar) {
   if (total === 0) return 'No questions answered this run.'
@@ -63,6 +65,23 @@ export function PostRunSummary() {
     })
     const xpAfter = usePantheonStore.getState().xp
     setEarnedXp(xpAfter - xpBefore)
+
+    // ── Submit leaderboard stats (logged-in players only) ──────────────
+    const { session, profile } = useAccountStore.getState()
+    if (session?.username) {
+      const classCodes = getStudentClassCodes(session.username).map(c => c.code)
+      submitRunStats({
+        username:     session.username,
+        displayName:  profile?.displayName || profile?.username || session.username,
+        campaign:     store.campaign || 'japanese',
+        floorReached: store.floor,
+        masteryLevel: store.masteryLevel || 0,
+        totalFloors:  Math.max(0, store.floor - 1),
+        totalCorrect: store.sessionCorrect,
+        classCodes,
+      })
+    }
+
     // Advance through phases
     const timer = setTimeout(() => setPhase(1), 1200)
     const timer2 = setTimeout(() => setPhase(2), 2400)
