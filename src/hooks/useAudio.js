@@ -2,7 +2,7 @@
 // Howler.js wrapper — silent fallback if audio files are missing
 // All audio calls go through this hook
 
-import { useCallback, useRef } from 'react'
+import { useCallback, useRef, useEffect } from 'react'
 import useSettingsStore from '../stores/settingsStore.js'
 
 // SFX registry — lazy loaded
@@ -78,9 +78,18 @@ const SFX_MAP = {
 }
 
 export function useAudio() {
-  const sfxVolume = useSettingsStore(s => s.sfxVolume)
+  const sfxVolume   = useSettingsStore(s => s.sfxVolume)
   const musicVolume = useSettingsStore(s => s.musicVolume)
   const musicRef = useRef({})
+
+  // Live-update all currently-playing music tracks whenever musicVolume changes
+  useEffect(() => {
+    Object.values(musicRef.current).forEach(m => {
+      if (m && m.playing()) {
+        try { m.volume(musicVolume) } catch { }
+      }
+    })
+  }, [musicVolume])
 
   const playSFX = useCallback(async (name) => {
     if (sfxVolume === 0) return

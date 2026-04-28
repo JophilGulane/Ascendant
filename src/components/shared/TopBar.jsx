@@ -11,6 +11,8 @@ import { RelicSlots } from './RelicSlots.jsx'
 import { VaultScreen } from '../menus/VaultScreen.jsx'
 import { MapOverlay } from '../map/MapOverlay.jsx'
 import { RELICS } from '../../data/relics.js'
+import { SettingsMenu } from './SettingsMenu.jsx'
+import { CAMPAIGN_THEMES } from '../../constants/campaigns.js'
 export function TopBar({ hideMapButton = false, potionsLocked = false }) {
   const store = useRunStore()
   const navigate = useNavigate()
@@ -161,64 +163,81 @@ export function TopBar({ hideMapButton = false, potionsLocked = false }) {
 }
 
 function SettingsOverlay({ onClose }) {
-  const navigate = useNavigate()
+  const navigate  = useNavigate()
+  const store     = useRunStore()
   const { playSFX } = useAudio()
-  
+  const [showSettings, setShowSettings] = useState(false)
+
+  const accent = CAMPAIGN_THEMES[store.campaign]?.accent || '#F5C842'
+
   const handleQuit = () => {
     playSFX('button_click')
     navigate('/')
   }
-  
+
   const handleAbandon = () => {
     playSFX('button_click')
     useRunStore.getState().endRun()
     navigate('/')
   }
-  
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ scale: 0.9, y: 20 }}
-        animate={{ scale: 1, y: 0 }}
-        exit={{ scale: 0.9, y: 20 }}
-        onClick={e => e.stopPropagation()}
-        className="rounded-2xl border border-gray-600 p-8 w-96 flex flex-col gap-4"
-        style={{ background: 'linear-gradient(160deg, #1a1208, #0d0d0d)', boxShadow: '0 0 60px rgba(0,0,0,0.8)' }}
-      >
-        <h2 className="text-2xl font-bold text-amber-300 text-center mb-4" style={{ fontFamily: "'Cinzel', serif" }}>Settings</h2>
-        
-        <button className="w-full py-3 rounded-lg border border-gray-600 text-gray-200 hover:bg-gray-800 transition-colors cursor-pointer">
-          Options
-        </button>
-        
-        <button 
-          onClick={handleAbandon}
-          className="w-full py-3 rounded-lg border border-gray-600 text-gray-200 hover:bg-gray-800 transition-colors cursor-pointer"
-        >
-          Abandon Run
-        </button>
-        
-        <button 
-          onClick={handleQuit}
-          className="w-full py-3 rounded-lg border border-amber-800 bg-amber-950/30 text-amber-200 hover:bg-amber-900/50 hover:border-amber-600 transition-all font-bold cursor-pointer"
-        >
-          Save & Quit to Menu
-        </button>
 
-        <button 
-          onClick={onClose}
-          className="w-full py-3 mt-4 rounded-lg border border-gray-700 bg-gray-900 text-gray-400 hover:text-white transition-colors cursor-pointer"
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center backdrop-blur-sm"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ scale: 0.9, y: 20 }}
+          animate={{ scale: 1, y: 0 }}
+          exit={{ scale: 0.9, y: 20 }}
+          onClick={e => e.stopPropagation()}
+          className="rounded-2xl border border-gray-600 p-8 w-96 flex flex-col gap-4"
+          style={{ background: 'linear-gradient(160deg, #1a1208, #0d0d0d)', boxShadow: '0 0 60px rgba(0,0,0,0.8)' }}
         >
-          Return to Game
-        </button>
+          <h2 className="text-2xl font-bold text-amber-300 text-center mb-4" style={{ fontFamily: "'Cinzel', serif" }}>Paused</h2>
+
+          {/* Options — opens the real settings panel */}
+          <button
+            onClick={() => { playSFX('button_click'); setShowSettings(true) }}
+            className="w-full py-3 rounded-lg border border-gray-600 text-gray-200 hover:bg-gray-800 transition-colors cursor-pointer"
+          >
+            ⚙️ Options
+          </button>
+
+          <button
+            onClick={handleAbandon}
+            className="w-full py-3 rounded-lg border border-gray-600 text-gray-200 hover:bg-gray-800 transition-colors cursor-pointer"
+          >
+            Abandon Run
+          </button>
+
+          <button
+            onClick={handleQuit}
+            className="w-full py-3 rounded-lg border border-amber-800 bg-amber-950/30 text-amber-200 hover:bg-amber-900/50 hover:border-amber-600 transition-all font-bold cursor-pointer"
+          >
+            Save &amp; Quit to Menu
+          </button>
+
+          <button
+            onClick={onClose}
+            className="w-full py-3 mt-4 rounded-lg border border-gray-700 bg-gray-900 text-gray-400 hover:text-white transition-colors cursor-pointer"
+          >
+            Return to Game
+          </button>
+        </motion.div>
       </motion.div>
-    </motion.div>
+
+      {/* Real settings panel — slides in on top of the pause menu */}
+      <SettingsMenu
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+        accent={accent}
+      />
+    </>
   )
 }
 

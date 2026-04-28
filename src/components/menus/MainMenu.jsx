@@ -11,6 +11,7 @@ import { AccountBadge } from '../../account/components/AccountBadge.jsx'
 import useAccountStore from '../../stores/accountStore.js'
 import { getUnlockedCustomThemes, getCustomCampaignTheme } from '../../utils/customCampaignLoader.js'
 import { unlockCustomCampaign } from '../../teacher/teacherService.js'
+import { SettingsMenu } from '../shared/SettingsMenu.jsx'
 
 // Floating ember particle (like STS burning embers)
 function Ember({ delay }) {
@@ -145,7 +146,7 @@ export function MainMenu() {
         {Array.from({ length: 20 }).map((_, i) => <Ember key={i} delay={i * 0.4} />)}
       </div>
 
-      {/* ── Account badge (top-left) — replaces static Player placeholder ── */}
+      {/* ── Account badge (top-left) ── */}
       <AccountBadge />
 
       {/* ── Title (center) ── */}
@@ -441,46 +442,11 @@ export function MainMenu() {
       </AnimatePresence>
 
       {/* ── Settings Overlay ── */}
-      <AnimatePresence>
-        {settingsOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center"
-            onClick={() => setSettingsOpen(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
-              onClick={e => e.stopPropagation()}
-              className="rounded-2xl border border-gray-600 p-8 w-96"
-              style={{ background: 'linear-gradient(160deg, #1a1208, #0d0d0d)', boxShadow: '0 0 60px rgba(0,0,0,0.8)' }}
-            >
-              <h2 className="text-2xl font-bold text-amber-300 mb-6" style={{ fontFamily: "'Cinzel', serif" }}>Settings</h2>
-              <div className="flex flex-col gap-4 mb-6 text-sm text-gray-300">
-                <div className="flex justify-between">
-                  <span>Answer Timer</span>
-                  <span className="text-amber-400">20s</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Romanization</span>
-                  <span className="text-amber-400">Progressive Fade</span>
-                </div>
-                <p className="text-xs text-gray-500 border-t border-gray-700 pt-3">Full settings available in Phase 2.</p>
-              </div>
-              <button
-                onClick={() => setSettingsOpen(false)}
-                className="w-full py-2.5 rounded-lg border border-gray-600 text-gray-200 text-sm hover:border-amber-600 hover:text-amber-200 transition-all"
-                style={{ background: '#1a1a1a' }}
-              >
-                Close
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <SettingsMenu
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        accent="#F5C842"
+      />
     </div>
   )
 }

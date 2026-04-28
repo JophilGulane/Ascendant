@@ -374,7 +374,6 @@ export function CombatScreen() {
             backgroundRepeat: 'no-repeat',
             backgroundSize: '100%',
             backgroundPosition: 'center bottom',
-
           }}
         />
 
