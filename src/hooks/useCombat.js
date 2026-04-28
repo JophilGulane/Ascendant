@@ -18,6 +18,10 @@ import {
   getEffectiveDrawCount,
   getEffectiveMaxEnergy,
   isCardTypeSilenced,
+  resolvePassiveAbility,
+  resetConsecutiveWrong,
+  resolveTimeSplitDebuff,
+  resetPassiveTrackers,
 } from '../utils/enemyTurn.js'
 import { CARD_TYPES } from '../constants/cardTypes.js'
 
@@ -95,6 +99,15 @@ export function useCombat() {
 
     // v2: unlock all locked cards first
     s.unlockAllCards()
+
+    // Reset passive ability trackers for the new turn
+    // (particle_trap consecutive wrong counter resets per-fight, not per-turn)
+
+    // Resolve time_split delayed damage if active
+    const timeSplitResult = resolveTimeSplitDebuff(s)
+    if (timeSplitResult.triggered && timeSplitResult.damage > 0) {
+      playSFX('enemy_strike')
+    }
 
     // v3: Passively retain cards that have the retain effect
     const currentHand = s.hand
@@ -221,6 +234,11 @@ export function useCombat() {
       graveyard.logCorrect(question)
       s.logCorrect()
 
+      // Reset consecutive wrong counter for passive ability tracking
+      if (s.currentEnemy?.id) {
+        resetConsecutiveWrong(s.currentEnemy.id)
+      }
+
       const freshS = useRunStore.getState()
       if (freshS.relics.includes('travelers_compass') && freshS.fightCorrectStreak > 0 && freshS.fightCorrectStreak % 3 === 0) {
         freshS.queueBonusEnergyNextTurn(1)
@@ -308,6 +326,12 @@ export function useCombat() {
       // RULE: break chain on any wrong answer
       s.breakChain()
 
+      // PASSIVE: check for chain-break triggered abilities (e.g. spirit_shield)
+      const chainBreakResult = resolvePassiveAbility('on_chain_break', s)
+      if (chainBreakResult.triggered) {
+        playSFX('enemy_buff')
+      }
+
       // Enemy buff from wrong answer
       const enemy = s.currentEnemy
       const buffTemplate = enemy?.wrong_answer_buffs?.[card.type]
@@ -334,6 +358,9 @@ export function useCombat() {
       setTimeout(() => setAnimState(null), 600)
       playSFX('wrong')
       playSFX('cardLock')
+
+      // PASSIVE: check for wrong-answer triggered abilities (e.g. particle_trap)
+      resolvePassiveAbility('on_wrong_answer', s)
     }
 
     setActiveQuestion(null)
@@ -373,6 +400,11 @@ export function useCombat() {
       s.damageEnemy(finalDmg)
       showDamageNumber(finalDmg, 'damage')
       playSFX('attack_enemy')
+
+      // PASSIVE: check for damage-triggered abilities (e.g. meditate, jade_shell)
+      const freshAfterDmg = useRunStore.getState()
+      resolvePassiveAbility('on_take_damage', freshAfterDmg, { damage: finalDmg })
+      resolvePassiveAbility('on_low_hp', freshAfterDmg)
     }
 
     if (effect.block) {

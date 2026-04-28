@@ -135,6 +135,13 @@ function getIntentLabel(action, enemy) {
     case 'self_buff_power_up':  return 'Fury +1'
     case 'self_buff_enrage':    return 'Fury +2'
     case 'self_buff_focus':     return 'Focus'
+    case 'self_buff_fortify':   return 'Fortify'
+    case 'special_fox_fire':    return 'Fox Fire'
+    case 'special_demon_roar':  return 'Demon Roar'
+    case 'special_contract_clause': return 'Contract!'
+    case 'special_shapeshift':  return 'Shapeshift'
+    case 'special_time_split':  return `Split ${Math.floor(enemy.base_attack / 2)}×2`
+    case 'special_system_override': return 'Override'
     default:                    return 'Special'
   }
 }
@@ -173,6 +180,20 @@ function getIntentTooltip(action, enemy) {
       return `Gains 2 Fury stacks at once. A rapid escalation — watch out for a double-damage hit!`
     case 'self_buff_focus':
       return `Focuses on your most-used card type. Incoming damage from that type is reduced by 50%.`
+    case 'self_buff_fortify':
+      return `The enemy heals HP, growing stronger from your mistakes.`
+    case 'special_fox_fire':
+      return `Swaps 2 cards from your hand with random cards from your discard pile. Disrupts your strategy!`
+    case 'special_demon_roar':
+      return `A terrifying roar! Gains 2 Fury stacks and inflicts Confusion. Answer carefully under pressure.`
+    case 'special_contract_clause':
+      return `You MUST play a Grammar card next turn, or take 10 direct damage that ignores Block entirely.`
+    case 'special_shapeshift':
+      return `Transforms and becomes resistant to your most-used card type. Vary your card types to counter!`
+    case 'special_time_split':
+      return `Splits damage across two turns: ${Math.floor(enemy.base_attack / 2)} now, ${Math.floor(enemy.base_attack / 2)} next turn. Block each half separately.`
+    case 'special_system_override':
+      return `Rewrites 2 cards in your hand with random cards from your discard pile. Your program has been hacked!`
     default:
       return `A special ability unique to this enemy. Stay alert!`
   }

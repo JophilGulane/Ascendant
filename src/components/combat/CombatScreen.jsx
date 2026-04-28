@@ -11,6 +11,7 @@ import { useEnemyTurn } from '../../hooks/useEnemyTurn.js'
 import { useDraft } from '../../hooks/useDraft.js'
 import { useAudio } from '../../hooks/useAudio.js'
 import { generateFloorMap } from '../../utils/map.js'
+import { resetPassiveTrackers } from '../../utils/enemyTurn.js'
 import { EnemyDisplay } from './EnemyDisplay.jsx'
 import { ChainIndicator } from './ChainIndicator.jsx'
 import CardHand from './CardHand.jsx'
@@ -145,6 +146,7 @@ export function CombatScreen() {
       if (!store.inCombat) {
         // Fresh encounter
         useRunStore.getState().startFight(store.currentEnemy)
+        resetPassiveTrackers()
         setTurnPhase(PHASE.PLAYER_DRAW)
       } else {
         // Resuming encounter: skip draw phase if we already have a hand
@@ -468,10 +470,10 @@ export function CombatScreen() {
               {store.activePlayerDebuffs.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-1.5">
                   {store.activePlayerDebuffs.map((d, i) => {
-                    const icons = { silence: '🔇', drain: '⚡', fog: '🌫️', bind: '🔗', confusion: '🔀' }
-                    const colors = { silence: 'border-purple-600 bg-purple-950/80', drain: 'border-yellow-600 bg-yellow-950/80', fog: 'border-blue-500 bg-blue-950/80', bind: 'border-orange-500 bg-orange-950/80', confusion: 'border-pink-500 bg-pink-950/80' }
-                    const labels = { silence: 'Silenced', drain: 'Drained', fog: 'Fogged', bind: 'Bound', confusion: 'Confused' }
-                    const descs = { silence: `${d.target || ''} cards muted`, drain: '−1 Energy/turn', fog: 'Options hidden', bind: '−1 Draw/turn', confusion: 'Options shuffle' }
+                    const icons = { silence: '🔇', drain: '⚡', fog: '🌫️', bind: '🔗', confusion: '🔀', contract_clause: '📜', time_split: '⏳' }
+                    const colors = { silence: 'border-purple-600 bg-purple-950/80', drain: 'border-yellow-600 bg-yellow-950/80', fog: 'border-blue-500 bg-blue-950/80', bind: 'border-orange-500 bg-orange-950/80', confusion: 'border-pink-500 bg-pink-950/80', contract_clause: 'border-yellow-500 bg-yellow-950/80', time_split: 'border-violet-500 bg-violet-950/80' }
+                    const labels = { silence: 'Silenced', drain: 'Drained', fog: 'Fogged', bind: 'Bound', confusion: 'Confused', contract_clause: 'Contract', time_split: 'Time Split' }
+                    const descs = { silence: `${d.target || ''} cards muted`, drain: '−1 Energy/turn', fog: 'Options hidden', bind: '−1 Draw/turn', confusion: 'Options shuffle', contract_clause: 'Play Grammar or take damage!', time_split: `${d.damage || 0} delayed damage` }
                     return (
                       <div key={i} className="relative group">
                         <div className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-full border text-[10px] font-bold cursor-help ${colors[d.type] || 'border-gray-600 bg-gray-900'}`}>

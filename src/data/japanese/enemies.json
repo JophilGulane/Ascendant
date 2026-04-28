@@ -379,8 +379,7 @@
         "debuff_fog"
       ],
       [
-        "debuff_confusion",
-        "strike"
+        "special_fox_fire"
       ],
       [
         "self_buff_power_up",
@@ -389,6 +388,10 @@
       [
         "strike",
         "debuff_bind"
+      ],
+      [
+        "debuff_confusion",
+        "strike"
       ]
     ],
     "wrong_answer_buffs": {
@@ -634,7 +637,7 @@
         "debuff_silence"
       ],
       [
-        "strike",
+        "special_time_split",
         "self_buff_power_up"
       ],
       [
@@ -1087,7 +1090,7 @@
         "strike"
       ],
       [
-        "self_buff_enrage",
+        "special_demon_roar",
         "debuff_curse"
       ],
       [
