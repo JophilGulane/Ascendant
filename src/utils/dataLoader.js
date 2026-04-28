@@ -13,7 +13,13 @@ import esEnemies from '../data/spanish/enemies.json'
 import esEvents from '../data/spanish/events.json'
 import esRelics from '../data/spanish/relics.json'
 
+import { tryGetCustomEnemies } from './customCampaignLoader.js'
+
 export function getEnemies(campaignId) {
+  // Transparent custom campaign branch — returns teacher-built enemies if applicable
+  const custom = tryGetCustomEnemies(campaignId)
+  if (custom !== null) return custom
+
   if (campaignId === 'korean') return krEnemies
   if (campaignId === 'spanish') return esEnemies
   return jpEnemies

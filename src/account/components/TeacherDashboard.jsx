@@ -2,6 +2,7 @@
 // Teacher-only class management: create class, copy join code, see enrolled students, delete class.
 
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import useAccountStore from '../../stores/accountStore.js'
 
@@ -109,6 +110,7 @@ function ClassCard({ cls, onDelete }) {
 
 export function TeacherDashboard({ onClose }) {
   const { session, profile, createNewClass, deleteExistingClass } = useAccountStore()
+  const navigate = useNavigate()
   const [newClassName, setNewClassName] = useState('')
   const [createError, setCreateError]   = useState(null)
   const [createSuccess, setCreateSuccess] = useState(null)
@@ -169,7 +171,20 @@ export function TeacherDashboard({ onClose }) {
               @{session?.username} · {classes.length} class{classes.length !== 1 ? 'es' : ''}
             </p>
           </div>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#6b7280', fontSize: '1.4rem', cursor: 'pointer' }}>×</button>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <motion.button
+              onClick={() => { onClose(); navigate('/teach') }}
+              whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
+              style={{
+                padding: '8px 14px', borderRadius: '10px', border: '1px solid rgba(168,85,247,0.35)',
+                background: 'rgba(168,85,247,0.12)', color: '#c084fc',
+                fontWeight: 700, fontSize: '0.76rem', cursor: 'pointer',
+              }}
+            >
+              📚 Lesson Builder
+            </motion.button>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#6b7280', fontSize: '1.4rem', cursor: 'pointer' }}>×</button>
+          </div>
         </div>
 
         {/* Create new class */}

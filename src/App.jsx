@@ -15,6 +15,7 @@ const GraveyardScreen = lazy(() => import('./components/menus/GraveyardScreen.js
 const ModifierSelect = lazy(() => import('./components/menus/ModifierSelect.jsx').then(m => ({ default: m.ModifierSelect })))
 const PantheonScreen = lazy(() => import('./components/menus/PantheonScreen.jsx').then(m => ({ default: m.PantheonScreen })))
 const LeaderboardScreen = lazy(() => import('./components/leaderboard/LeaderboardScreen.jsx').then(m => ({ default: m.LeaderboardScreen })))
+const LessonBuilderShell = lazy(() => import('./teacher/components/LessonBuilderShell.jsx').then(m => ({ default: m.LessonBuilderShell })))
 
 function LoadingFallback() {
   return (
@@ -44,6 +45,7 @@ export default function App() {
             <Route path="/modifier-select" element={<ModifierSelect />} />
             <Route path="/pantheon" element={<PantheonScreen />} />
             <Route path="/leaderboard" element={<LeaderboardScreen />} />
+            <Route path="/teach" element={<LessonBuilderShell />} />
             {/* Fallback */}
             <Route path="*" element={<MainMenu />} />
           </Routes>

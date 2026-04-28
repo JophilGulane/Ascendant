@@ -2,6 +2,7 @@
 // Question sampling and filtering utilities
 
 import { isRuleActive } from '../constants/masteryRules.js'
+import { tryGetCustomQuestions, isCustomCampaign } from './customCampaignLoader.js'
 
 function weightedRandomChoice(pool, weights) {
   const totalWeight = weights.reduce((sum, w) => sum + w, 0)
@@ -46,6 +47,21 @@ export function filterQuestionsByFloor(questions, floor) {
  */
 export function sampleQuestionsForCard(card, allQuestions, graveyardEntries, settings, floor, store) {
   const usedIds = store?.fightQuestionPoolUsed ?? []
+
+  // ── Custom campaign: use teacher-built questions ──────────────────────────
+  const campaignId = card.campaign
+  if (isCustomCampaign(campaignId)) {
+    const customQs = tryGetCustomQuestions(campaignId) || []
+    const floorFiltered = filterQuestionsByFloor(customQs, floor)
+    let pool = floorFiltered.filter(q => q.type === card.type && !usedIds.includes(q.id))
+    if (pool.length === 0) pool = floorFiltered.filter(q => q.type === card.type)
+    if (pool.length === 0) pool = customQs.filter(q => q.type === card.type)
+    if (pool.length === 0) pool = customQs
+    if (pool.length === 0) return null
+    const chosen = pool[Math.floor(Math.random() * pool.length)]
+    store?.markQuestionUsed?.(chosen.id)
+    return chosen
+  }
 
   const floorFiltered = filterQuestionsByFloor(allQuestions, floor)
 

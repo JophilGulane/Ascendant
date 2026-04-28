@@ -10,6 +10,13 @@ import { CARDS as CAMPAIGN_CHARS } from '../../constants/campaigns.js'
 import { buildStartingDeck } from '../../utils/deck.js'
 import { ScreenTransition } from '../shared/ScreenTransition.jsx'
 import { useAudio } from '../../hooks/useAudio.js'
+import { isCustomCampaign, getCustomCampaignTheme } from '../../utils/customCampaignLoader.js'
+
+// Generic characters used for custom campaigns (teacher doesn't define characters)
+const CUSTOM_CHARACTERS = [
+  { id: 'scholar', name: 'The Scholar', title: 'Eager Learner', type: 'newcomer', fluency: 'First time', description: 'Approaches every subject with fresh eyes and an open mind.', startingDeckBreakdown: { vocabulary: 4, grammar: 3, reading: 2, rare: 1 }, starterRelic: 'newcomers_phrasebook', hp: 80, locked: false },
+  { id: 'veteran', name: 'The Veteran', title: 'Returning Student', type: 'traveler', fluency: 'Some experience', description: 'Has seen this material before. Ready to go deeper.', startingDeckBreakdown: { vocabulary: 4, grammar: 3, reading: 2, rare: 1 }, starterRelic: 'travelers_compass', hp: 80, locked: false },
+]
 
 // Floating ember
 function Ember({ delay }) {
@@ -151,7 +158,10 @@ export function CharacterSelect() {
   const [selectedChar, setSelectedChar] = useState(null)
 
   const campaignId = sessionStorage.getItem('selected_campaign') || 'japanese'
-  const CHARS = CAMPAIGN_CHARS[campaignId]?.characters || []
+  const isCustom   = isCustomCampaign(campaignId)
+  const CHARS = isCustom
+    ? CUSTOM_CHARACTERS
+    : (CAMPAIGN_CHARS[campaignId]?.characters || [])
 
   const handleTileClick = (char) => {
     if (char.locked) return
@@ -162,7 +172,9 @@ export function CharacterSelect() {
     if (!selectedChar) return
     playSFX('button_click')
     stopMusic()
-    const campaign = CAMPAIGN_CHARS[campaignId]
+
+    // For custom campaigns, use the Japanese starter deck as a generic base
+    const campaign = isCustom ? CAMPAIGN_CHARS['japanese'] : CAMPAIGN_CHARS[campaignId]
 
     // Choose rare card based on character
     const rareCard = selectedChar.id === 'hana' ? 'jp_read_newcomers_luck'
@@ -175,12 +187,16 @@ export function CharacterSelect() {
       campaign.startingReadingCards || [],
       rareCard
     )
-    // Store run config in sessionStorage — startRun will be called by ModifierSelect
-    // after the modifier is chosen, so starting HP/energy/gold apply correctly.
+    // Ensure every card in the deck carries the correct campaignId
+    // so combat engine can route questions to the custom question bank.
+    const taggedDeck = isCustom
+      ? deck.map(card => ({ ...card, campaign: campaignId }))
+      : deck
+
     sessionStorage.setItem('pending_run', JSON.stringify({
       campaignId,
       character: selectedChar,
-      deck,
+      deck: taggedDeck,
       starterRelic: selectedChar.starterRelic,
     }))
     sessionStorage.removeItem('active_encounter')

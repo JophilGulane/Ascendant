@@ -8,6 +8,9 @@ import { useAudio } from '../../hooks/useAudio.js'
 import useRunStore from '../../stores/runStore.js'
 import { CAMPAIGN_THEMES } from '../../constants/campaigns.js'
 import { AccountBadge } from '../../account/components/AccountBadge.jsx'
+import useAccountStore from '../../stores/accountStore.js'
+import { getUnlockedCustomThemes, getCustomCampaignTheme } from '../../utils/customCampaignLoader.js'
+import { unlockCustomCampaign } from '../../teacher/teacherService.js'
 
 // Floating ember particle (like STS burning embers)
 function Ember({ delay }) {
@@ -38,24 +41,52 @@ function Ember({ delay }) {
 }
 
 const MENU_ITEMS = [
-  { id: 'play',        label: 'Play' },
-  { id: 'leaderboard',label: '🏆 Leaderboard' },
-  { id: 'pantheon',   label: 'The Pantheon' },
-  { id: 'graveyard',  label: 'Mistake Graveyard' },
-  { id: 'settings',   label: 'Settings' },
-  { id: 'about',      label: 'About' },
+  { id: 'play',           label: 'Play' },
+  { id: 'lesson_builder', label: '📚 Lesson Builder', teacherOnly: true },
+  { id: 'leaderboard',   label: 'Leaderboard' },
+  { id: 'pantheon',      label: 'The Pantheon' },
+  { id: 'graveyard',     label: 'Mistake Graveyard' },
+  { id: 'settings',      label: 'Settings' },
+  { id: 'about',         label: 'About' },
 ]
 
 export function MainMenu() {
   const navigate = useNavigate()
   const store = useRunStore()
   const { playMusic, playSFX } = useAudio()
-  
+  const { session, isLoggedIn } = useAccountStore()
+
   const [hoveredItem, setHoveredItem] = useState(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [view, setView] = useState('main') // 'main' | 'campaign'
+  const [customCampaigns, setCustomCampaigns] = useState([])
+  const [codeInput, setCodeInput] = useState('')
+  const [codeMsg, setCodeMsg] = useState(null)
 
   const hasActiveRun = Boolean(store.runId)
+
+
+  // Load unlocked custom campaigns when campaign view opens
+  useEffect(() => {
+    if (view === 'campaign') {
+      setCustomCampaigns(getUnlockedCustomThemes(session?.username))
+    }
+  }, [view, session?.username])
+
+  const handleUnlockCode = () => {
+    const code = codeInput.trim().toUpperCase()
+    if (!code) return
+    if (!isLoggedIn) { setCodeMsg({ ok: false, msg: 'Sign in to unlock campaigns.' }); return }
+    const result = unlockCustomCampaign(session.username, code)
+    if (result.ok) {
+      setCodeMsg({ ok: true, msg: `✓ Unlocked: ${result.campaign.name}` })
+      setCustomCampaigns(getUnlockedCustomThemes(session.username))
+      setCodeInput('')
+    } else {
+      setCodeMsg({ ok: false, msg: result.error })
+    }
+    setTimeout(() => setCodeMsg(null), 4000)
+  }
 
   useEffect(() => {
     // Attempt to play immediately (works if navigating back to menu)
@@ -80,12 +111,13 @@ export function MainMenu() {
 
   const handleMenuClick = (id) => {
     playSFX('button_click')
-    if (id === 'play')        setView('campaign')
-    if (id === 'graveyard')   navigate('/graveyard')
-    if (id === 'pantheon')    navigate('/pantheon')
-    if (id === 'leaderboard') navigate('/leaderboard')
-    if (id === 'settings')    setSettingsOpen(true)
-    if (id === 'about') {} // placeholder
+    if (id === 'play')           setView('campaign')
+    if (id === 'lesson_builder') navigate('/teach')
+    if (id === 'graveyard')      navigate('/graveyard')
+    if (id === 'pantheon')       navigate('/pantheon')
+    if (id === 'leaderboard')    navigate('/leaderboard')
+    if (id === 'settings')       setSettingsOpen(true)
+    if (id === 'about') { } // placeholder
   }
 
   return (
@@ -187,7 +219,9 @@ export function MainMenu() {
           </motion.div>
         )}
 
-        {MENU_ITEMS.map((item, i) => (
+        {MENU_ITEMS
+          .filter(item => !item.teacherOnly || session?.accountType === 'teacher')
+          .map((item, i) => (
           <motion.div
             key={item.id}
             initial={{ opacity: 0, x: -20 }}
@@ -206,14 +240,18 @@ export function MainMenu() {
               <motion.span
                 animate={{ x: hoveredItem === item.id ? 8 : 0 }}
                 style={{
-                  fontSize: 'clamp(1.1rem, 2.8vw, 1.8rem)',
+                  fontSize: item.teacherOnly
+                    ? 'clamp(0.9rem, 2.2vw, 1.45rem)'
+                    : 'clamp(1.1rem, 2.8vw, 1.8rem)',
                   fontFamily: "'Cinzel', Georgia, serif",
                   fontWeight: 600,
                   letterSpacing: '0.02em',
                   textShadow: hoveredItem === item.id
-                    ? '0 0 30px #F5C842, 0 2px 6px rgba(0,0,0,0.9)'
+                    ? '0 0 30px #c084fc, 0 2px 6px rgba(0,0,0,0.9)'
                     : '0 2px 6px rgba(0,0,0,0.9)',
-                  color: hoveredItem === item.id ? '#F5C842' : '#e8e8e8',
+                  color: item.teacherOnly
+                    ? (hoveredItem === item.id ? '#c084fc' : '#a855f7')
+                    : (hoveredItem === item.id ? '#F5C842' : '#e8e8e8'),
                   transition: 'color 0.15s, text-shadow 0.15s',
                 }}
               >
@@ -250,12 +288,13 @@ export function MainMenu() {
                 ← Back
               </button>
             </div>
-            
+
             <h2 className="text-4xl text-amber-300 font-bold mb-12" style={{ fontFamily: "'Cinzel', serif", textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>
               Select Campaign
             </h2>
-            
-            <div className="flex gap-6 items-stretch justify-center max-w-6xl px-12 w-full">
+
+            <div className="flex gap-6 items-stretch justify-center max-w-6xl px-12 w-full flex-wrap">
+              {/* Built-in campaigns */}
               {Object.values(CAMPAIGN_THEMES).map((campaign, i) => (
                 <motion.button
                   key={campaign.id}
@@ -277,26 +316,22 @@ export function MainMenu() {
                     ${campaign.locked ? 'border-gray-800 cursor-default grayscale' : 'border-gray-600 cursor-pointer'}
                   `}
                   style={{
-                    minHeight: '400px',
+                    minHeight: '400px', minWidth: '200px',
                     background: campaign.bgGradient,
                     boxShadow: campaign.locked ? 'none' : `0 10px 30px rgba(0,0,0,0.8), 0 0 20px ${campaign.accent}44`,
                   }}
                 >
                   <div className="absolute inset-0 p-8 flex flex-col items-center justify-center text-center">
                     <div className="text-6xl mb-6 drop-shadow-lg">{campaign.particleEmoji}</div>
-                    
                     <h3 className="text-2xl font-bold mb-2 text-white" style={{ fontFamily: "'Cinzel', serif" }}>
                       {campaign.name}
                     </h3>
-                    
                     <div className="text-sm font-bold tracking-widest mb-6 uppercase" style={{ color: campaign.accent }}>
                       {campaign.language}
                     </div>
-                    
                     <p className="text-gray-300 text-sm italic mb-auto">
                       "{campaign.tagline}"
                     </p>
-                    
                     {campaign.locked && (
                       <div className="mt-8 bg-gray-900/80 text-gray-500 font-bold uppercase tracking-widest px-4 py-2 rounded-lg border border-gray-700">
                         Locked
@@ -305,6 +340,101 @@ export function MainMenu() {
                   </div>
                 </motion.button>
               ))}
+
+              {/* Custom campaigns — styled identically to built-in campaign cards */}
+              {customCampaigns.map((campaign, i) => (
+                <motion.button
+                  key={campaign.id}
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: (Object.values(CAMPAIGN_THEMES).length + i) * 0.1 }}
+                  onHoverStart={() => playSFX('button_hover')}
+                  whileHover={{ scale: 1.05, y: -10 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    playSFX('button_click')
+                    sessionStorage.setItem('selected_campaign', campaign.id)
+                    navigate('/character-select')
+                  }}
+                  className="relative flex-1 rounded-2xl overflow-hidden border-2 cursor-pointer transition-all"
+                  style={{
+                    minHeight: '400px', minWidth: '200px',
+                    background: campaign.bgGradient,
+                    borderColor: campaign.accent + 'aa',
+                    boxShadow: `0 10px 30px rgba(0,0,0,0.8), 0 0 20px ${campaign.accent}44`,
+                  }}
+                >
+                  {/* Inner glow overlay matching built-in style */}
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    background: `radial-gradient(ellipse 80% 60% at 50% 100%, ${campaign.accent}18, transparent 70%)`,
+                    pointerEvents: 'none',
+                  }} />
+
+                  <div className="absolute inset-0 p-8 flex flex-col items-center justify-center text-center">
+                    {/* Emoji — same size as built-in cards */}
+                    <div className="text-6xl mb-6 drop-shadow-lg">{campaign.particleEmoji || '📚'}</div>
+
+                    {/* Campaign name — Cinzel, 2xl like built-in */}
+                    <h3 className="text-2xl font-bold mb-2 text-white" style={{ fontFamily: "'Cinzel', serif" }}>
+                      {campaign.name}
+                    </h3>
+
+                    {/* Subject tag — same accent colour + tracking as language line */}
+                    <div className="text-sm font-bold tracking-widest mb-6 uppercase" style={{ color: campaign.accent }}>
+                      {campaign.subject || 'Custom'}
+                    </div>
+
+                    {/* Description as tagline — italic gray, same as built-in */}
+                    <p className="text-gray-300 text-sm italic mb-auto">
+                      "{campaign.tagline?.slice(0, 100) || 'A teacher-built campaign'}"
+                    </p>
+
+                    {/* Campaign code — subtle, bottom of card */}
+                    <div style={{ marginTop: '16px', fontSize: '0.6rem', color: `${campaign.accent}99`, fontFamily: 'monospace', letterSpacing: '0.15em', fontWeight: 700 }}>
+                      {campaign.code}
+                    </div>
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+
+            {/* Campaign Code unlock input */}
+            <div style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+              <div style={{ fontSize: '0.7rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                Have a Campaign Code from your teacher?
+              </div>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  value={codeInput}
+                  onChange={e => setCodeInput(e.target.value.toUpperCase())}
+                  onKeyDown={e => e.key === 'Enter' && handleUnlockCode()}
+                  placeholder="Enter code e.g. CP-7731"
+                  style={{
+                    background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)',
+                    borderRadius: '10px', padding: '10px 16px', color: '#f3f4f6',
+                    fontSize: '0.88rem', outline: 'none', fontFamily: 'monospace',
+                    letterSpacing: '0.1em', width: '200px',
+                  }}
+                />
+                <motion.button
+                  onClick={handleUnlockCode}
+                  whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                  style={{
+                    padding: '10px 20px', borderRadius: '10px', border: 'none',
+                    background: 'linear-gradient(135deg,#b45309,#F5C842)',
+                    color: '#1a0e00', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer',
+                    fontFamily: "'Cinzel', serif",
+                  }}
+                >
+                  Unlock
+                </motion.button>
+              </div>
+              {codeMsg && (
+                <div style={{ fontSize: '0.78rem', color: codeMsg.ok ? '#6ee7b7' : '#fca5a5' }}>
+                  {codeMsg.msg}
+                </div>
+              )}
             </div>
           </motion.div>
         )}
