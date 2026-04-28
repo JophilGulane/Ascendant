@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useAudio } from '../../hooks/useAudio.js'
 import useRunStore from '../../stores/runStore.js'
 import { CAMPAIGN_THEMES } from '../../constants/campaigns.js'
+import { AccountBadge } from '../../account/components/AccountBadge.jsx'
 
 // Floating ember particle (like STS burning embers)
 function Ember({ delay }) {
@@ -110,16 +111,8 @@ export function MainMenu() {
         {Array.from({ length: 20 }).map((_, i) => <Ember key={i} delay={i * 0.4} />)}
       </div>
 
-      {/* ── Player name badge (top-left) ── */}
-      <div className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-black/40 border border-gray-700/50 rounded px-3 py-1.5">
-        <div className="w-5 h-5 bg-gray-700 rounded-sm flex items-center justify-center">
-          <span className="text-[10px] text-gray-300">◆</span>
-        </div>
-        <div>
-          <div className="text-xs font-bold text-white leading-none">Player</div>
-          <div className="text-[9px] text-amber-400/70 leading-none mt-0.5">click to edit</div>
-        </div>
-      </div>
+      {/* ── Account badge (top-left) — replaces static Player placeholder ── */}
+      <AccountBadge />
 
       {/* ── Title (center) ── */}
       <motion.div

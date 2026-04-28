@@ -7,6 +7,9 @@ export const STORAGE_KEYS = {
   PROGRESS: 'lq_progress',
   SETTINGS: 'lq_settings',
   JOURNAL: 'lq_journal',
+  // Account system
+  ACCOUNTS_DB: 'lq_accounts_v1',
+  SESSION: 'lq_session_v1',
 }
 
 let _degraded = false
