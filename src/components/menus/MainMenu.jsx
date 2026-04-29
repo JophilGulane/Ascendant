@@ -42,13 +42,13 @@ function Ember({ delay }) {
 }
 
 const MENU_ITEMS = [
-  { id: 'play',           label: 'Play' },
+  { id: 'play', label: 'Play' },
   { id: 'lesson_builder', label: '📚 Lesson Builder', teacherOnly: true },
-  { id: 'leaderboard',   label: 'Leaderboard' },
-  { id: 'pantheon',      label: 'The Pantheon' },
-  { id: 'graveyard',     label: 'Mistake Graveyard' },
-  { id: 'settings',      label: 'Settings' },
-  { id: 'about',         label: 'About' },
+  { id: 'leaderboard', label: 'Leaderboard' },
+  { id: 'pantheon', label: 'The Pantheon' },
+  { id: 'graveyard', label: 'Mistake Graveyard' },
+  { id: 'settings', label: 'Settings' },
+  { id: 'about', label: 'About' },
 ]
 
 export function MainMenu() {
@@ -112,12 +112,12 @@ export function MainMenu() {
 
   const handleMenuClick = (id) => {
     playSFX('button_click')
-    if (id === 'play')           navigate('/mode-select')
+    if (id === 'play') navigate('/mode-select')
     if (id === 'lesson_builder') navigate('/teach')
-    if (id === 'graveyard')      navigate('/graveyard')
-    if (id === 'pantheon')       navigate('/pantheon')
-    if (id === 'leaderboard')    navigate('/leaderboard')
-    if (id === 'settings')       setSettingsOpen(true)
+    if (id === 'graveyard') navigate('/graveyard')
+    if (id === 'pantheon') navigate('/pantheon')
+    if (id === 'leaderboard') navigate('/leaderboard')
+    if (id === 'settings') setSettingsOpen(true)
     if (id === 'about') { } // placeholder
   }
 
@@ -223,48 +223,48 @@ export function MainMenu() {
         {MENU_ITEMS
           .filter(item => !item.teacherOnly || session?.accountType === 'teacher')
           .map((item, i) => (
-          <motion.div
-            key={item.id}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 + i * 0.08 }}
-          >
-            <button
-              onClick={() => handleMenuClick(item.id)}
-              onMouseEnter={() => {
-                setHoveredItem(item.id)
-                playSFX('button_hover')
-              }}
-              onMouseLeave={() => setHoveredItem(null)}
-              className="flex items-center gap-2 group"
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 + i * 0.08 }}
             >
-              <motion.span
-                animate={{ x: hoveredItem === item.id ? 8 : 0 }}
-                style={{
-                  fontSize: item.teacherOnly
-                    ? 'clamp(0.9rem, 2.2vw, 1.45rem)'
-                    : 'clamp(1.1rem, 2.8vw, 1.8rem)',
-                  fontFamily: "'Cinzel', Georgia, serif",
-                  fontWeight: 600,
-                  letterSpacing: '0.02em',
-                  textShadow: hoveredItem === item.id
-                    ? '0 0 30px #c084fc, 0 2px 6px rgba(0,0,0,0.9)'
-                    : '0 2px 6px rgba(0,0,0,0.9)',
-                  color: item.teacherOnly
-                    ? (hoveredItem === item.id ? '#c084fc' : '#a855f7')
-                    : (hoveredItem === item.id ? '#F5C842' : '#e8e8e8'),
-                  transition: 'color 0.15s, text-shadow 0.15s',
+              <button
+                onClick={() => handleMenuClick(item.id)}
+                onMouseEnter={() => {
+                  setHoveredItem(item.id)
+                  playSFX('button_hover')
                 }}
+                onMouseLeave={() => setHoveredItem(null)}
+                className="flex items-center gap-2 group"
               >
-                {item.label}
-              </motion.span>
-            </button>
-          </motion.div>
-        ))}
+                <motion.span
+                  animate={{ x: hoveredItem === item.id ? 8 : 0 }}
+                  style={{
+                    fontSize: item.teacherOnly
+                      ? 'clamp(0.9rem, 2.2vw, 1.45rem)'
+                      : 'clamp(1.1rem, 2.8vw, 1.8rem)',
+                    fontFamily: "'Cinzel', Georgia, serif",
+                    fontWeight: 600,
+                    letterSpacing: '0.02em',
+                    textShadow: hoveredItem === item.id
+                      ? '0 0 30px #c084fc, 0 2px 6px rgba(0,0,0,0.9)'
+                      : '0 2px 6px rgba(0,0,0,0.9)',
+                    color: item.teacherOnly
+                      ? (hoveredItem === item.id ? '#c084fc' : '#a855f7')
+                      : (hoveredItem === item.id ? '#F5C842' : '#e8e8e8'),
+                    transition: 'color 0.15s, text-shadow 0.15s',
+                  }}
+                >
+                  {item.label}
+                </motion.span>
+              </button>
+            </motion.div>
+          ))}
 
         {/* Version */}
         <div className="mt-4 text-[10px] text-gray-600" style={{ fontFamily: 'monospace' }}>
-          v0.2 · Phase 3
+          v0.1
         </div>
       </div>
 

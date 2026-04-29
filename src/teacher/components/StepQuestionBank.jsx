@@ -5,6 +5,7 @@
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { QUESTION_TYPES, makeBlankQuestion, parseCSV } from '../teacherService.js'
+import { AIGeneratorPanel } from './AIGeneratorPanel.jsx'
 
 const FLOORS = [1, 2, 3, 4]
 const MIN_PER_TIER = 10
@@ -261,6 +262,7 @@ export function StepQuestionBank({ campaign, onUpdate }) {
   const [filterFloor, setFilterFloor] = useState(null)
   const [filterType,  setFilterType]  = useState(null)
   const [showCsv, setShowCsv] = useState(false)
+  const [showAI,  setShowAI]  = useState(false)
 
   const saveQuestion = (q) => {
     let updated
@@ -305,6 +307,17 @@ export function StepQuestionBank({ campaign, onUpdate }) {
         <button onClick={() => setShowCsv(s => !s)} style={{ padding: '8px 18px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.12)', background: 'transparent', color: '#9ca3af', fontSize: '0.82rem', cursor: 'pointer' }}>
           {showCsv ? '▲ Hide' : '📋 Bulk Import'}
         </button>
+        <motion.button
+          onClick={() => setShowAI(s => !s)}
+          whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+          style={{
+            padding: '8px 18px', borderRadius: '10px', border: `1px solid ${showAI ? 'rgba(124,58,237,0.5)' : 'rgba(124,58,237,0.25)'}`,
+            background: showAI ? 'rgba(124,58,237,0.18)' : 'rgba(124,58,237,0.08)',
+            color: '#a78bfa', fontSize: '0.82rem', cursor: 'pointer', fontWeight: showAI ? 700 : 400,
+          }}
+        >
+          🤖 AI Generate
+        </motion.button>
         {/* Filters */}
         <div style={{ marginLeft: 'auto', display: 'flex', gap: '6px' }}>
           <select value={filterFloor || ''} onChange={e => setFilterFloor(e.target.value ? Number(e.target.value) : null)}
@@ -338,48 +351,65 @@ export function StepQuestionBank({ campaign, onUpdate }) {
         )}
       </AnimatePresence>
 
-      {/* Question list */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-        {visible.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '48px 0', color: '#4b5563', fontSize: '0.85rem' }}>
-            {questions.length === 0 ? 'No questions yet. Add your first one!' : 'No questions match this filter.'}
-          </div>
-        )}
-        {visible.map(q => (
-          <AnimatePresence key={q.id} mode="popLayout">
-            {editing === q.id ? (
-              <QuestionEditor q={q} onSave={saveQuestion} onCancel={() => setEditing(null)} />
-            ) : (
-              <motion.div
-                layout
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '10px',
-                  padding: '10px 14px', borderRadius: '10px',
-                  background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
-                }}
-              >
-                <span style={{ fontSize: '0.62rem', color: '#6b7280', fontFamily: 'monospace', flexShrink: 0 }}>F{q.floor_tier}</span>
-                <span style={{
-                  fontSize: '0.6rem', flexShrink: 0,
-                  color: q.type === 'vocabulary' ? '#fca5a5' : q.type === 'grammar' ? '#93c5fd' : '#86efac',
-                  background: q.type === 'vocabulary' ? 'rgba(239,68,68,0.1)' : q.type === 'grammar' ? 'rgba(59,130,246,0.1)' : 'rgba(34,197,94,0.1)',
-                  border: `1px solid ${q.type === 'vocabulary' ? 'rgba(239,68,68,0.3)' : q.type === 'grammar' ? 'rgba(59,130,246,0.3)' : 'rgba(34,197,94,0.3)'}`,
-                  borderRadius: '4px', padding: '1px 6px',
-                }}>{q.type.slice(0, 4).toUpperCase()}</span>
-                <span style={{ flex: 1, color: '#d1d5db', fontSize: '0.82rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{q.question || '(empty)'}</span>
-                <button onClick={() => setEditing(q.id)} style={{ background: 'none', border: 'none', color: '#F5C842', cursor: 'pointer', fontSize: '0.75rem' }}>Edit</button>
-                <button onClick={() => deleteQ(q.id)} style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', fontSize: '0.75rem' }}>✕</button>
-              </motion.div>
+      {/* Question list + AI panel side-by-side */}
+      <div style={{ display: 'flex', gap: '0', alignItems: 'flex-start', margin: '0 -40px -32px', position: 'relative' }}>
+        <div style={{ flex: 1, minWidth: 0, padding: '0 40px 32px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            {visible.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '48px 0', color: '#4b5563', fontSize: '0.85rem' }}>
+                {questions.length === 0 ? 'No questions yet. Add your first one!' : 'No questions match this filter.'}
+              </div>
             )}
-          </AnimatePresence>
-        ))}
-      </div>
-      <div style={{ fontSize: '0.68rem', color: '#4b5563', textAlign: 'center' }}>
-        Total: {questions.length} question{questions.length !== 1 ? 's' : ''}
+            {visible.map(q => (
+              <AnimatePresence key={q.id} mode="popLayout">
+                {editing === q.id ? (
+                  <QuestionEditor q={q} onSave={saveQuestion} onCancel={() => setEditing(null)} />
+                ) : (
+                  <motion.div
+                    layout
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '10px',
+                      padding: '10px 14px', borderRadius: '10px',
+                      background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
+                    }}
+                  >
+                    <span style={{ fontSize: '0.62rem', color: '#6b7280', fontFamily: 'monospace', flexShrink: 0 }}>F{q.floor_tier}</span>
+                    <span style={{
+                      fontSize: '0.6rem', flexShrink: 0,
+                      color: q.type === 'vocabulary' ? '#fca5a5' : q.type === 'grammar' ? '#93c5fd' : '#86efac',
+                      background: q.type === 'vocabulary' ? 'rgba(239,68,68,0.1)' : q.type === 'grammar' ? 'rgba(59,130,246,0.1)' : 'rgba(34,197,94,0.1)',
+                      border: `1px solid ${q.type === 'vocabulary' ? 'rgba(239,68,68,0.3)' : q.type === 'grammar' ? 'rgba(59,130,246,0.3)' : 'rgba(34,197,94,0.3)'}`,
+                      borderRadius: '4px', padding: '1px 6px',
+                    }}>{q.type.slice(0, 4).toUpperCase()}</span>
+                    {q._aiGenerated && <span style={{ fontSize: '0.55rem', color: '#7c3aed', background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.2)', borderRadius: '3px', padding: '1px 4px', fontWeight: 700 }}>AI</span>}
+                    <span style={{ flex: 1, color: '#d1d5db', fontSize: '0.82rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{q.question || '(empty)'}</span>
+                    <button onClick={() => setEditing(q.id)} style={{ background: 'none', border: 'none', color: '#F5C842', cursor: 'pointer', fontSize: '0.75rem' }}>Edit</button>
+                    <button onClick={() => deleteQ(q.id)} style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', fontSize: '0.75rem' }}>✕</button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            ))}
+          </div>
+          <div style={{ fontSize: '0.68rem', color: '#4b5563', textAlign: 'center', marginTop: '12px' }}>
+            Total: {questions.length} question{questions.length !== 1 ? 's' : ''}
+          </div>
+        </div>
+
+        {/* AI Generator Panel */}
+        <AnimatePresence>
+          {showAI && (
+            <AIGeneratorPanel
+              campaign={campaign}
+              onApprove={importMany}
+              onClose={() => setShowAI(false)}
+            />
+          )}
+        </AnimatePresence>
       </div>
     </div>
   )
 }
+
