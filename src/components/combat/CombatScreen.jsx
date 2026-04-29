@@ -620,6 +620,7 @@ export function CombatScreen() {
                 silencedTypes={silencedTypes}
                 retainedCards={store.retainedCards}
                 retainGrowthStacks={store.retainGrowthStacks}
+                upgradedCards={store.upgradedCards || []}
                 selectedCardId={activeCardId}
                 chainActive={store.chainActive}
                 chainType={store.chainType}
