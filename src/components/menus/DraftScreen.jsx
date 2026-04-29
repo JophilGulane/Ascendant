@@ -6,6 +6,12 @@ import { HoverTranslate } from '../shared/HoverTranslate.jsx'
 import { useAudio } from '../../hooks/useAudio.js'
 import useRunStore from '../../stores/runStore.js'
 
+// v4: Upgrade bonus constants
+const UPGRADE_DMG = 3
+const UPGRADE_BLK = 3
+const UPGRADE_HEAL = 2
+const UPGRADE_DRAW = 1
+
 /**
  * @param {Object[]} cards - sampled draft card data objects
  * @param {Object} cardMap - full card map
@@ -16,6 +22,7 @@ import useRunStore from '../../stores/runStore.js'
 export default function DraftScreen({ cards = [], cardMap = {}, onPick, onSkip, accuracy = 1 }) {
   const { playSFX } = useAudio()
   const activeModifier = useRunStore(s => s.activeModifier)
+  const upgradedCards = useRunStore(s => s.upgradedCards) || []
   // Curse: blind_drafts — card names/effects are hidden during draft
   const isBlindDraft = activeModifier?.curse?.effect?.type === 'blind_drafts'
 
@@ -64,7 +71,7 @@ export default function DraftScreen({ cards = [], cardMap = {}, onPick, onSkip, 
                   className={`
                     w-56 p-5 rounded-2xl border-2 cursor-pointer transition-all hover:ring-2 hover:ring-yellow-400/50 hover:shadow-xl hover:shadow-yellow-500/20
                     ${typeMeta.bgClass}
-                    ${rarityMeta.borderClass}/60
+                    ${upgradedCards.includes(card.id) ? 'border-amber-500/80' : `${rarityMeta.borderClass}/60`}
                   `}
                   style={{ background: 'linear-gradient(160deg, rgba(18,18,24,0.95) 0%, rgba(8,8,12,0.98) 100%)' }}
                 >
@@ -81,7 +88,9 @@ export default function DraftScreen({ cards = [], cardMap = {}, onPick, onSkip, 
                     {isBlindDraft ? (
                       <span className="text-gray-600 italic">???</span>
                     ) : (
-                      <HoverTranslate translation={card.name_native}>{card.name_target}</HoverTranslate>
+                      <HoverTranslate translation={card.name_native}>
+                        {card.name_target}{upgradedCards.includes(card.id) ? '+' : ''}
+                      </HoverTranslate>
                     )}
                   </div>
                   <div className="text-xs text-gray-500 mb-2">
@@ -93,7 +102,7 @@ export default function DraftScreen({ cards = [], cardMap = {}, onPick, onSkip, 
 
                   {/* Effect */}
                   <div className="text-xs text-gray-300 leading-tight">
-                    {isBlindDraft ? <span className="text-gray-700 italic">Effect hidden</span> : getEffectDesc(card)}
+                    {isBlindDraft ? <span className="text-gray-700 italic">Effect hidden</span> : getEffectDesc(card, upgradedCards.includes(card.id))}
                   </div>
 
                   {/* Flavor */}
@@ -123,13 +132,17 @@ export default function DraftScreen({ cards = [], cardMap = {}, onPick, onSkip, 
   )
 }
 
-function getEffectDesc(card) {
+function getEffectDesc(card, isUpgraded = false) {
   const e = card.effect || {}
   const parts = []
-  if (e.damage) parts.push(`Deal ${e.damage}${e.bonus_correct_first_try ? ` (+${e.bonus_correct_first_try})` : ''} damage`)
-  if (e.block) parts.push(`Gain ${e.block} Block`)
-  if (e.heal) parts.push(`Heal ${e.heal} HP`)
-  if (e.draw) parts.push(`Draw ${e.draw} card${e.draw > 1 ? 's' : ''}`)
+  const uD = isUpgraded ? UPGRADE_DMG : 0
+  const uB = isUpgraded ? UPGRADE_BLK : 0
+  const uH = isUpgraded ? UPGRADE_HEAL : 0
+  const uDr = isUpgraded ? UPGRADE_DRAW : 0
+  if (e.damage) parts.push(`Deal ${e.damage + uD}${e.bonus_correct_first_try ? ` (+${e.bonus_correct_first_try})` : ''} damage`)
+  if (e.block) parts.push(`Gain ${e.block + uB} Block`)
+  if (e.heal) parts.push(`Heal ${e.heal + uH} HP`)
+  if (e.draw) parts.push(`Draw ${e.draw + uDr} card${(e.draw + uDr) > 1 ? 's' : ''}`)
   if (e.chain_bonus) parts.push(`Chain: +${e.chain_bonus}`)
   return parts.join('. ') || 'Special effect.'
 }

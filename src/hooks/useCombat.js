@@ -395,9 +395,16 @@ export function useCombat() {
     const { effect } = card
     if (!effect) return
 
+    // v4: Card upgrade bonuses
+    const isUpgraded = s.upgradedCards?.includes(card.id)
+    const upgradeDmg   = isUpgraded ? 3 : 0
+    const upgradeBlock  = isUpgraded ? 3 : 0
+    const upgradeHeal   = isUpgraded ? 2 : 0
+    const upgradeDraw   = isUpgraded ? 1 : 0
+
     if (effect.damage) {
       let baseDmg = calculateDamage({
-        base: effect.damage,
+        base: effect.damage + upgradeDmg,
         bonusCorrectFirstTry: effect.bonus_correct_first_try || effect.bonus_correct_no_hint || 0,
         chainMultiplier,
         cardType: card.type,
@@ -435,20 +442,20 @@ export function useCombat() {
         // v3: retain growth — each retained turn adds +4 bonus block
         const stacks = s.retainGrowthStacks?.[card.id] || 0
         const growthBonus = stacks * 4
-        const blockGained = calculateBlock({ base: effect.block + growthBonus, chainMultiplier })
+        const blockGained = calculateBlock({ base: effect.block + upgradeBlock + growthBonus, chainMultiplier })
         s.addBlock(blockGained)
         playSFX('block_gain')
       }
     }
 
     if (effect.heal) {
-      const healAmt = chainMultiplier > 1 ? Math.floor(effect.heal * chainMultiplier) : effect.heal
+      const healAmt = chainMultiplier > 1 ? Math.floor((effect.heal + upgradeHeal) * chainMultiplier) : (effect.heal + upgradeHeal)
       s.healHp(healAmt)
       playSFX('heal')
     }
 
     if (effect.draw) {
-      const drawCount = chainMultiplier > 1 ? effect.draw + 1 : effect.draw
+      const drawCount = (chainMultiplier > 1 ? effect.draw + 1 : effect.draw) + upgradeDraw
       const { drawn, deck: newDeck, discard: newDiscard } = drawCards(s.deck, s.discardPile, drawCount)
       s.setHand([...s.hand, ...drawn])
       s.setDeck(newDeck)

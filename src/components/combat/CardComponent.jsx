@@ -27,6 +27,7 @@ const CardComponent = React.memo(function CardComponent({
   isSelected = false,
   isShaking = false,
   isRetained = false,   // v3: this card is retained (stays in hand next turn)
+  isUpgraded = false,   // v4: this card has been upgraded at a rest site
   growthStacks = 0,     // v3: how many turns this card has been retained
   onSelect,
   indexInHand = 0,
@@ -94,14 +95,27 @@ const CardComponent = React.memo(function CardComponent({
         />
       )}
 
+      {/* v4: Glow for upgraded cards */}
+      {isUpgraded && (
+        <motion.div
+          className="absolute inset-0 rounded-lg pointer-events-none z-10"
+          animate={{ boxShadow: ['0 0 6px #FFD700', '0 0 14px #DAA520', '0 0 6px #FFD700'] }}
+          transition={{ duration: 3, repeat: Infinity }}
+        />
+      )}
+
       {/* ── Main Card Body ── */}
       <div
         className="relative w-[140px] h-[190px] cursor-pointer"
         style={{
           background: `linear-gradient(150deg, #2a2a2a, #111)`,
-          border: '4px solid #333',
+          border: isUpgraded ? '4px solid #DAA520' : '4px solid #333',
           borderRadius: '10px',
-          boxShadow: isSelected ? '0 10px 30px rgba(0,0,0,0.8)' : '0 4px 10px rgba(0,0,0,0.6)',
+          boxShadow: isSelected
+            ? '0 10px 30px rgba(0,0,0,0.8)'
+            : isUpgraded
+              ? '0 4px 12px rgba(218,165,32,0.3)'
+              : '0 4px 10px rgba(0,0,0,0.6)',
           overflow: 'visible', // allow energy orb to break bounds
           fontFamily: "'Crimson Text', Georgia, serif"
         }}
@@ -111,9 +125,9 @@ const CardComponent = React.memo(function CardComponent({
 
         {/* ── Card Name Banner ── */}
         <div className="absolute top-2 left-3 right-2 h-6 flex items-center justify-center bg-black/60 border border-gray-500/30 rounded-sm">
-          <div className="text-center font-bold text-white text-[11px] leading-none px-1 truncate w-full" style={{ textShadow: '1px 1px 2px #000' }}>
+          <div className={`text-center font-bold text-[11px] leading-none px-1 truncate w-full ${isUpgraded ? 'text-amber-200' : 'text-white'}`} style={{ textShadow: '1px 1px 2px #000' }}>
             <HoverTranslate translation={card.name_native}>
-              {card.name_target}
+              {card.name_target}{isUpgraded ? '+' : ''}
             </HoverTranslate>
           </div>
         </div>
@@ -135,7 +149,7 @@ const CardComponent = React.memo(function CardComponent({
         {/* ── Text Box ── */}
         <div className="absolute top-[96px] left-2 right-2 bottom-2 bg-[#f4ebd8]/90 border border-[#b8a066] rounded-sm p-1.5 flex flex-col justify-between">
           <div className="text-[10px] text-center text-gray-900 leading-tight font-bold" style={{ textShadow: 'none' }}>
-            {getEffectDescription(card, growthStacks)}
+            {getEffectDescription(card, growthStacks, isUpgraded)}
           </div>
           <div className="text-center text-[8px] text-gray-600 italic leading-tight truncate">
              <HoverTranslate translation={card.flavor_native}>{card.flavor_target}</HoverTranslate>
@@ -187,16 +201,21 @@ const CardComponent = React.memo(function CardComponent({
   )
 })
 
-function getEffectDescription(card, growthStacks = 0) {
+function getEffectDescription(card, growthStacks = 0, isUpgraded = false) {
   const e = card.effect || {}
   const parts = []
-  if (e.damage) parts.push(`Deal ${e.damage} damage.${e.hits && e.hits > 1 ? ` (${e.hits} times)` : ''}${e.bonus_correct_first_try ? ` If 1st try, deal ${e.damage + e.bonus_correct_first_try} instead.` : ''}`)
+  const uDmg = isUpgraded ? 3 : 0
+  const uBlk = isUpgraded ? 3 : 0
+  const uHeal = isUpgraded ? 2 : 0
+  const uDraw = isUpgraded ? 1 : 0
+
+  if (e.damage) parts.push(`Deal ${e.damage + uDmg} damage.${e.hits && e.hits > 1 ? ` (${e.hits} times)` : ''}${e.bonus_correct_first_try ? ` If 1st try, deal ${e.damage + uDmg + e.bonus_correct_first_try} instead.` : ''}`)
   if (e.block) {
-    const grownBlock = e.block + growthStacks * 4
+    const grownBlock = e.block + uBlk + growthStacks * 4
     parts.push(`Gain ${grownBlock} Block.${growthStacks > 0 ? ` (grown ×${growthStacks})` : ''}`)
   }
-  if (e.heal) parts.push(`Heal ${e.heal} HP.`)
-  if (e.draw) parts.push(`Draw ${e.draw} card${e.draw > 1 ? 's' : ''}.`)
+  if (e.heal) parts.push(`Heal ${e.heal + uHeal} HP.`)
+  if (e.draw) parts.push(`Draw ${e.draw + uDraw} card${(e.draw + uDraw) > 1 ? 's' : ''}.`)
   if (e.stun) parts.push(`Stun enemy for ${e.stun} turn.`)
   if (e.chain_bonus) parts.push(`Adds +${e.chain_bonus} to Chain.`)
   if (e.bonus_if_block_active) parts.push(`If Block active, gain +${e.bonus_if_block_active}.`)

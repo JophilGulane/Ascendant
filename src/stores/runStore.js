@@ -57,6 +57,10 @@ const useRunStore = create(
       // v3: Growth stacks per retained card ID (how many turns it has been retained)
       retainGrowthStacks: {},
 
+      // v4: Upgraded cards — card IDs that have been upgraded at rest sites
+      // All copies of an upgraded card ID get boosted effects
+      upgradedCards: [],
+
       // Relics — max 5 equipped, unlimited vault storage
       relics: [],        // equipped (active, max 5)
       vaultRelics: [],   // stored but inactive
@@ -359,6 +363,14 @@ const useRunStore = create(
         return { deck: [...s.deck.slice(0, idx), ...s.deck.slice(idx + 1)] }
       }),
 
+      // v4: Card upgrades
+      upgradeCard: (cardId) => set(s => ({
+        upgradedCards: s.upgradedCards.includes(cardId)
+          ? s.upgradedCards
+          : [...s.upgradedCards, cardId]
+      })),
+      isCardUpgraded: (cardId) => get().upgradedCards.includes(cardId),
+
       // Combat toggle
       setInCombat: (val) => set({ inCombat: val }),
 
@@ -491,6 +503,7 @@ const useRunStore = create(
           enemyFuryStacks: 0,
           enemyFocusType: null,
           blindCardId: null,
+          upgradedCards: [],
         })
       },
 

@@ -30,6 +30,7 @@ export function MerchantRoom() {
   const [removeMode, setRemoveMode] = useState(false)
   const [dialogueIdx, setDialogueIdx] = useState(0)
   const [notification, setNotification] = useState(null)
+  const upgradedCards = store.upgradedCards || []
 
   useEffect(() => {
     import(`../../data/${store.campaign || 'japanese'}/cards.json`).then(mod => {
@@ -164,7 +165,9 @@ export function MerchantRoom() {
                         </span>
                       </div>
                       <div className={`font-bold text-sm ${typeMeta.colorClass} mb-1`}>
-                        <HoverTranslate translation={card.name_native}>{card.name_target}</HoverTranslate>
+                        <HoverTranslate translation={card.name_native}>
+                          {card.name_target}{upgradedCards.includes(card.id) ? '+' : ''}
+                        </HoverTranslate>
                       </div>
                       <div className="text-xs text-gray-400 mb-1">Cost: {card.energy_cost} energy</div>
                       <div className="text-xs text-gray-300">{getEffectSummary(card)}</div>
@@ -230,7 +233,7 @@ export function MerchantRoom() {
                         onClick={() => removeCard(cardId)}
                         className="text-xs px-2 py-1 bg-red-950/40 border border-red-800 rounded text-red-200 hover:bg-red-900/60"
                       >
-                        {card.name_native}
+                        {card.name_native}{upgradedCards.includes(cardId) ? '+' : ''}
                       </button>
                     )
                   })}

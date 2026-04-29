@@ -16,6 +16,7 @@ import { CARD_TYPES } from '../../constants/cardTypes.js'
  * @param {string[]} silencedTypes  - v2: card types currently silenced (from debuffs)
  * @param {string[]} retainedCards  - v3: card IDs retained across turns
  * @param {Object} retainGrowthStacks - v3: map of cardId → number of growth stacks
+ * @param {string[]} upgradedCards  - v4: card IDs that have been upgraded
  * @param {string|null} selectedCardId
  * @param {boolean} chainActive
  * @param {string|null} chainType   - type of chain active
@@ -30,6 +31,7 @@ const CardHand = React.memo(function CardHand({
   silencedTypes = [],
   retainedCards = [],
   retainGrowthStacks = {},
+  upgradedCards = [],
   selectedCardId = null,
   chainActive = false,
   chainType = null,
@@ -72,6 +74,7 @@ const CardHand = React.memo(function CardHand({
           const isSilenced = silencedTypes.includes(card.type)
           const isRetained = retainedCards.includes(card.id)
           const growthStacks = retainGrowthStacks[card.id] || 0
+          const isUpgraded = upgradedCards.includes(card.id)
 
           const isPrimed =
             !isLocked &&
@@ -88,6 +91,7 @@ const CardHand = React.memo(function CardHand({
               isSilenced={isSilenced}
               isPrimed={isPrimed}
               isRetained={isRetained}
+              isUpgraded={isUpgraded}
               growthStacks={growthStacks}
               isSelected={selectedCardId === card.id}
               isShaking={shakingCardId === card.id}
