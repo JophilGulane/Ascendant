@@ -4,13 +4,16 @@
 //   Step 2: Choose campaign (filtered by mode)
 // Sets modeStore.activeMode, sets sessionStorage.selected_campaign, navigates to CharacterSelect.
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAudio } from '../../hooks/useAudio.js'
 import useModeStore from '../../stores/modeStore.js'
+import useAccountStore from '../../stores/accountStore.js'
 import { CAMPAIGN_THEMES } from '../../constants/campaigns.js'
 import { ScreenTransition } from '../shared/ScreenTransition.jsx'
+import { getUnlockedCustomThemes } from '../../utils/customCampaignLoader.js'
+import { unlockCustomCampaign } from '../../teacher/teacherService.js'
 
 // ── Mode definitions ──────────────────────────────────────────────────────────
 const MODES = [
@@ -149,9 +152,20 @@ export function ModeSelect() {
   const navigate    = useNavigate()
   const { playSFX } = useAudio()
   const setMode     = useModeStore(s => s.setMode)
+  const { session, isLoggedIn } = useAccountStore()
 
-  const [step, setStep] = useState('mode') // 'mode' | 'campaign'
+  const [step,       setStep]       = useState('mode') // 'mode' | 'campaign'
   const [activeMode, setActiveMode] = useState(null)
+  const [customCampaigns, setCustomCampaigns] = useState([])
+  const [codeInput,  setCodeInput]  = useState('')
+  const [codeMsg,    setCodeMsg]    = useState(null)
+
+  // Load unlocked custom campaigns when campaign step opens
+  useEffect(() => {
+    if (step === 'campaign') {
+      setCustomCampaigns(getUnlockedCustomThemes(session?.username))
+    }
+  }, [step, session?.username])
 
   const handleModeSelect = (modeId) => {
     playSFX('button_click')
@@ -164,6 +178,21 @@ export function ModeSelect() {
     playSFX('button_click')
     sessionStorage.setItem('selected_campaign', campaignId)
     navigate('/character-select')
+  }
+
+  const handleUnlockCode = () => {
+    const code = codeInput.trim().toUpperCase()
+    if (!code) return
+    if (!isLoggedIn) { setCodeMsg({ ok: false, msg: 'Sign in to unlock campaigns.' }); return }
+    const result = unlockCustomCampaign(session.username, code)
+    if (result.ok) {
+      setCodeMsg({ ok: true, msg: `✓ Unlocked: ${result.campaign.name}` })
+      setCustomCampaigns(getUnlockedCustomThemes(session.username))
+      setCodeInput('')
+    } else {
+      setCodeMsg({ ok: false, msg: result.error })
+    }
+    setTimeout(() => setCodeMsg(null), 4000)
   }
 
   const handleBack = () => {
@@ -238,6 +267,47 @@ export function ModeSelect() {
                 {showPlaceholders && PROGRAMMING_PLACEHOLDERS.map((c, i) => (
                   <CampaignCard key={c.id} campaign={c} index={builtInCards.length + i} onSelect={handleCampaignSelect} comingSoon={true} />
                 ))}
+                {customCampaigns.map((c, i) => (
+                  <CampaignCard key={c.id} campaign={c} index={builtInCards.length + i} onSelect={handleCampaignSelect} comingSoon={false} />
+                ))}
+              </div>
+
+              {/* ── Campaign Code unlock ── */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', marginTop: '-16px' }}>
+                <div style={{ fontSize: '0.7rem', color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                  Have a Campaign Code from your teacher?
+                </div>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input
+                    value={codeInput}
+                    onChange={e => setCodeInput(e.target.value.toUpperCase())}
+                    onKeyDown={e => e.key === 'Enter' && handleUnlockCode()}
+                    placeholder="Enter code e.g. CP-7731"
+                    style={{
+                      background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)',
+                      borderRadius: '10px', padding: '10px 16px', color: '#f3f4f6',
+                      fontSize: '0.88rem', outline: 'none', fontFamily: 'monospace',
+                      letterSpacing: '0.1em', width: '200px',
+                    }}
+                  />
+                  <motion.button
+                    onClick={handleUnlockCode}
+                    whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                    style={{
+                      padding: '10px 20px', borderRadius: '10px', border: 'none',
+                      background: 'linear-gradient(135deg,#b45309,#F5C842)',
+                      color: '#1a0e00', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer',
+                      fontFamily: "'Cinzel', serif",
+                    }}
+                  >
+                    Unlock
+                  </motion.button>
+                </div>
+                {codeMsg && (
+                  <div style={{ fontSize: '0.78rem', color: codeMsg.ok ? '#6ee7b7' : '#fca5a5' }}>
+                    {codeMsg.msg}
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
