@@ -425,16 +425,25 @@ export function CombatScreen() {
               className="relative flex items-end justify-center"
               style={{ height: '200px' }}
             >
-              {store.character?.id ? (
-                <img
-                  src={`/images/characters/${store.campaign || campaignId || 'japanese'}/${store.character.id}.png`}
-                  alt={store.character.name || "Player"}
-                  className="max-h-full max-w-full object-contain object-bottom"
-                  style={{ imageRendering: 'pixelated', filter: 'drop-shadow(0 8px 10px rgba(0,0,0,0.8))' }}
-                />
+              {['kenji', 'hana', 'yuki', 'minjun', 'jiwoo', 'mateo', 'elena'].includes(store.character?.id) ? (
+                <div className="relative w-full h-full flex items-end justify-center">
+                  <img
+                    src={`/images/characters/${store.campaign || campaignId || 'japanese'}/${store.character.id}.png`}
+                    alt={store.character?.name || "Player"}
+                    className="max-h-full max-w-full object-contain object-bottom"
+                    style={{ imageRendering: 'pixelated', filter: 'drop-shadow(0 8px 10px rgba(0,0,0,0.8))' }}
+                    onError={e => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex' }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center text-8xl opacity-40" style={{ display: 'none' }}>
+                    {store.character?.id === 'hana' ? '🌸' : store.character?.id === 'yuki' ? '❄️' : '👤'}
+                  </div>
+                </div>
               ) : (
-                <div className="w-36 h-44 bg-gray-800/80 border-2 border-gray-600 rounded flex items-center justify-center text-4xl">
-                  👤
+                <div className="w-full h-full flex items-center justify-center text-[10rem] opacity-30" style={{ filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.1))' }}>
+                  {({
+                    scholar: '🧑‍🎓',
+                    veteran: '🎖️',
+                  })[store.character?.id] || '👤'}
                 </div>
               )}
 

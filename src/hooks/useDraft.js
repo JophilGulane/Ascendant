@@ -6,14 +6,22 @@ import useRunStore from '../stores/runStore.js'
 import { shuffle } from '../utils/deck.js'
 import { isRuleActive } from '../constants/masteryRules.js'
 
+import { isCustomCampaign } from '../utils/customCampaignLoader.js'
+
 const cardCache = {}
 async function loadCards(campaign) {
   if (cardCache[campaign]) return cardCache[campaign]
+  const baseId = isCustomCampaign(campaign) ? 'japanese' : campaign
+
   try {
-    const mod = await import(`../data/${campaign}/cards.json`)
-    cardCache[campaign] = mod.default
-    return cardCache[campaign]
-  } catch {
+    const mod = await import(`../data/${baseId}/cards.json`)
+    const cards = mod.default.map(card => 
+      isCustomCampaign(campaign) ? { ...card, campaign } : card
+    )
+    cardCache[campaign] = cards
+    return cards
+  } catch (e) {
+    console.error(`[useDraft] Failed to load cards for ${campaign}:`, e)
     return []
   }
 }

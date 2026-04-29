@@ -18,6 +18,7 @@ import useRunStore from '../../stores/runStore.js'
  */
 export function PlayerStatus({ hp, maxHp, block, energy, maxEnergy, debuffs = [], isHit = false, relics = [] }) {
   const campaign = useRunStore(s => s.campaign)
+  const character = useRunStore(s => s.character)
   const hpPercent = Math.max(0, (hp / maxHp) * 100)
   const hpColor = hpPercent > 50 ? 'bg-emerald-500' : hpPercent > 25 ? 'bg-yellow-500' : 'bg-red-600'
   const criticalHp = hpPercent <= 20
@@ -33,8 +34,20 @@ export function PlayerStatus({ hp, maxHp, block, energy, maxEnergy, debuffs = []
     >
       {/* Player label */}
       <div className="flex items-center gap-1.5">
-        <span className="text-base">🧘</span>
-        <span className="text-xs text-gray-400">Kenji</span>
+        <span className="text-base">
+          {({
+            hana:    '🌸',
+            kenji:   '⚔️',
+            yuki:    '❄️',
+            minjun:  '📊',
+            jiwoo:   '🤝',
+            mateo:   '🗺️',
+            elena:   '📜',
+            scholar: '🧑‍🎓',
+            veteran: '🎖️',
+          })[character?.id] || '👤'}
+        </span>
+        <span className="text-xs text-gray-400">{character?.name || 'Player'}</span>
         {criticalHp && (
           <motion.span
             animate={{ opacity: [1, 0.3, 1] }}
