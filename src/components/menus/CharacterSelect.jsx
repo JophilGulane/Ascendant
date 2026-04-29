@@ -140,9 +140,19 @@ function CharTile({ char, isSelected, onClick }) {
           </div>
         </div>
       ) : (
-        // Character icon
+        // Character icon — covers built-in and custom characters
         <div style={{ fontSize: 36, lineHeight: 1 }}>
-          {char.id === 'kenji' ? '⚔️' : char.id === 'hana' ? '🌸' : char.id === 'yuki' ? '❄️' : '?'}
+          {({
+            hana:    '🌸',
+            kenji:   '⚔️',
+            yuki:    '❄️',
+            minjun:  '📊',
+            jiwoo:   '🤝',
+            mateo:   '🗺️',
+            elena:   '📜',
+            scholar: '🧑‍🎓',
+            veteran: '🎖️',
+          })[char.id] || '🧑‍🏫'}
         </div>
       )}
     </motion.button>

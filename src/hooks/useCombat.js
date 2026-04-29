@@ -24,6 +24,10 @@ import {
   resetPassiveTrackers,
 } from '../utils/enemyTurn.js'
 import { CARD_TYPES } from '../constants/cardTypes.js'
+import {
+  isCustomCampaign,
+  tryGetCustomQuestions,
+} from '../utils/customCampaignLoader.js'
 
 // Lazy question + card cache per campaign
 const questionCache = {}
@@ -31,6 +35,14 @@ const cardCache = {}
 
 async function loadQuestions(campaign) {
   if (questionCache[campaign]) return questionCache[campaign]
+
+  // Custom campaigns: pull questions from localStorage via the loader
+  // Do NOT cache — teacher may update questions between fights
+  if (isCustomCampaign(campaign)) {
+    const qs = tryGetCustomQuestions(campaign) || []
+    return qs
+  }
+
   try {
     const mod = await import(`../data/${campaign}/questions.json`)
     questionCache[campaign] = mod.default
@@ -43,14 +55,23 @@ async function loadQuestions(campaign) {
 
 async function loadCards(campaign) {
   if (cardCache[campaign]) return cardCache[campaign]
+
+  // Custom campaigns: borrow the Japanese card definitions (same mechanics)
+  // but re-tag each card with the custom campaignId so question routing works.
+  const baseId = isCustomCampaign(campaign) ? 'japanese' : campaign
+
   try {
-    const mod = await import(`../data/${campaign}/cards.json`)
+    const mod = await import(`../data/${baseId}/cards.json`)
     const map = {}
-    for (const card of mod.default) map[card.id] = card
+    for (const card of mod.default) {
+      map[card.id] = isCustomCampaign(campaign)
+        ? { ...card, campaign }   // override campaign tag
+        : card
+    }
     cardCache[campaign] = map
     return cardCache[campaign]
   } catch (e) {
-    console.error(`[useCombat] Failed to load cards for ${campaign}:`, e)
+    console.error(`[useCombat] Failed to load cards for ${baseId}:`, e)
     return {}
   }
 }
