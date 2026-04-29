@@ -4,6 +4,7 @@
 // When open during combat the parent is responsible for pausing turn processing.
 
 import { useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import useSettingsStore from '../../stores/settingsStore.js'
 import { ROMANIZATION_MODES } from '../../constants/campaigns.js'
@@ -122,7 +123,8 @@ function VolumeSlider({ value, onChange, accent }) {
 // ── Main export ───────────────────────────────────────────────────────────────
 // accent: the campaign's accent color token (or a neutral gold for main menu)
 export function SettingsMenu({ isOpen, onClose, accent = '#F5C842' }) {
-  const s = useSettingsStore()
+  const s        = useSettingsStore()
+  const navigate = useNavigate()
 
   // Apply Howler volumes immediately
   const handleSfxVolume = useCallback((vol) => {
@@ -308,6 +310,21 @@ export function SettingsMenu({ isOpen, onClose, accent = '#F5C842' }) {
               </div>
 
             </div>
+
+            {/* ── DEV TOOLS (dev builds only) ── */}
+            {import.meta.env.DEV && (
+              <div style={{ marginTop: '20px', paddingTop: '14px', borderTop: '1px solid rgba(124,58,237,0.25)' }}>
+                <div style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#7c3aed', marginBottom: '8px', fontFamily: "'Cinzel', serif" }}>🛠 Dev Tools</div>
+                <button
+                  onClick={() => { onClose(); navigate('/dev/import') }}
+                  style={{ width: '100%', padding: '9px', borderRadius: '9px', border: '1px solid rgba(124,58,237,0.4)', background: 'rgba(124,58,237,0.08)', color: '#a78bfa', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s' }}
+                  onMouseEnter={e => e.target.style.background = 'rgba(124,58,237,0.18)'}
+                  onMouseLeave={e => e.target.style.background = 'rgba(124,58,237,0.08)'}
+                >
+                  📋 Bulk Import Questions (CSV)
+                </button>
+              </div>
+            )}
 
             {/* ── Reset + Close ── */}
             <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.07)', display: 'flex', gap: '10px' }}>

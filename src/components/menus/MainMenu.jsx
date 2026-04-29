@@ -112,7 +112,7 @@ export function MainMenu() {
 
   const handleMenuClick = (id) => {
     playSFX('button_click')
-    if (id === 'play')           setView('campaign')
+    if (id === 'play')           navigate('/mode-select')
     if (id === 'lesson_builder') navigate('/teach')
     if (id === 'graveyard')      navigate('/graveyard')
     if (id === 'pantheon')       navigate('/pantheon')

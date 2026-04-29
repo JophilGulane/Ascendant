@@ -46,20 +46,26 @@ export function filterQuestionsByFloor(questions, floor) {
  * @returns {Object|null} question data or null if none found
  */
 export function sampleQuestionsForCard(card, allQuestions, graveyardEntries, settings, floor, store) {
-  const usedIds = store?.fightQuestionPoolUsed ?? []
+  // Use a Set for O(1) lookup; coerce all IDs to strings to prevent type-mismatch duplicates
+  const usedIds = new Set((store?.fightQuestionPoolUsed ?? []).map(String))
 
   // ── Custom campaign: use teacher-built questions ──────────────────────────
   const campaignId = card.campaign
   if (isCustomCampaign(campaignId)) {
     const customQs = tryGetCustomQuestions(campaignId) || []
     const floorFiltered = filterQuestionsByFloor(customQs, floor)
-    let pool = floorFiltered.filter(q => q.type === card.type && !usedIds.includes(q.id))
+    let pool = floorFiltered.filter(q => q.type === card.type && !usedIds.has(String(q.id)))
+
+    if (pool.length < 3) {
+      console.warn(`[Ascendant] ⚠️ Low custom question pool for card type "${card.type}" (${pool.length} available after used-ID filter) — consider adding more questions to the teacher campaign`)
+    }
+
     if (pool.length === 0) pool = floorFiltered.filter(q => q.type === card.type)
     if (pool.length === 0) pool = customQs.filter(q => q.type === card.type)
     if (pool.length === 0) pool = customQs
     if (pool.length === 0) return null
     const chosen = pool[Math.floor(Math.random() * pool.length)]
-    store?.markQuestionUsed?.(chosen.id)
+    store?.markQuestionUsed?.(String(chosen.id))
     return chosen
   }
 
@@ -70,8 +76,17 @@ export function sampleQuestionsForCard(card, allQuestions, graveyardEntries, set
     q.campaign === card.campaign &&
     q.type === card.type &&
     card.question_tags.some(tag => q.tags.includes(tag)) &&
-    !usedIds.includes(q.id)
+    !usedIds.has(String(q.id))
   )
+
+  // Warn immediately when available pool is small — helps catch thin question banks
+  if (pool.length < 3) {
+    console.warn(
+      `[Ascendant] ⚠️ Low question pool for card "${card.id}" type="${card.type}" ` +
+      `campaign="${card.campaign}" floor=${floor}: ` +
+      `${pool.length} available after used-ID filter (${usedIds.size} used this fight)`
+    )
+  }
 
   // If pool exhausted by used IDs, silently reset for this card type (rare edge case)
   if (pool.length === 0) {
@@ -91,7 +106,7 @@ export function sampleQuestionsForCard(card, allQuestions, graveyardEntries, set
     pool = floorFiltered.filter(q =>
       q.campaign === card.campaign &&
       q.type === card.type &&
-      !usedIds.includes(q.id)
+      !usedIds.has(String(q.id))
     )
     if (pool.length > 0) {
       console.warn(`[Ascendant] No tag match for ${card.id}, using tag-agnostic fallback pool`)
@@ -121,22 +136,22 @@ export function sampleQuestionsForCard(card, allQuestions, graveyardEntries, set
       if (entry.wrongCount > 0) {
         w += Math.min(entry.wrongCount * 40, 200) // Cap penalty
       }
-      
+
       // Drastically decrease weight for consecutive correct answers
       if (entry.correctStreak > 0) {
         w = w / Math.pow(2.5, entry.correctStreak)
       }
-      
+
       return Math.max(2, w) // Floor the weight so cards are never completely eliminated
     })
-    
+
     const chosen = weightedRandomChoice(pool, weights)
-    store?.markQuestionUsed?.(chosen.id)
+    store?.markQuestionUsed?.(String(chosen.id))
     return chosen
   }
 
   const chosen = pool[Math.floor(Math.random() * pool.length)]
-  store?.markQuestionUsed?.(chosen.id) // RULE: mark before returning — no repeats this fight
+  store?.markQuestionUsed?.(String(chosen.id)) // RULE: mark before returning — no repeats this fight
   return chosen
 }
 

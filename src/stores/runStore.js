@@ -173,7 +173,7 @@ const useRunStore = create(
 
       // v2: Question pool tracking
       markQuestionUsed: (questionId) => set(s => ({
-        fightQuestionPoolUsed: [...s.fightQuestionPoolUsed, questionId]
+        fightQuestionPoolUsed: [...s.fightQuestionPoolUsed, String(questionId)]
       })),
       resetFightQuestionPool: () => set({ fightQuestionPoolUsed: [] }),
 

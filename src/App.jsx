@@ -3,7 +3,8 @@ import { Suspense, lazy } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 
-const MainMenu = lazy(() => import('./components/menus/MainMenu.jsx').then(m => ({ default: m.MainMenu })))
+const MainMenu       = lazy(() => import('./components/menus/MainMenu.jsx').then(m => ({ default: m.MainMenu })))
+const ModeSelect     = lazy(() => import('./components/menus/ModeSelect.jsx').then(m => ({ default: m.ModeSelect })))
 const CharacterSelect = lazy(() => import('./components/menus/CharacterSelect.jsx').then(m => ({ default: m.CharacterSelect })))
 const MapScreen = lazy(() => import('./components/map/MapScreen.jsx').then(m => ({ default: m.MapScreen })))
 const CombatScreen = lazy(() => import('./components/combat/CombatScreen.jsx').then(m => ({ default: m.CombatScreen })))
@@ -16,6 +17,7 @@ const ModifierSelect = lazy(() => import('./components/menus/ModifierSelect.jsx'
 const PantheonScreen = lazy(() => import('./components/menus/PantheonScreen.jsx').then(m => ({ default: m.PantheonScreen })))
 const LeaderboardScreen = lazy(() => import('./components/leaderboard/LeaderboardScreen.jsx').then(m => ({ default: m.LeaderboardScreen })))
 const LessonBuilderShell = lazy(() => import('./teacher/components/LessonBuilderShell.jsx').then(m => ({ default: m.LessonBuilderShell })))
+const QuestionImporter   = lazy(() => import('./components/dev/QuestionImporter.jsx').then(m => ({ default: m.QuestionImporter })))
 
 function LoadingFallback() {
   return (
@@ -34,6 +36,7 @@ export default function App() {
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<MainMenu />} />
+            <Route path="/mode-select" element={<ModeSelect />} />
             <Route path="/character-select" element={<CharacterSelect />} />
             <Route path="/map" element={<MapScreen />} />
             <Route path="/combat" element={<CombatScreen />} />
@@ -46,6 +49,7 @@ export default function App() {
             <Route path="/pantheon" element={<PantheonScreen />} />
             <Route path="/leaderboard" element={<LeaderboardScreen />} />
             <Route path="/teach" element={<LessonBuilderShell />} />
+            <Route path="/dev/import" element={<QuestionImporter />} />
             {/* Fallback */}
             <Route path="*" element={<MainMenu />} />
           </Routes>
