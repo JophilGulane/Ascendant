@@ -2,6 +2,7 @@
 import { Suspense, lazy } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import { DebugPanel } from './components/dev/DebugPanel.jsx'
 
 const MainMenu       = lazy(() => import('./components/menus/MainMenu.jsx').then(m => ({ default: m.MainMenu })))
 const ModeSelect     = lazy(() => import('./components/menus/ModeSelect.jsx').then(m => ({ default: m.ModeSelect })))
@@ -55,6 +56,8 @@ export default function App() {
           </Routes>
         </AnimatePresence>
       </Suspense>
+      {/* Dev debug panel — always visible */}
+      <DebugPanel />
     </div>
   )
 }
