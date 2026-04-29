@@ -198,10 +198,9 @@ export function CharacterSelect() {
       rareCard
     )
     // Ensure every card in the deck carries the correct campaignId
-    // so combat engine can route questions to the custom question bank.
-    const taggedDeck = isCustom
-      ? deck.map(card => ({ ...card, campaign: campaignId }))
-      : deck
+    // The combat engine now tags the card definitions directly via loadCards,
+    // so we just pass the string IDs here as expected by runStore.
+    const taggedDeck = deck
 
     sessionStorage.setItem('pending_run', JSON.stringify({
       campaignId,
@@ -346,8 +345,11 @@ export function CharacterSelect() {
                   </div>
                 </div>
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-8xl opacity-40">
-                  👤
+                <div className="w-full h-full flex items-center justify-center text-[10rem] opacity-30" style={{ filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.1))' }}>
+                  {({
+                    scholar: '🧑‍🎓',
+                    veteran: '🎖️',
+                  })[selectedChar.id] || '👤'}
                 </div>
               )}
               {/* Radial glow behind portrait */}
