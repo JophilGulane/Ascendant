@@ -395,6 +395,7 @@ const useRunStore = create(
           bonusEnergyNextTurn: 0,
           blindCardId: newBlindCardId,
           lastCardTypePlayed: null,  // Reset type_lock tracker
+          _jadeShellTriggered: false, // Reset passive ability one-time triggers
         }
       }),
 

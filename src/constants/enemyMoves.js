@@ -18,7 +18,14 @@ export const MOVE_TYPES = {
   SELF_BUFF_POWER:  'self_buff_power_up',
   SELF_BUFF_ENRAGE: 'self_buff_enrage',
   SELF_BUFF_FOCUS:  'self_buff_focus',
+  SELF_BUFF_FORTIFY:'self_buff_fortify',
   SPECIAL:          'special',
+  SPECIAL_FOX_FIRE: 'special_fox_fire',
+  SPECIAL_DEMON_ROAR: 'special_demon_roar',
+  SPECIAL_CONTRACT_CLAUSE: 'special_contract_clause',
+  SPECIAL_SHAPESHIFT: 'special_shapeshift',
+  SPECIAL_TIME_SPLIT: 'special_time_split',
+  SPECIAL_SYSTEM_OVERRIDE: 'special_system_override',
 }
 
 export const MOVE_ICONS = {
@@ -38,7 +45,14 @@ export const MOVE_ICONS = {
   self_buff_power_up: '🔥',
   self_buff_enrage:   '😤',
   self_buff_focus:    '👁️',
+  self_buff_fortify:  '🏔️',
   special:            '💀',
+  special_fox_fire:   '🦊',
+  special_demon_roar: '👹',
+  special_contract_clause: '📜',
+  special_shapeshift: '🔄',
+  special_time_split: '⏳',
+  special_system_override: '💻',
 }
 
 export const MOVE_COLORS = {
@@ -58,7 +72,14 @@ export const MOVE_COLORS = {
   self_buff_power_up: 'text-orange-500',
   self_buff_enrage:   'text-red-400',
   self_buff_focus:    'text-cyan-400',
+  self_buff_fortify:  'text-green-500',
   special:            'text-red-500',
+  special_fox_fire:   'text-amber-400',
+  special_demon_roar: 'text-red-600',
+  special_contract_clause: 'text-yellow-300',
+  special_shapeshift: 'text-emerald-400',
+  special_time_split: 'text-violet-400',
+  special_system_override: 'text-cyan-300',
 }
 
 export const MOVE_CATEGORY = {
@@ -78,21 +99,32 @@ export const MOVE_CATEGORY = {
   self_buff_power_up: 'selfbuff',
   self_buff_enrage:   'selfbuff',
   self_buff_focus:    'selfbuff',
+  self_buff_fortify:  'selfbuff',
   special:            'special',
+  special_fox_fire:   'special',
+  special_demon_roar: 'special',
+  special_contract_clause: 'special',
+  special_shapeshift: 'special',
+  special_time_split: 'special',
+  special_system_override: 'special',
 }
 
 export const DEBUFF_ICONS = {
-  silence:    '🔇',
-  drain:      '⚡',
-  fog:        '🌫️',
-  bind:       '🔗',
-  confusion:  '🔀',
+  silence:         '🔇',
+  drain:           '⚡',
+  fog:             '🌫️',
+  bind:            '🔗',
+  confusion:       '🔀',
+  contract_clause: '📜',
+  time_split:      '⏳',
 }
 
 export const DEBUFF_COLORS = {
-  silence:    'text-purple-400 border-purple-600',
-  drain:      'text-yellow-400 border-yellow-600',
-  fog:        'text-blue-300  border-blue-500',
-  bind:       'text-orange-400 border-orange-600',
-  confusion:  'text-pink-400  border-pink-600',
+  silence:         'text-purple-400 border-purple-600',
+  drain:           'text-yellow-400 border-yellow-600',
+  fog:             'text-blue-300  border-blue-500',
+  bind:            'text-orange-400 border-orange-600',
+  confusion:       'text-pink-400  border-pink-600',
+  contract_clause: 'text-yellow-300 border-yellow-500',
+  time_split:      'text-violet-400 border-violet-600',
 }

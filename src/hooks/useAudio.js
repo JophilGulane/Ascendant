@@ -1,13 +1,25 @@
 // hooks/useAudio.js
 // Howler.js wrapper — silent fallback if audio files are missing
 // All audio calls go through this hook
+//
+// IMPORTANT: Music tracks are stored in a MODULE-LEVEL singleton so that ALL
+// components share the same registry. This prevents the "stacking music" bug
+// where a track started by one component (e.g. MainMenu) keeps playing after
+// that component unmounts, because the new component (e.g. CombatScreen) has
+// its own empty ref and can't see the orphaned track.
 
-import { useCallback, useRef, useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import useSettingsStore from '../stores/settingsStore.js'
 
 // SFX registry — lazy loaded
 const sfxCache = {}
 let Howl = null
+
+// ═══════════════════════════════════════════════════════════════════
+// MODULE-LEVEL MUSIC SINGLETON — shared across all useAudio() calls
+// ═══════════════════════════════════════════════════════════════════
+const activeTracks = {}   // { [key]: Howl instance }
+let currentTrackKey = null // the key of the currently playing track
 
 // Attempt to load Howler (silent if unavailable)
 async function loadHowler() {
@@ -77,16 +89,35 @@ const SFX_MAP = {
   map_click: '/audio/sfx/map_click.mp3',
 }
 
+/**
+ * Stop ALL currently-playing music tracks (module-level).
+ * Used internally by playMusic and exposed via the hook.
+ */
+function stopAllMusic(fadeMs = 500) {
+  Object.entries(activeTracks).forEach(([key, howl]) => {
+    if (howl) {
+      try {
+        if (howl.playing()) {
+          howl.fade(howl.volume(), 0, fadeMs)
+          setTimeout(() => { try { howl.stop() } catch {} }, fadeMs)
+        } else {
+          howl.stop()
+        }
+      } catch {}
+    }
+  })
+  currentTrackKey = null
+}
+
 export function useAudio() {
   const sfxVolume   = useSettingsStore(s => s.sfxVolume)
   const musicVolume = useSettingsStore(s => s.musicVolume)
-  const musicRef = useRef({})
 
   // Live-update all currently-playing music tracks whenever musicVolume changes
   useEffect(() => {
-    Object.values(musicRef.current).forEach(m => {
+    Object.values(activeTracks).forEach(m => {
       if (m && m.playing()) {
-        try { m.volume(musicVolume) } catch { }
+        try { m.volume(musicVolume) } catch {}
       }
     })
   }, [musicVolume])
@@ -114,7 +145,7 @@ export function useAudio() {
 
   const playMusic = useCallback(async (campaign, trackId) => {
     const key = `${campaign}_${trackId}`
-    let src = `/audio/${campaign}/bgm_floor${trackId}.mp3` // Default assumption: trackId is a floor number
+    let src = `/audio/${campaign}/bgm_floor${trackId}.mp3`
 
     if (campaign === 'menu') {
       src = '/audio/bgm_menu.mp3'
@@ -128,27 +159,32 @@ export function useAudio() {
     if (!Howl) return
 
     try {
-      // Check if already playing the exact same track
-      const currentTrack = musicRef.current[key]
-      if (currentTrack && currentTrack.playing()) return
+      // Already playing this exact track — do nothing
+      if (currentTrackKey === key && activeTracks[key]?.playing()) return
 
-      // Stop all other playing music
-      Object.entries(musicRef.current).forEach(([k, m]) => {
-        if (m && m.playing() && k !== key) {
-          m.fade(musicVolume, 0, 800)
-          setTimeout(() => m && m.stop(), 800)
+      // Stop ALL other playing tracks (cross-fade out)
+      Object.entries(activeTracks).forEach(([k, howl]) => {
+        if (howl && k !== key) {
+          try {
+            if (howl.playing()) {
+              howl.fade(howl.volume(), 0, 800)
+              setTimeout(() => { try { howl.stop() } catch {} }, 800)
+            }
+          } catch {}
         }
       })
 
-      if (!musicRef.current[key]) {
-        musicRef.current[key] = createHowl([src], { loop: true, volume: 0 })
+      // Create Howl if not cached
+      if (!activeTracks[key]) {
+        activeTracks[key] = createHowl([src], { loop: true, volume: 0 })
       }
 
-      if (musicRef.current[key]) {
-        // Prevent React strict mode double-play
-        musicRef.current[key].stop()
-        musicRef.current[key].play()
-        musicRef.current[key].fade(0, musicVolume, 1000)
+      // Play and fade in
+      if (activeTracks[key]) {
+        activeTracks[key].stop() // Prevent React strict mode double-play
+        activeTracks[key].play()
+        activeTracks[key].fade(0, musicVolume, 1000)
+        currentTrackKey = key
       }
     } catch {
       // Silent failure
@@ -156,11 +192,7 @@ export function useAudio() {
   }, [musicVolume])
 
   const stopMusic = useCallback(() => {
-    Object.values(musicRef.current).forEach(m => {
-      if (m) {
-        try { m.fade(musicRef.current ? 0.4 : 0, 0, 500); setTimeout(() => m.stop(), 500) } catch { }
-      }
-    })
+    stopAllMusic(500)
   }, [])
 
   return { playSFX, playMusic, stopMusic }
