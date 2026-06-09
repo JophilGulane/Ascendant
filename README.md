@@ -1,16 +1,119 @@
-# React + Vite
+# Ascendant-Language-Learning-Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> A roguelike deck-building RPG that teaches language vocabulary, grammar, and programming concepts through strategic card-based combat.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Project Information
 
-## React Compiler
+| Field | Details |
+|-------|---------|
+| Subject | Web Systems and Technologies |
+| Academic Year | 2025-2026 |
+| Project Category | Web Development / Game Development / Educational |
+| Instructor | Ma'am Divine Grace Caabay |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Members
 
-## Expanding the ESLint configuration
+* Jophil F. Gulane
+* Vougne Froid P. Alis
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## Project Description
+
+Ascendant is an educational single-player card RPG built to make learning interactive and engaging. Inspired by roguelike deckbuilders like *Slay the Spire*, players must ascend a mountain by defeating enemies using cards that represent vocabulary, grammar, and reading skills. To successfully play a card, the player must correctly answer a randomized educational prompt. 
+
+The game is designed for language learners and programming students who want a gamified, strategic way to drill flashcard concepts without the boredom of traditional study methods. It features a robust Custom Campaign and Lesson Builder, allowing teachers to create and publish their own custom subject modules, complete with AI-generated questions.
+
+---
+
+## Features
+
+* **Roguelike Deck-building Combat:** Draft cards, build synergies, and manage energy to defeat challenging enemies.
+* **Dynamic Educational Mechanics:** Cards require correct answers to deal damage or block attacks.
+* **Multiple Built-in Campaigns:** Study Japanese, Korean, Spanish, C, Python, and JavaScript.
+* **Teacher Lesson Builder:** Create custom campaigns with custom vocabularies and questions.
+* **AI Question Generator:** Integrated OpenRouter AI automatically generates contextual questions for your custom campaigns.
+* **Campaign Codes:** Unlock special custom campaigns shared by teachers using unique CP codes.
+
+---
+
+## Technologies Used
+
+* React.js
+* Vite
+* Tailwind CSS
+* Zustand (State Management)
+* Framer Motion (Animations)
+* OpenRouter API (AI Integration)
+
+---
+
+## Installation Guide
+
+> Follow these steps to run the Ascendant game locally on your machine.
+
+1. Clone the repository
+
+```bash
+git clone https://github.com/PSU-CS-Academic-Projects/Ascendant-Language-Learning-Game.git
+```
+
+2. Navigate into the project folder
+
+```bash
+cd Ascendant-Language-Learning-Game
+```
+
+3. Install the dependencies
+
+```bash
+npm install
+```
+
+4. Run the development server
+
+```bash
+npm run dev
+```
+
+5. Open your browser and navigate to `http://localhost:5173` to play!
+
+---
+
+## Screenshots
+
+> Upload your screenshots inside the `screenshots/` folder and reference them here.
+
+**Main Menu**
+
+![Main Menu](screenshots/login.png)
+
+**Character & Mode Select**
+
+![Mode Select](screenshots/dashboard.png)
+
+**Combat Screen**
+
+![Combat Screen](screenshots/features.png)
+
+---
+
+## Live Demo
+
+* Live URL: https://ascendant-mocha.vercel.app/
+
+---
+
+## Video Demonstration
+
+* Video Link: https://your-video-link-here.com (Optional)
+
+---
+
+## Future Improvements
+
+* Multiplayer or leaderboard system for classroom competition
+* Expanded database of built-in programming language campaigns
+* Advanced boss mechanics and custom enemy sprite uploads for teachers
