@@ -86,17 +86,37 @@ npm run dev
 
 > Upload your screenshots inside the `screenshots/` folder and reference them here.
 
-**Main Menu**
+**Main Menu & Mode Selection**
+*The entry point of the game where players select between Language or Programming modes.*
+![Main Menu](screenshots/main_menu.png)
 
-![Main Menu](screenshots/login.png)
+**Character & Campaign Select**
+*Players choose their character and specific subject campaign to study.*
+![Campaign Select](screenshots/campaign_select.png)
 
-**Character & Mode Select**
+**Map Navigation**
+*Branching paths where players choose their route through elite enemies, rest sites, and events.*
+![Map Navigation](screenshots/map.png)
 
-![Mode Select](screenshots/dashboard.png)
+**Strategic Card Combat**
+*The core gameplay loop. Players play cards and answer educational prompts to deal damage or block.*
+![Combat Screen](screenshots/combat.png)
 
-**Combat Screen**
+**Loot & Card Drafting**
+*Drafting new cards to build powerful synergies after winning a battle.*
+![Draft Screen](screenshots/draft_screen.png)
 
-![Combat Screen](screenshots/features.png)
+**Teacher Dashboard & Lesson Builder**
+*The dedicated portal for educators to create custom campaigns and manage flashcards.*
+![Lesson Builder](screenshots/lesson_builder.png)
+
+**AI Question Generator**
+*OpenRouter AI integration allowing teachers to instantly generate educational questions.*
+![AI Generator](screenshots/ai_generator.png)
+
+**Post-Run Summary & Leaderboards**
+*The Graveyard and Leaderboard screens showing run statistics and high scores.*
+![Post Run](screenshots/leaderboard.png)
 
 ---
 
