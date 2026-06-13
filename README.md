@@ -86,37 +86,53 @@ npm run dev
 
 > Upload your screenshots inside the `screenshots/` folder and reference them here.
 
-**Main Menu & Mode Selection**
-*The entry point of the game where players select between Language or Programming modes.*
+**1. Main Menu**
+*The starting screen where players can begin a run or enter custom campaign codes.*
 ![Main Menu](screenshots/main_menu.png)
 
-**Character & Campaign Select**
-*Players choose their character and specific subject campaign to study.*
+**2. Mode Selection**
+*Players must choose between World Languages or Programming Languages.*
+![Mode Select](screenshots/mode_select.png)
+
+**3. Character & Campaign Select**
+*Selecting a hero and a specific learning module (e.g. Japanese, Python).*
 ![Campaign Select](screenshots/campaign_select.png)
 
-**Map Navigation**
+**4. Map Navigation**
 *Branching paths where players choose their route through elite enemies, rest sites, and events.*
 ![Map Navigation](screenshots/map.png)
 
-**Strategic Card Combat**
-*The core gameplay loop. Players play cards and answer educational prompts to deal damage or block.*
+**5. Strategic Card Combat**
+*The core gameplay loop. Players play cards to deal damage or block.*
 ![Combat Screen](screenshots/combat.png)
 
-**Loot & Card Drafting**
+**6. Combat Question Prompt**
+*Answering educational prompts correctly is required to successfully cast cards.*
+![Question Prompt](screenshots/question_prompt.png)
+
+**7. Loot & Card Drafting**
 *Drafting new cards to build powerful synergies after winning a battle.*
 ![Draft Screen](screenshots/draft_screen.png)
 
-**Teacher Dashboard & Lesson Builder**
-*The dedicated portal for educators to create custom campaigns and manage flashcards.*
+**8. Teacher Dashboard**
+*The portal for educators to manage their custom learning campaigns.*
+![Teacher Dashboard](screenshots/teacher_dashboard.png)
+
+**9. Custom Lesson Builder**
+*The interface for creating and managing flashcards and enemy encounters.*
 ![Lesson Builder](screenshots/lesson_builder.png)
 
-**AI Question Generator**
+**10. AI Question Generator**
 *OpenRouter AI integration allowing teachers to instantly generate educational questions.*
 ![AI Generator](screenshots/ai_generator.png)
 
-**Post-Run Summary & Leaderboards**
-*The Graveyard and Leaderboard screens showing run statistics and high scores.*
-![Post Run](screenshots/leaderboard.png)
+**11. Post-Run Graveyard**
+*Game Over screen showing statistics and run history.*
+![Graveyard](screenshots/graveyard.png)
+
+**12. Leaderboards**
+*High scores and rankings for competitive play.*
+![Leaderboard](screenshots/leaderboard.png)
 
 ---
 
