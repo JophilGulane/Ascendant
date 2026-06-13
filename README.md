@@ -84,7 +84,7 @@ npm run dev
 
 ## Screenshots
 
-> Upload your screenshots inside the `screenshots/` folder and reference them here.
+
 
 **1. Main Menu**
 *The starting screen where players can begin a run or enter custom campaign codes.*
@@ -97,6 +97,7 @@ npm run dev
 **3. Character & Campaign Select**
 *Selecting a hero and a specific learning module (e.g. Japanese, Python).*
 ![Campaign Select](screenshots/campaign_select.png)
+![Character Select](screenshots/character_select.png)
 
 **4. Map Navigation**
 *Branching paths where players choose their route through elite enemies, rest sites, and events.*
@@ -108,10 +109,12 @@ npm run dev
 
 **6. Combat Question Prompt**
 *Answering educational prompts correctly is required to successfully cast cards.*
+![New Discovery](screenshots/new_discovery.png)
 ![Question Prompt](screenshots/question_prompt.png)
 
 **7. Loot & Card Drafting**
 *Drafting new cards to build powerful synergies after winning a battle.*
+![Loot Screen](screenshots/loot_screen.png)
 ![Draft Screen](screenshots/draft_screen.png)
 
 **8. Teacher Dashboard**
@@ -128,7 +131,9 @@ npm run dev
 
 **11. Post-Run Graveyard**
 *Game Over screen showing statistics and run history.*
+![Gameover](screenshots/gameover.png)
 ![Graveyard](screenshots/graveyard.png)
+![Run History](screenshots/run_history.png)
 
 **12. Leaderboards**
 *High scores and rankings for competitive play.*
